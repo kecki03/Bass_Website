@@ -1,0 +1,6 @@
+# robots.txt fuer die Bass-Website
+# Oeffentliche Seiten duerfen indexiert werden, interne API-Endpunkte nicht.
+
+User-agent: *
+Allow: /
+Disallow: /api/

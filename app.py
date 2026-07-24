@@ -1,6 +1,6 @@
 import re
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 
 import db
 
@@ -92,6 +92,12 @@ def configurator():
         dev_phase=DEV_PHASE,
         supporter_contribution=SUPPORTER_CONTRIBUTION,
     )
+
+
+@app.route("/robots.txt")
+def robots():
+    # Aus static/ ausliefern, aber unter der Wurzel-URL /robots.txt erreichbar.
+    return send_from_directory(app.static_folder, "robots.txt", mimetype="text/plain")
 
 
 @app.route("/impressum")
