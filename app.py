@@ -106,6 +106,16 @@ def configurator():
     )
 
 
+@app.route("/impressum")
+def impressum():
+    return render_template("impressum.html")
+
+
+@app.route("/datenschutz")
+def datenschutz():
+    return render_template("datenschutz.html")
+
+
 @app.route("/api/options")
 def api_options():
     return jsonify({"base_price": BASE_PRICE, "options": OPTIONS})

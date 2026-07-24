@@ -317,6 +317,56 @@ html { scroll-behavior: smooth; }
     border-top: 1px solid var(--line);
 }
 .footer__note { color: var(--muted); font-size: 13px; letter-spacing: 0.04em; }
+.footer__links { display: flex; gap: 24px; font-size: 13px; letter-spacing: 0.04em; }
+.footer__links a { color: var(--muted); transition: color .2s ease; }
+.footer__links a:hover { color: var(--fg); }
+
+/* ---------- Rechtsseiten (Impressum / Datenschutz) ---------- */
+.legal-page { min-height: 100%; display: flex; flex-direction: column; }
+.legal-page .footer { margin-top: auto; }
+.legal {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 40px 80px;
+    flex: 1;
+}
+.legal__title {
+    font-size: clamp(30px, 4.4vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 40px;
+}
+.legal__block { margin-bottom: 34px; }
+.legal__block h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--fg);
+}
+.legal__block p {
+    color: #b9b9c4;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.legal__block p strong { color: var(--fg); }
+.legal__block a { color: var(--accent); }
+.legal__list {
+    color: #b9b9c4;
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 4px 0 12px 22px;
+}
+.legal__note {
+    margin-top: 40px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
 
 /* Reveal-on-Scroll */
 .reveal {

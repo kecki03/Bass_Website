@@ -122,7 +122,7 @@
                 <label class="check check--center">
                     <input type="checkbox" name="consent" required>
                     <span>Ich möchte per E-Mail zum Release benachrichtigt werden.
-                          (<a href="#" target="_blank">Datenschutz</a>)</span>
+                          (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
                 </label>
                 <p class="form__msg" data-msg></p>
             </form>
@@ -138,6 +138,10 @@
     <footer class="footer">
         <span class="brand">3D BROS</span>
         <span class="footer__note">Handgefertigt & 3D-gedruckt · Ein Studentenprojekt</span>
+        <nav class="footer__links">
+            <a href="{{ url_for('impressum') }}">Impressum</a>
+            <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+        </nav>
     </footer>
 
     <script src="{{ url_for('static', filename='js/landing.js') }}"></script>

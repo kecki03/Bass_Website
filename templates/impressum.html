@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D Bros — Impressum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="legal-page">
+
+    <header class="topbar topbar--solid">
+        <a class="brand" href="{{ url_for('home') }}">3D BROS</a>
+        <span class="topbar__right">Impressum</span>
+    </header>
+
+    <main class="legal">
+        <p class="eyebrow">Rechtliches</p>
+        <h1 class="legal__title">Impressum</h1>
+
+        <section class="legal__block">
+            <h2>Angaben gemäß § 5 DDG</h2>
+            <p>Dieses Angebot wird gemeinschaftlich betrieben von:</p>
+
+            <p>
+                <strong>Clemens Keckeis</strong><br>
+                Alt-Lichtenrade 29<br>
+                12305 Berlin<br>
+                Deutschland
+            </p>
+
+            <p>
+                <strong>Perotin Götz</strong><br>
+                Körblergasse 7, Top 5<br>
+                8010 Graz<br>
+                Österreich
+            </p>
+        </section>
+
+        <section class="legal__block">
+            <h2>Kontakt</h2>
+            <!-- TODO: Bitte echte Kontaktdaten eintragen. Eine Kontaktmöglichkeit
+                 (mind. E-Mail) ist gesetzlich vorgeschrieben. -->
+            <p>
+                E-Mail: <a href="mailto:kontakt@3dbros.example">kontakt@3dbros.example</a>
+            </p>
+        </section>
+
+        <section class="legal__block">
+            <h2>Verantwortlich für den Inhalt</h2>
+            <p>
+                Clemens Keckeis, Alt-Lichtenrade 29, 12305 Berlin<br>
+                Perotin Götz, Körblergasse 7, Top 5, 8010 Graz
+            </p>
+        </section>
+
+        <section class="legal__block">
+            <h2>Haftung für Inhalte</h2>
+            <p>Die Inhalte dieser Seiten wurden mit größter Sorgfalt erstellt. Für die
+               Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch
+               keine Gewähr übernehmen. Als Diensteanbieter sind wir für eigene Inhalte
+               auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich.</p>
+        </section>
+
+        <section class="legal__block">
+            <h2>Haftung für Links</h2>
+            <p>Unser Angebot enthält gegebenenfalls Links zu externen Websites Dritter,
+               auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese
+               fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der
+               verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der
+               Seiten verantwortlich.</p>
+        </section>
+
+        <section class="legal__block">
+            <h2>Urheberrecht</h2>
+            <p>Die durch die Betreiber erstellten Inhalte und Werke auf diesen Seiten
+               unterliegen dem Urheberrecht. Beiträge Dritter sind als solche
+               gekennzeichnet. Vervielfältigung, Bearbeitung oder Verbreitung außerhalb
+               der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des
+               jeweiligen Autors bzw. Erstellers.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <a class="brand" href="{{ url_for('home') }}">3D BROS</a>
+        <nav class="footer__links">
+            <a href="{{ url_for('impressum') }}">Impressum</a>
+            <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+        </nav>
+    </footer>
+
+</body>
+</html>

@@ -98,7 +98,7 @@
                 <label class="check">
                     <input type="checkbox" name="consent" required>
                     <span>Ich bin einverstanden, zu Release-Infos kontaktiert zu werden.
-                          (<a href="#" target="_blank">Datenschutz</a>)</span>
+                          (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
                 </label>
                 <button type="submit" class="buy">Absenden</button>
                 <p class="form__msg" data-msg></p>
@@ -147,7 +147,7 @@
                     <input type="checkbox" name="consent" required>
                     <span>Ich möchte die Entwicklung mit meinem Beitrag unterstützen und bin
                           mit der Verarbeitung meiner Daten einverstanden.
-                          (<a href="#" target="_blank">Datenschutz</a>)</span>
+                          (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
                 </label>
                 <button type="submit" class="buy">Beitrag absenden</button>
                 <p class="form__note">Der Beitrag wird noch nicht abgebucht – wir schicken dir die
