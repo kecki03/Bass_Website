@@ -1,6 +1,6 @@
 # robots.txt fuer die Bass-Website
-# Oeffentliche Seiten duerfen indexiert werden, interne API-Endpunkte nicht.
+# Entwicklungsphase: komplett fuer Suchmaschinen gesperrt.
+# Vor dem Launch auf "Allow: /" umstellen und ggf. Sitemap ergaenzen.
 
 User-agent: *
-Allow: /
-Disallow: /api/
+Disallow: /
