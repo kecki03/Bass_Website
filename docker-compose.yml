@@ -1,0 +1,36 @@
+services:
+  db:
+    # 8.4 (LTS) statt 8.0: der aktuelle 8.0.46-Build segfaultet (Exit 139) beim
+    # Start unter bestimmten CPU-/WSL2-Setups und macht den Container "unhealthy".
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bass}
+      MYSQL_USER: ${MYSQL_USER:-bass}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-basspass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+    ports:
+      # Host-Port 3306 auf den Container mappen (fuer DB-Tools wie DBeaver o.a.)
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      # Web-Container startet erst, wenn MySQL wirklich Anfragen beantwortet
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpass}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-bass}:${MYSQL_PASSWORD:-basspass}@db:3306/${MYSQL_DATABASE:-bass}?charset=utf8mb4
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

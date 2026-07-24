@@ -1,6 +1,9 @@
 # Nutzerdaten (E-Mail-Anmeldungen etc.) nicht hochladen
 data/
 
+# Umgebungsvariablen mit Zugangsdaten
+.env
+
 # Python
 __pycache__/
 *.py[cod]

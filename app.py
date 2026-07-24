@@ -1,11 +1,13 @@
-import json
-import os
 import re
-from datetime import datetime, timezone
 
 from flask import Flask, render_template, jsonify, request
 
+import db
+
 app = Flask(__name__)
+
+# Datenbank-Tabellen beim Start anlegen (wartet, bis MySQL erreichbar ist).
+db.init_db()
 
 # ---------------------------------------------------------------------------
 # Entwicklungsphase-Schalter.
@@ -23,11 +25,6 @@ SUPPORTER_CONTRIBUTION = 50
 
 # Basispreis des Basses in Euro (waehrend der Entwicklungsphase nicht sichtbar)
 BASE_PRICE = 1299
-
-# Ablage fuer Anmeldungen (einfache JSON-Lines-Dateien, spaeter durch DB ersetzbar)
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-NEWSLETTER_FILE = os.path.join(DATA_DIR, "newsletter.jsonl")
-INTEREST_FILE = os.path.join(DATA_DIR, "interest.jsonl")
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -81,15 +78,6 @@ OPTIONS = {
 }
 
 
-def _append_record(path, record):
-    """Haengt einen Datensatz als JSON-Zeile an die angegebene Datei an."""
-    os.makedirs(DATA_DIR, exist_ok=True)
-    record = dict(record)
-    record["ts"] = datetime.now(timezone.utc).isoformat()
-    with open(path, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(record, ensure_ascii=False) + "\n")
-
-
 @app.route("/")
 def home():
     return render_template("index.html", dev_phase=DEV_PHASE)
@@ -138,7 +126,7 @@ def api_newsletter():
     if not consent:
         return jsonify({"ok": False, "error": "Bitte bestätige die Einwilligung."}), 400
 
-    _append_record(NEWSLETTER_FILE, {"email": email, "consent": consent})
+    db.add_newsletter(email=email, consent=consent)
     return jsonify({"ok": True, "message": "Danke! Wir melden uns, sobald es losgeht."})
 
 
@@ -161,7 +149,7 @@ def api_interest():
     if email and not EMAIL_RE.match(email):
         return jsonify({"ok": False, "error": "Bitte gib eine gültige E-Mail-Adresse ein."}), 400
 
-    record = {"kind": kind, "config": config, "email": email}
+    record = {"kind": kind, "config": config, "email": email or None}
 
     if kind == "supporter":
         # Fuer die Reservierung brauchen wir Name + Lieferadresse fuers Dankeschoen.
@@ -180,7 +168,7 @@ def api_interest():
         record.update(required)
         record["contribution"] = SUPPORTER_CONTRIBUTION
 
-    _append_record(INTEREST_FILE, record)
+    db.add_interest(record)
 
     if kind == "supporter":
         message = (
