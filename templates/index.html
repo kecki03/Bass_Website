@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D Bros — Nebula Bass</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="landing">
+
+    <header class="topbar topbar--fixed">
+        <span class="brand">3D BROS</span>
+        <nav class="topbar__nav">
+            <a href="#konzept">Konzept</a>
+            <a href="#design">Design</a>
+            <a href="#ueber-uns">Über uns</a>
+            <a class="topbar__cta" href="{{ url_for('configurator') }}">Konfigurieren</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <a class="hero__link" href="{{ url_for('configurator') }}" aria-label="Zum Konfigurator">
+            <div class="hero__stage">
+                <img class="hero__bass" src="{{ url_for('static', filename='img/bass_studio_h.png') }}" alt="3D Bros Nebula Bass">
+            </div>
+            <div class="hero__content">
+                <p class="hero__eyebrow">Der erste seiner Art</p>
+                <p class="hero__sub">Ein modularer Bass aus dem 3D-Drucker.<br>Kein Katalog. Nur dieses eine Instrument — ganz nach dir.</p>
+                <span class="cta">
+                    Jetzt konfigurieren
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </span>
+            </div>
+        </a>
+        <a class="hero__scroll" href="#konzept" aria-label="Nach unten scrollen">
+            <span>Mehr entdecken</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
+    </section>
+
+    <!-- KONZEPT / PHILOSOPHIE -->
+    <section class="section" id="konzept">
+        <div class="wrap">
+            <p class="eyebrow reveal">Die Idee</p>
+            <h2 class="section__title reveal">Ein Bass aus dem Drucker.<br>Modular bis in die letzte Schraube.</h2>
+            <p class="section__lead reveal">Wir haben den Bass gebaut, den wir uns immer gewünscht haben — bezahlbar, wandelbar und komplett dein eigenes Ding. Kein Massenprodukt von der Stange, sondern Schicht für Schicht gedruckt und Teil für Teil konfiguriert.</p>
+
+            <div class="cards">
+                <div class="card reveal">
+                    <span class="card__num">01</span>
+                    <h3 class="card__title">Modular</h3>
+                    <p class="card__text">Hals, Pick-Ups, Stimmer und Hardware lassen sich einzeln tauschen. Deine Klangvorstellung ändert sich? Dein Bass ändert sich mit — ohne Löten, ohne Werkstatt.</p>
+                </div>
+                <div class="card reveal">
+                    <span class="card__num">02</span>
+                    <h3 class="card__title">3D-gedruckt</h3>
+                    <p class="card__text">Der facettierte Korpus entsteht Schicht für Schicht im 3D-Drucker. Jedes Muster ein Unikat — leicht, robust und mit einer Oberfläche, die man sonst nirgends findet.</p>
+                </div>
+                <div class="card reveal">
+                    <span class="card__num">03</span>
+                    <h3 class="card__title">Konfigurierbar</h3>
+                    <p class="card__text">Stell dir online genau das Instrument zusammen, das zu dir passt — Farbe, Klang, Haptik. Was du im Konfigurator siehst, drucken und bauen wir für dich.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DESIGN mit Foto -->
+    <section class="section section--split" id="design">
+        <div class="wrap split">
+            <div class="split__media reveal">
+                <img src="{{ url_for('static', filename='img/bass2.jpg') }}" alt="Nebula Bass im Detail">
+            </div>
+            <div class="split__text">
+                <p class="eyebrow reveal">Das Design</p>
+                <h2 class="section__title reveal">Facetten, die man sieht<br>und fühlt.</h2>
+                <p class="section__lead reveal">Die kristalline Low-Poly-Oberfläche ist kein Aufkleber und keine Folie — sie ist die Form selbst. Tausende kleine Dreiecke brechen das Licht, sodass der Korpus je nach Blickwinkel von tiefem Violett zu leuchtendem Blau wandert.</p>
+                <ul class="ticks reveal">
+                    <li>Handgefinishte Oberfläche aus dem 3D-Druck</li>
+                    <li>Leichter Korpus, angenehm ausbalanciert</li>
+                    <li>Jedes Exemplar ein optisches Unikat</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ÜBER UNS -->
+    <section class="section section--about" id="ueber-uns">
+        <div class="wrap">
+            <p class="eyebrow reveal">Über uns</p>
+            <h2 class="section__title reveal">Zwei Studenten, ein Drucker,<br>viel zu viele Ideen.</h2>
+            <p class="section__lead reveal">Wir sind zwei Studenten und Hobbymusiker. Angefangen hat alles mit einer simplen Frage: Warum ist ein guter Bass so teuer — und warum kann man ihn danach nie wieder verändern? Also haben wir angefangen, selbst zu drucken, zu schrauben und zu experimentieren.</p>
+            <p class="section__lead reveal">Aus einem Feierabendprojekt zwischen Vorlesungen und Bandproben sind die 3D Bros geworden: der Versuch, einen Bass zu bauen, der so individuell ist wie die Musik, die man damit macht. Kein Konzern, keine Fabrik — nur wir zwei, unser Drucker und ganz viel Herzblut.</p>
+            <div class="stats reveal">
+                <div class="stat"><span class="stat__num">2</span><span class="stat__label">Gründer</span></div>
+                <div class="stat"><span class="stat__num">1</span><span class="stat__label">Modell — dieses</span></div>
+                <div class="stat"><span class="stat__num">∞</span><span class="stat__label">Konfigurationen</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Newsletter -->
+    <section class="section cta-band" id="release">
+        <div class="wrap cta-band__inner reveal">
+            <span class="dev-banner__tag dev-banner__tag--lg">In Entwicklung</span>
+            <h2 class="cta-band__title">Sei beim Release dabei.</h2>
+            <p class="cta-band__sub">Der Nebula Bass ist noch nicht fertig. Trag dich ein und wir
+               sagen dir als Erstes Bescheid, sobald es losgeht.</p>
+
+            <form id="newsletterForm" class="newsletter">
+                <div class="newsletter__row">
+                    <input type="email" name="email" required placeholder="deine@email.de" aria-label="E-Mail-Adresse">
+                    <button type="submit" class="cta cta--solid">
+                        Benachrichtigen
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </button>
+                </div>
+                <label class="check check--center">
+                    <input type="checkbox" name="consent" required>
+                    <span>Ich möchte per E-Mail zum Release benachrichtigt werden.
+                          (<a href="#" target="_blank">Datenschutz</a>)</span>
+                </label>
+                <p class="form__msg" data-msg></p>
+            </form>
+
+            <p class="cta-band__sub" style="margin-top:36px">Schon eine Idee im Kopf?</p>
+            <a class="cta" href="{{ url_for('configurator') }}">
+                Zum Konfigurator
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <span class="brand">3D BROS</span>
+        <span class="footer__note">Handgefertigt & 3D-gedruckt · Ein Studentenprojekt</span>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+</body>
+</html>

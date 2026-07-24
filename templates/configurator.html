@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D Bros — Konfigurator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="config">
+
+    <header class="topbar topbar--solid">
+        <a class="brand" href="{{ url_for('home') }}">3D BROS</a>
+        <span class="topbar__right">Nebula · Konfigurator</span>
+    </header>
+
+    <main class="config__grid">
+
+        <!-- Live-Visualisierung -->
+        <section class="stage">
+            <div class="stage__glow"></div>
+            <img id="bassImg" class="stage__img"
+                 src="{{ url_for('static', filename='img/bass_studio.png') }}"
+                 alt="Dein 3D Bros Nebula Bass">
+            <div class="stage__caption">
+                <span id="stageName">Nebula</span>
+                <span class="stage__dot">·</span>
+                <span id="stageHardware">Chrom</span>
+            </div>
+        </section>
+
+        <!-- Optionen -->
+        <aside class="panel">
+            <div class="panel__head">
+                <p class="panel__eyebrow">Dein Instrument</p>
+                <h1 class="panel__title">NEBULA Bass</h1>
+                <p class="panel__desc">Stell dir deinen Bass zusammen. Jede Änderung siehst du sofort links am Instrument.</p>
+            </div>
+
+            {% for key, group in options.items() %}
+            <div class="group" data-group="{{ key }}">
+                <div class="group__label">{{ group.label }}</div>
+                <div class="group__choices {% if key in ['body','hardware'] %}group__choices--swatch{% endif %}">
+                    {% for c in group.choices %}
+                    <button type="button"
+                            class="choice {% if loop.first %}is-active{% endif %}"
+                            data-group="{{ key }}"
+                            data-id="{{ c.id }}"
+                            data-delta="{{ c.delta }}"
+                            data-name="{{ c.name }}"
+                            {% if c.hue is defined %}data-hue="{{ c.hue }}" data-sat="{{ c.sat }}"{% endif %}>
+                        {% if c.swatch is defined %}
+                        <span class="choice__swatch" style="background:{{ c.swatch }}"></span>
+                        {% endif %}
+                        <span class="choice__name">{{ c.name }}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="summary">
+                <div class="dev-banner">
+                    <span class="dev-banner__tag">In Entwicklung</span>
+                    <p>Der Nebula Bass ist noch nicht im Verkauf. Zeig uns, dass dir dein
+                       Design gefällt – wir melden uns zum Release bei dir.</p>
+                </div>
+
+                <button id="interestBtn" class="buy">Interesse bekunden</button>
+
+                <button id="supporterBtn" class="buy buy--outline">
+                    Ernsthaftes Interesse · {{ supporter_contribution }} € Unterstützung
+                </button>
+                <p class="summary__note">
+                    Mit deinem Beitrag unterstützt du die Entwicklung und hilfst, den Bass
+                    wirklich auf den Markt zu bringen. Als Dankeschön gibt es ein kleines Geschenk.
+                </p>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Modal: unverbindliches Interesse -->
+    <div id="interestModal" class="modal" hidden>
+        <div class="modal__backdrop" data-close></div>
+        <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="interestTitle">
+            <button class="modal__x" data-close aria-label="Schließen">×</button>
+            <h2 id="interestTitle" class="modal__title">Interesse bekunden</h2>
+            <p class="modal__lead">Trag deine E-Mail ein und wir benachrichtigen dich, sobald
+               dein konfigurierter Bass bestellbar ist. Deine Konfiguration schicken wir mit.</p>
+            <form id="interestForm" class="modal__form">
+                <label class="field">
+                    <span>E-Mail</span>
+                    <input type="email" name="email" required placeholder="du@beispiel.de">
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="consent" required>
+                    <span>Ich bin einverstanden, zu Release-Infos kontaktiert zu werden.
+                          (<a href="#" target="_blank">Datenschutz</a>)</span>
+                </label>
+                <button type="submit" class="buy">Absenden</button>
+                <p class="form__msg" data-msg></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: ernsthaftes Interesse mit Unterstuetzer-Beitrag -->
+    <div id="supporterModal" class="modal" hidden>
+        <div class="modal__backdrop" data-close></div>
+        <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="supporterTitle">
+            <button class="modal__x" data-close aria-label="Schließen">×</button>
+            <h2 id="supporterTitle" class="modal__title">Ernsthaftes Interesse</h2>
+            <p class="modal__lead">Mit einem Beitrag von
+               <strong>{{ supporter_contribution }} €</strong> unterstützt du die Entwicklung des
+               Nebula Bass und hilfst, dass er es wirklich auf den Markt schafft. Als Dankeschön
+               bekommst du ein kleines Geschenk – für den Versand brauchen wir deine Adresse.</p>
+            <form id="supporterForm" class="modal__form">
+                <label class="field">
+                    <span>Name</span>
+                    <input type="text" name="name" required>
+                </label>
+                <label class="field">
+                    <span>E-Mail</span>
+                    <input type="email" name="email" required placeholder="du@beispiel.de">
+                </label>
+                <label class="field">
+                    <span>Straße & Hausnummer</span>
+                    <input type="text" name="street" required>
+                </label>
+                <div class="field-row">
+                    <label class="field field--sm">
+                        <span>PLZ</span>
+                        <input type="text" name="zip" required>
+                    </label>
+                    <label class="field">
+                        <span>Ort</span>
+                        <input type="text" name="city" required>
+                    </label>
+                </div>
+                <label class="field">
+                    <span>Land</span>
+                    <input type="text" name="country" value="Deutschland" required>
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="consent" required>
+                    <span>Ich möchte die Entwicklung mit meinem Beitrag unterstützen und bin
+                          mit der Verarbeitung meiner Daten einverstanden.
+                          (<a href="#" target="_blank">Datenschutz</a>)</span>
+                </label>
+                <button type="submit" class="buy">Beitrag absenden</button>
+                <p class="form__note">Der Beitrag wird noch nicht abgebucht – wir schicken dir die
+                   Zahlungs-Details per E-Mail.</p>
+                <p class="form__msg" data-msg></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.BASE_PRICE = {{ base_price }};
+        window.DEV_PHASE = {{ 'true' if dev_phase else 'false' }};
+    </script>
+    <script src="{{ url_for('static', filename='js/configurator.js') }}"></script>
+</body>
+</html>
