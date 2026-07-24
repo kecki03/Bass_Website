@@ -1,0 +1,53 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: eu-north-1
+      ECR_REPO: bass-website
+      ACCOUNT_ID: 106153342961
+      INSTANCE_ID: i-0468e3b33489e19d7
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::106153342961:role/GitHubActionsDeployRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: "Build and push (tag: latest and sha)"
+        run: |
+          ECR_URI="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
+
+          docker build \
+          -t "$ECR_URI:latest" \
+          .
+
+          docker tag "$ECR_URI:latest" "$ECR_URI:${GITHUB_SHA}"
+          docker push "$ECR_URI:latest"
+          docker push "$ECR_URI:${GITHUB_SHA}"
+
+      - name: Deploy on EC2 via SSM
+        run: |
+          aws ssm send-command \
+            --instance-ids "${INSTANCE_ID}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploy bass-website from ECR" \
+            --parameters commands=["sudo /home/ec2-user/bass-website/deploy.sh"] \
+            --region "${AWS_REGION}"

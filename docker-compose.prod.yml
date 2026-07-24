@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bass}
+      MYSQL_USER: ${MYSQL_USER:-bass}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-basspass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpass}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    image: 106153342961.dkr.ecr.eu-north-1.amazonaws.com/bass-website:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-bass}:${MYSQL_PASSWORD:-basspass}@db:3306/${MYSQL_DATABASE:-bass}?charset=utf8mb4
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
