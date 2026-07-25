@@ -80,9 +80,9 @@ function init(mount) {
             // uSilkMix   = Anteil Silk-Shift vs. Orts-Verlauf
             // uSilkScale = Kontrast der Verschiebung ueber die Flaechenneigung
             // uEdge      = zusaetzlicher Fresnel-/Kantenglanz
-            shader.uniforms.uSilkMix = { value: 0.55 };
-            shader.uniforms.uSilkScale = { value: 1.4 };
-            shader.uniforms.uEdge = { value: 0.25 };
+            shader.uniforms.uSilkMix = { value: 0.68 };
+            shader.uniforms.uSilkScale = { value: 2.0 };
+            shader.uniforms.uEdge = { value: 0.3 };
 
             shader.vertexShader = shader.vertexShader
                 .replace(
