@@ -133,9 +133,9 @@ html { scroll-behavior: smooth; }
 @media (max-width: 760px) {
     .hero__bass {
         width: auto;
-        max-width: 82vw;
-        height: 68vh;
-        max-height: 68vh;
+        max-width: 68vw;
+        height: 54vh;
+        max-height: 54vh;
     }
 }
 
@@ -479,7 +479,9 @@ html { scroll-behavior: smooth; }
     justify-content: center;
 }
 .stage__model:active { cursor: grabbing; }
-.stage__model canvas { display: block; width: 100%; height: 100%; }
+/* touch-action: none -> fluessige 3D-Steuerung auf Touch (keine Konflikte
+   mit Browser-Scroll-/Zoom-Gesten auf dem Canvas). */
+.stage__model canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .stage__spinner {
     position: absolute;
     width: 42px; height: 42px;
