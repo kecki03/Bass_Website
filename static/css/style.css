@@ -549,10 +549,18 @@ html { scroll-behavior: smooth; }
 .stage__info-tip strong { color: var(--fg); font-size: 0.85rem; margin-bottom: 2px; }
 .stage__info-tip b { color: var(--fg); font-weight: 600; }
 .stage__info-tip > div { display: flex; flex-direction: column; gap: 5px; }
-.stage__info:hover .stage__info-tip,
-.stage__info:focus .stage__info-tip {
+/* Tap-Toggle (Mobile + alle): per JS gesetzte Klasse */
+.stage__info.is-open .stage__info-tip {
     opacity: 1;
     transform: translateY(0);
+}
+/* Hover/Focus nur auf echten Hover-Geraeten (kein sticky hover auf Touch) */
+@media (hover: hover) {
+    .stage__info:hover .stage__info-tip,
+    .stage__info:focus .stage__info-tip {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Automatische Umschaltung Maus/Touch: Standard = Maus-Steuerung.
@@ -659,6 +667,10 @@ html { scroll-behavior: smooth; }
 .choice-wrap { position: relative; display: flex; }
 .choice-wrap > .choice { width: 100%; }
 
+/* Schnellere Taps auf Touch (kein 300ms-Delay / kein Doppeltap-Zoom) */
+.choice, .choices-toggle, .buy, .filament-bar__link,
+.stage__info, .filament-info, .modal__x { touch-action: manipulation; }
+
 /* Auf-/zuklappbare Filament-Liste: eingeklappt nur die ersten 6 zeigen */
 .group__choices.is-collapsed .choice-wrap:nth-child(n+7) { display: none; }
 .choices-toggle {
@@ -742,10 +754,16 @@ html { scroll-behavior: smooth; }
     transition: opacity .2s ease, transform .2s ease;
     z-index: 5;
 }
-.filament-info:hover .filament-info__tip,
-.filament-info:focus .filament-info__tip {
+.filament-info.is-open .filament-info__tip {
     opacity: 1;
     transform: translateY(0);
+}
+@media (hover: hover) {
+    .filament-info:hover .filament-info__tip,
+    .filament-info:focus .filament-info__tip {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .group__choices--swatch .choice__name { font-size: 13px; }
 .group__choices--swatch .choice__delta { font-size: 11px; }
@@ -940,4 +958,6 @@ body.modal-open { overflow: hidden; }
 @media (max-width: 560px) {
     .newsletter__row { flex-direction: column; }
     .newsletter .cta--solid { justify-content: center; }
+    /* Farbkacheln auf schmalen Handys 2-spaltig -> groesser & besser tappbar */
+    .group__choices--swatch { grid-template-columns: repeat(2, 1fr); }
 }

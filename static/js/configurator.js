@@ -1,6 +1,38 @@
 (function () {
     "use strict";
 
+    // ===== Modals ZUERST und abgesichert verdrahten =====================
+    // Bewusst ganz oben, damit "Interesse bekunden"/"Unterstuetzung" auch dann
+    // funktionieren, wenn weiter unten etwas anderes einen Fehler wirft.
+    function openModal(modal) {
+        if (!modal) return;
+        modal.hidden = false;
+        document.body.classList.add("modal-open");
+        var first = modal.querySelector("input, button");
+        if (first) first.focus();
+    }
+    function closeModal(modal) {
+        if (!modal) return;
+        modal.hidden = true;
+        if (!document.querySelector(".modal:not([hidden])")) {
+            document.body.classList.remove("modal-open");
+        }
+    }
+    var interestModal = document.getElementById("interestModal");
+    var supporterModal = document.getElementById("supporterModal");
+    var interestBtn = document.getElementById("interestBtn");
+    var supporterBtn = document.getElementById("supporterBtn");
+    if (interestBtn) interestBtn.addEventListener("click", function () { openModal(interestModal); });
+    if (supporterBtn) supporterBtn.addEventListener("click", function () { openModal(supporterModal); });
+    document.querySelectorAll("[data-close]").forEach(function (el) {
+        el.addEventListener("click", function () { closeModal(el.closest(".modal")); });
+    });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            document.querySelectorAll(".modal:not([hidden])").forEach(closeModal);
+        }
+    });
+
     var glow = document.querySelector(".stage__glow");
     var stageName = document.getElementById("stageName");
     var stageHardware = document.getElementById("stageHardware");
@@ -91,7 +123,7 @@
 
         // Bildunterschrift + Glow
         if (group === "body") {
-            stageName.textContent = btn.dataset.name;
+            if (stageName) stageName.textContent = btn.dataset.name;
             // "Hier geht's zum Filament"-Leiste auf das aktive Filament setzen
             var filamentLink = document.getElementById("filamentLink");
             var filamentName = document.getElementById("filamentName");
@@ -99,13 +131,35 @@
             if (filamentName) filamentName.textContent = btn.dataset.name;
         }
         if (group === "hardware") {
-            stageHardware.textContent = btn.dataset.name;
-            glow.style.background =
-                "radial-gradient(circle, " +
-                (hardwareGlow[btn.dataset.id] || hardwareGlow.chrome) +
-                ", rgba(0,0,0,0) 65%)";
+            if (stageHardware) stageHardware.textContent = btn.dataset.name;
+            if (glow) {
+                glow.style.background =
+                    "radial-gradient(circle, " +
+                    (hardwareGlow[btn.dataset.id] || hardwareGlow.chrome) +
+                    ", rgba(0,0,0,0) 65%)";
+            }
         }
     }
+
+    // ----- Info-Tooltips: Tap-Toggle (v.a. Mobile) -------------------------
+    // Auf Touch oeffnet/schliesst ein Tipp per Klick (statt Hover). Ein Klick
+    // woanders schliesst offene Tooltips wieder.
+    function wireTapToggle(el) {
+        if (!el) return;
+        el.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var willOpen = !el.classList.contains("is-open");
+            document.querySelectorAll(".stage__info.is-open, .filament-info.is-open")
+                .forEach(function (o) { o.classList.remove("is-open"); });
+            if (willOpen) el.classList.add("is-open");
+        });
+    }
+    wireTapToggle(document.querySelector(".stage__info"));
+    document.querySelectorAll(".filament-info").forEach(wireTapToggle);
+    document.addEventListener("click", function () {
+        document.querySelectorAll(".stage__info.is-open, .filament-info.is-open")
+            .forEach(function (el) { el.classList.remove("is-open"); });
+    });
 
     // Alle Buttons verdrahten + Startzustand aus den .is-active Buttons lesen
     document.querySelectorAll(".choice").forEach(function (btn) {
@@ -113,44 +167,6 @@
     });
     document.querySelectorAll(".choice.is-active").forEach(function (btn) {
         selectChoice(btn);
-    });
-
-    // ----- Modals: Interesse / Unterstuetzer -------------------------------
-
-    function openModal(modal) {
-        modal.hidden = false;
-        document.body.classList.add("modal-open");
-        var first = modal.querySelector("input, button");
-        if (first) first.focus();
-    }
-
-    function closeModal(modal) {
-        modal.hidden = true;
-        if (!document.querySelector(".modal:not([hidden])")) {
-            document.body.classList.remove("modal-open");
-        }
-    }
-
-    var interestModal = document.getElementById("interestModal");
-    var supporterModal = document.getElementById("supporterModal");
-
-    document.getElementById("interestBtn").addEventListener("click", function () {
-        openModal(interestModal);
-    });
-    document.getElementById("supporterBtn").addEventListener("click", function () {
-        openModal(supporterModal);
-    });
-
-    // Schliessen ueber X, Backdrop oder Escape
-    document.querySelectorAll("[data-close]").forEach(function (el) {
-        el.addEventListener("click", function () {
-            closeModal(el.closest(".modal"));
-        });
-    });
-    document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-            document.querySelectorAll(".modal:not([hidden])").forEach(closeModal);
-        }
     });
 
     // ----- Formulare absenden ----------------------------------------------
@@ -195,11 +211,13 @@
             });
     }
 
-    document.getElementById("interestForm").addEventListener("submit", function (e) {
+    var interestForm = document.getElementById("interestForm");
+    var supporterForm = document.getElementById("supporterForm");
+    if (interestForm) interestForm.addEventListener("submit", function (e) {
         e.preventDefault();
         submitInterest(this, "interest");
     });
-    document.getElementById("supporterForm").addEventListener("submit", function (e) {
+    if (supporterForm) supporterForm.addEventListener("submit", function (e) {
         e.preventDefault();
         submitInterest(this, "supporter");
     });
