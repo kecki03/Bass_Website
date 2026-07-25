@@ -1,13 +1,48 @@
 (function () {
     "use strict";
 
-    var bassImg = document.getElementById("bassImg");
     var glow = document.querySelector(".stage__glow");
     var stageName = document.getElementById("stageName");
     var stageHardware = document.getElementById("stageHardware");
 
+    // ----- Geraete-Erkennung: Maus- oder Touch-Steuerung im Info-Tooltip -----
+    var infoBox = document.querySelector(".stage__info");
+    if (infoBox) {
+        var setMode = function (touch) {
+            infoBox.classList.toggle("is-touch", touch);
+            infoBox.classList.toggle("is-mouse", !touch);
+        };
+        // Startzustand aus dem primaeren Zeiger ableiten (Handy/Tablet = coarse)
+        var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+        setMode(!!coarse);
+        // Bei jeder Eingabe die tatsaechlich genutzte Art anzeigen. pointerType
+        // unterscheidet sauber touch/mouse (auch auf Hybrid-Geraeten).
+        window.addEventListener("pointerdown", function (e) {
+            if (e.pointerType) setMode(e.pointerType === "touch");
+        }, { passive: true });
+    }
+
+    // ----- Filament-Liste auf-/zuklappen (ab dem 7. Eintrag) -----------------
+    var bodyToggle = document.getElementById("bodyToggle");
+    var bodyChoices = document.getElementById("bodyChoices");
+    if (bodyToggle && bodyChoices) {
+        var total = bodyToggle.dataset.count || bodyChoices.querySelectorAll(".choice-wrap").length;
+        bodyToggle.addEventListener("click", function () {
+            var collapsed = bodyChoices.classList.toggle("is-collapsed");
+            bodyToggle.setAttribute("aria-expanded", String(!collapsed));
+            bodyToggle.textContent = collapsed
+                ? "Alle " + total + " Filamente anzeigen"
+                : "Weniger anzeigen";
+        });
+    }
+
     // Aktuelle Auswahl je Gruppe (Start = jeweils erste Option)
     var state = {};
+
+    // Gewuenschte Konfiguration global ablegen. Das 3D-Modul (configurator3d.js)
+    // laedt als ES-Modul spaeter und liest diesen Stand beim Modell-Load aus.
+    // Bei spaeteren Klicks ist window.BassViewer schon da und wird direkt gerufen.
+    window.bassConfig = window.bassConfig || {};
 
     // Metall-Farbwerte fuer den weichen Glow-Schein hinter dem Bass
     var hardwareGlow = {
@@ -16,16 +51,24 @@
         gold: "rgba(255,197,90,0.30)"
     };
 
-    // Weicher Schlagschatten bleibt bei jeder Farbe erhalten
-    var SHADOW = " drop-shadow(0 30px 45px rgba(0,0,0,0.6))";
-
-    // Faerbt den Bass per CSS-Filter passend zur gewaehlten Korpus-Farbe um
-    function applyBodyFilter(hue, sat) {
-        if (sat === 0) {
-            // Graphite: entsaettigen statt Farbe drehen
-            bassImg.style.filter = "grayscale(1) brightness(0.92) contrast(1.05)" + SHADOW;
-        } else {
-            bassImg.style.filter = "hue-rotate(" + hue + "deg) saturate(" + sat + ")" + SHADOW;
+    // Auswahl an den 3D-Viewer weiterreichen (bzw. puffern, bis er bereit ist)
+    function pushToViewer(group, btn) {
+        if (group === "body") {
+            var a = btn.dataset.color;
+            var b = btn.dataset.color2 || a;
+            window.bassConfig.body = { a: a, b: b };
+            if (window.BassViewer) window.BassViewer.setBody(a, b);
+        } else if (group === "hardware") {
+            var hw = {
+                color: btn.dataset.color,
+                metallic: btn.dataset.metallic !== undefined ? parseFloat(btn.dataset.metallic) : undefined,
+                rough: btn.dataset.rough !== undefined ? parseFloat(btn.dataset.rough) : undefined
+            };
+            window.bassConfig.hardware = hw;
+            if (window.BassViewer) window.BassViewer.setHardware(hw.color, hw.metallic, hw.rough);
+        } else if (group === "neck") {
+            window.bassConfig.neck = { color: btn.dataset.color };
+            if (window.BassViewer) window.BassViewer.setNeck(btn.dataset.color);
         }
     }
 
@@ -43,13 +86,17 @@
             name: btn.dataset.name
         };
 
-        // Live-Effekte je nach Gruppe
+        // Modell einfaerben
+        pushToViewer(group, btn);
+
+        // Bildunterschrift + Glow
         if (group === "body") {
-            applyBodyFilter(
-                parseFloat(btn.dataset.hue) || 0,
-                btn.dataset.sat === undefined ? 1 : parseFloat(btn.dataset.sat)
-            );
             stageName.textContent = btn.dataset.name;
+            // "Hier geht's zum Filament"-Leiste auf das aktive Filament setzen
+            var filamentLink = document.getElementById("filamentLink");
+            var filamentName = document.getElementById("filamentName");
+            if (filamentLink && btn.dataset.url) filamentLink.href = btn.dataset.url;
+            if (filamentName) filamentName.textContent = btn.dataset.name;
         }
         if (group === "hardware") {
             stageHardware.textContent = btn.dataset.name;

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>3D Bros — Admin-Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .admin-auth {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 24px; background: radial-gradient(60% 100% at 50% 0%, #1c1730 0%, #06060a 70%);
+        }
+        .admin-card {
+            width: 100%; max-width: 380px; background: var(--card);
+            border: 1px solid var(--line); border-radius: 16px; padding: 32px;
+        }
+        .admin-card h1 { font-size: 1.4rem; margin: 0 0 4px; }
+        .admin-card p.sub { color: var(--muted); margin: 0 0 24px; font-size: .9rem; }
+        .admin-field { margin-bottom: 16px; }
+        .admin-field label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 6px; }
+        .admin-field input {
+            width: 100%; box-sizing: border-box; padding: 11px 13px; border-radius: 10px;
+            border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--fg);
+            font: inherit; font-size: .95rem;
+        }
+        .admin-field input:focus { outline: none; border-color: var(--accent); }
+        .admin-btn {
+            width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer;
+            background: var(--accent); color: #0a0a0d; font: inherit; font-weight: 600; font-size: .95rem;
+        }
+        .admin-btn:hover { filter: brightness(1.08); }
+        .admin-error {
+            background: rgba(255,77,109,.12); border: 1px solid rgba(255,77,109,.35);
+            color: #ff9db0; padding: 10px 12px; border-radius: 10px; font-size: .85rem; margin-bottom: 18px;
+        }
+    </style>
+</head>
+<body>
+    <main class="admin-auth">
+        <form class="admin-card" method="post" action="{{ url_for('admin.login') }}" autocomplete="off">
+            <h1>Admin-Bereich</h1>
+            <p class="sub">Bitte melde dich an.</p>
+
+            {% if error %}<div class="admin-error">{{ error }}</div>{% endif %}
+
+            <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+            <div class="admin-field">
+                <label for="username">Benutzername</label>
+                <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+            </div>
+            <div class="admin-field">
+                <label for="password">Passwort</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+            </div>
+            <button class="admin-btn" type="submit">Anmelden</button>
+        </form>
+    </main>
+</body>
+</html>

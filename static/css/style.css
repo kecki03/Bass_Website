@@ -129,6 +129,16 @@ html { scroll-behavior: smooth; }
 }
 .hero__link:hover .hero__bass { transform: scale(1.03); }
 
+/* Mobil: aufrechtes Foto ueber die Hoehe skalieren statt ueber die Breite */
+@media (max-width: 760px) {
+    .hero__bass {
+        width: auto;
+        max-width: 82vw;
+        height: 68vh;
+        max-height: 68vh;
+    }
+}
+
 .hero__content {
     position: absolute;
     left: 0; right: 0; bottom: max(104px, 13vh);
@@ -456,6 +466,106 @@ html { scroll-behavior: smooth; }
     filter: drop-shadow(0 30px 45px rgba(0,0,0,0.6));
     transition: filter .5s ease;
 }
+/* 3D-Modell (three.js-Canvas) statt statischem Bild */
+.stage__model {
+    position: relative;
+    width: 100%;
+    height: 86vh;
+    max-height: calc(100vh - 73px);
+    background: transparent;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.stage__model:active { cursor: grabbing; }
+.stage__model canvas { display: block; width: 100%; height: 100%; }
+.stage__spinner {
+    position: absolute;
+    width: 42px; height: 42px;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: bass-spin 0.9s linear infinite;
+    pointer-events: none;
+}
+@keyframes bass-spin { to { transform: rotate(360deg); } }
+
+/* Steuerungs-Hinweis: i-Icon mit Tooltip (oben links) */
+.stage__info {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 3;
+    cursor: help;
+    outline: none;
+}
+.stage__info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(19, 19, 24, 0.7);
+    backdrop-filter: blur(6px);
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color .2s, border-color .2s, background .2s;
+}
+.stage__info:hover .stage__info-icon,
+.stage__info:focus .stage__info-icon {
+    color: var(--fg);
+    border-color: var(--accent);
+    background: rgba(19, 19, 24, 0.92);
+}
+.stage__info-tip {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    min-width: 230px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: rgba(12, 12, 16, 0.96);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.3;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+}
+.stage__info-tip strong { color: var(--fg); font-size: 0.85rem; margin-bottom: 2px; }
+.stage__info-tip b { color: var(--fg); font-weight: 600; }
+.stage__info-tip > div { display: flex; flex-direction: column; gap: 5px; }
+.stage__info:hover .stage__info-tip,
+.stage__info:focus .stage__info-tip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Automatische Umschaltung Maus/Touch: Standard = Maus-Steuerung.
+   1) CSS-Media-Query fuer typische Touch-Geraete (kein Hover, grober Zeiger).
+   2) JS setzt zusaetzlich .is-touch (siehe configurator.js) – auch fuer
+      Hybrid-Geraete, die erst mit Maus starten und dann getippt werden. */
+.stage__info-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+    .stage__info-mouse { display: none; }
+    .stage__info-touch { display: flex; }
+}
+.stage__info.is-touch .stage__info-mouse { display: none; }
+.stage__info.is-touch .stage__info-touch { display: flex; }
+.stage__info.is-mouse .stage__info-mouse { display: flex; }
+.stage__info.is-mouse .stage__info-touch { display: none; }
 .stage__caption {
     position: absolute;
     bottom: 26px;
@@ -541,6 +651,99 @@ html { scroll-behavior: smooth; }
     height: 34px;
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.14);
+}
+
+/* Wrapper um Auswahl-Button */
+.choice-wrap { position: relative; display: flex; }
+.choice-wrap > .choice { width: 100%; }
+
+/* Auf-/zuklappbare Filament-Liste: eingeklappt nur die ersten 6 zeigen */
+.group__choices.is-collapsed .choice-wrap:nth-child(n+7) { display: none; }
+.choices-toggle {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s, background .2s;
+}
+.choices-toggle:hover { color: var(--fg); border-color: var(--accent); background: rgba(139,108,255,0.06); }
+
+/* Leiste "Hier geht's zum Filament" ueber den Korpus-Optionen */
+.filament-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.filament-bar__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    padding: 9px 13px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: rgba(139, 108, 255, 0.08);
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 13px;
+    transition: background .2s, border-color .2s;
+}
+.filament-bar__link:hover { background: rgba(139, 108, 255, 0.16); border-color: var(--accent); }
+.filament-bar__text { color: var(--muted); }
+.filament-bar__name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.filament-bar__link svg { flex-shrink: 0; color: var(--accent); margin-left: auto; }
+
+/* Info-i mit Tooltip in der Filament-Leiste */
+.filament-info { position: relative; flex-shrink: 0; cursor: help; outline: none; }
+.filament-info__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: color .2s, border-color .2s;
+}
+.filament-info:hover .filament-info__icon,
+.filament-info:focus .filament-info__icon { color: var(--fg); border-color: var(--accent); }
+.filament-info__tip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 250px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: rgba(12, 12, 16, 0.97);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 5;
+}
+.filament-info:hover .filament-info__tip,
+.filament-info:focus .filament-info__tip {
+    opacity: 1;
+    transform: translateY(0);
 }
 .group__choices--swatch .choice__name { font-size: 13px; }
 .group__choices--swatch .choice__delta { font-size: 11px; }
@@ -730,6 +933,7 @@ body.modal-open { overflow: hidden; }
     .stage { min-height: 52vh; padding: 30px; }
     .panel { border-left: none; border-top: 1px solid var(--line); max-height: none; }
     .stage__img { max-height: 48vh; }
+    .stage__model { height: 52vh; max-height: 52vh; }
 }
 @media (max-width: 560px) {
     .newsletter__row { flex-direction: column; }

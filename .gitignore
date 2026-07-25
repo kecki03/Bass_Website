@@ -4,6 +4,9 @@ data/
 # Umgebungsvariablen mit Zugangsdaten
 .env
 
+# Original-CAD-Ablage in der Wurzel (ausgeliefert wird static/models/Bassembly.glb)
+/Bassembly.glb
+
 # Python
 __pycache__/
 *.py[cod]

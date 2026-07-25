@@ -10,3 +10,5 @@ data/
 *.md
 .vscode/
 .idea/
+# Original-CAD-Ablage in der Wurzel; ausgeliefert wird static/models/Bassembly.glb
+/Bassembly.glb

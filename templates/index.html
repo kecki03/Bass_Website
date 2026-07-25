@@ -25,7 +25,11 @@
     <section class="hero">
         <a class="hero__link" href="{{ url_for('configurator') }}" aria-label="Zum Konfigurator">
             <div class="hero__stage">
-                <img class="hero__bass" src="{{ url_for('static', filename='img/bass_studio_h.png') }}" alt="3D Bros Nebula Bass">
+                <picture>
+                    <!-- Mobil: aufrechtes (hochkant) Foto, Desktop: liegendes Foto -->
+                    <source media="(max-width: 760px)" srcset="{{ url_for('static', filename='img/bass_studio.png') }}">
+                    <img class="hero__bass" src="{{ url_for('static', filename='img/bass_studio_h.png') }}" alt="3D Bros Nebula Bass">
+                </picture>
             </div>
             <div class="hero__content">
                 <p class="hero__eyebrow">Der erste seiner Art</p>

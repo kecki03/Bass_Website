@@ -8,6 +8,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- three.js fuer den 3D-Viewer mit Dual-Color-Fresnel-Shader -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
 </head>
 <body class="config">
 
@@ -21,11 +30,32 @@
         <!-- Live-Visualisierung -->
         <section class="stage">
             <div class="stage__glow"></div>
-            <img id="bassImg" class="stage__img"
-                 src="{{ url_for('static', filename='img/bass_studio.png') }}"
-                 alt="Dein 3D Bros Nebula Bass">
+            <div id="bassViewer" class="stage__model"
+                 data-model="{{ url_for('static', filename='models/Bassembly.glb') }}"
+                 aria-label="Dein 3D Bros Nebula Bass – 3D-Modell zum Drehen">
+                <div class="stage__spinner" data-viewer-loading></div>
+            </div>
+
+            <!-- Steuerungs-Hinweis (i-Icon mit Tooltip). Zeigt je nach Geraet
+                 automatisch Maus- oder Touch-Steuerung an. -->
+            <div class="stage__info" tabindex="0" aria-label="Steuerung anzeigen">
+                <span class="stage__info-icon" aria-hidden="true">i</span>
+                <div class="stage__info-tip" role="tooltip">
+                    <strong>Steuerung</strong>
+                    <div class="stage__info-mouse">
+                        <span><b>Drehen</b> · linke Maustaste ziehen</span>
+                        <span><b>Verschieben</b> · rechte Maustaste ziehen</span>
+                        <span><b>Zoom</b> · Scrollrad</span>
+                    </div>
+                    <div class="stage__info-touch">
+                        <span><b>Drehen</b> · mit 1 Finger ziehen</span>
+                        <span><b>Zoom</b> · mit 2 Fingern auf-/zuziehen</span>
+                        <span><b>Verschieben</b> · mit 2 Fingern ziehen</span>
+                    </div>
+                </div>
+            </div>
             <div class="stage__caption">
-                <span id="stageName">Nebula</span>
+                <span id="stageName">Silk Blue Magenta</span>
                 <span class="stage__dot">·</span>
                 <span id="stageHardware">Chrom</span>
             </div>
@@ -42,22 +72,53 @@
             {% for key, group in options.items() %}
             <div class="group" data-group="{{ key }}">
                 <div class="group__label">{{ group.label }}</div>
-                <div class="group__choices {% if key in ['body','hardware'] %}group__choices--swatch{% endif %}">
+                {% if key == 'body' %}
+                <div class="filament-bar">
+                    <a class="filament-bar__link" id="filamentLink"
+                       href="{{ group.choices[0].url }}" target="_blank" rel="noopener noreferrer">
+                        <span class="filament-bar__text">Hier geht’s zum Filament</span>
+                        <span class="filament-bar__name" id="filamentName">{{ group.choices[0].name }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+                    </a>
+                    <span class="filament-info" tabindex="0" aria-label="Info zum Filament">
+                        <span class="filament-info__icon" aria-hidden="true">i</span>
+                        <span class="filament-info__tip" role="tooltip">
+                            Dein Bass wird mit genau diesem Filament gedruckt. Die echten
+                            Farben und der Silk-Schimmer lassen sich auf der Produktseite
+                            oft besser erkennen als in der 3D-Vorschau.
+                        </span>
+                    </span>
+                </div>
+                {% endif %}
+                <div class="group__choices {% if key in ['body','hardware'] %}group__choices--swatch{% endif %} {% if key == 'body' %}is-collapsed{% endif %}"
+                     {% if key == 'body' %}id="bodyChoices"{% endif %}>
                     {% for c in group.choices %}
-                    <button type="button"
-                            class="choice {% if loop.first %}is-active{% endif %}"
-                            data-group="{{ key }}"
-                            data-id="{{ c.id }}"
-                            data-delta="{{ c.delta }}"
-                            data-name="{{ c.name }}"
-                            {% if c.hue is defined %}data-hue="{{ c.hue }}" data-sat="{{ c.sat }}"{% endif %}>
-                        {% if c.swatch is defined %}
-                        <span class="choice__swatch" style="background:{{ c.swatch }}"></span>
-                        {% endif %}
-                        <span class="choice__name">{{ c.name }}</span>
-                    </button>
+                    <div class="choice-wrap">
+                        <button type="button"
+                                class="choice {% if loop.first %}is-active{% endif %}"
+                                data-group="{{ key }}"
+                                data-id="{{ c.id }}"
+                                data-delta="{{ c.delta }}"
+                                data-name="{{ c.name }}"
+                                {% if c.color is defined %}data-color="{{ c.color }}"{% endif %}
+                                {% if c.color2 is defined %}data-color2="{{ c.color2 }}"{% endif %}
+                                {% if c.metallic is defined %}data-metallic="{{ c.metallic }}"{% endif %}
+                                {% if c.rough is defined %}data-rough="{{ c.rough }}"{% endif %}
+                                {% if c.url is defined %}data-url="{{ c.url }}"{% endif %}>
+                            {% if c.swatch is defined %}
+                            <span class="choice__swatch" style="background:{{ c.swatch }}"></span>
+                            {% endif %}
+                            <span class="choice__name">{{ c.name }}</span>
+                        </button>
+                    </div>
                     {% endfor %}
                 </div>
+                {% if key == 'body' and group.choices|length > 6 %}
+                <button type="button" class="choices-toggle" id="bodyToggle" aria-expanded="false"
+                        data-count="{{ group.choices|length }}">
+                    Alle {{ group.choices|length }} Filamente anzeigen
+                </button>
+                {% endif %}
             </div>
             {% endfor %}
 
@@ -162,5 +223,6 @@
         window.DEV_PHASE = {{ 'true' if dev_phase else 'false' }};
     </script>
     <script src="{{ url_for('static', filename='js/configurator.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/configurator3d.js') }}"></script>
 </body>
 </html>

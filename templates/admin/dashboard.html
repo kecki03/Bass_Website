@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>3D Bros — Admin-Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 80px; }
+        .admin-top {
+            display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+            justify-content: space-between; margin-bottom: 28px;
+        }
+        .admin-top h1 { font-size: 1.5rem; margin: 0; }
+        .admin-actions { display: flex; gap: 10px; align-items: center; }
+        .btn {
+            display: inline-block; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--line);
+            background: rgba(255,255,255,.04); color: var(--fg); font: inherit; font-size: .9rem;
+            font-weight: 500; cursor: pointer; text-decoration: none;
+        }
+        .btn:hover { border-color: var(--accent); }
+        .btn--accent { background: var(--accent); color: #0a0a0d; border-color: var(--accent); font-weight: 600; }
+        .btn--accent:hover { filter: brightness(1.08); }
+        .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+        .stat {
+            background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+            padding: 16px 22px; min-width: 150px;
+        }
+        .stat .num { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+        .stat .lbl { color: var(--muted); font-size: .82rem; }
+        section.block { margin-bottom: 40px; }
+        section.block > h2 { font-size: 1.1rem; margin: 0 0 14px; }
+        .table-scroll {
+            overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+        th, td { text-align: left; padding: 11px 14px; white-space: nowrap; }
+        thead th { color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--line); }
+        tbody tr + tr td { border-top: 1px solid rgba(255,255,255,.05); }
+        tbody tr:hover td { background: rgba(255,255,255,.02); }
+        td.wrap { white-space: normal; min-width: 220px; }
+        .badge {
+            display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .75rem;
+            border: 1px solid var(--line);
+        }
+        .badge--supporter { background: rgba(185,139,255,.15); border-color: rgba(185,139,255,.4); color: #d3b8ff; }
+        .empty { color: var(--muted); padding: 20px; font-size: .9rem; }
+        .muted { color: var(--muted); }
+        td.actions { text-align: right; }
+        .btn-del {
+            padding: 5px 10px; border-radius: 8px; cursor: pointer; font: inherit; font-size: .78rem;
+            background: rgba(255,77,109,.10); border: 1px solid rgba(255,77,109,.35); color: #ff9db0;
+        }
+        .btn-del:hover { background: rgba(255,77,109,.20); border-color: rgba(255,77,109,.6); }
+        .config-cell { min-width: 260px; }
+        .cfg {
+            display: inline-flex; align-items: stretch; margin: 2px 4px 2px 0; border-radius: 7px;
+            overflow: hidden; border: 1px solid var(--line); font-size: .76rem; line-height: 1.6;
+        }
+        .cfg-k { background: rgba(255,255,255,.05); color: var(--muted); padding: 1px 7px; }
+        .cfg-v { color: var(--fg); padding: 1px 8px; }
+    </style>
+</head>
+<body>
+    <div class="admin-wrap">
+        <div class="admin-top">
+            <h1>Admin-Dashboard</h1>
+            <div class="admin-actions">
+                <a class="btn btn--accent" href="{{ url_for('admin.export_excel') }}">⬇ Excel-Export</a>
+                <form method="post" action="{{ url_for('admin.logout') }}" style="margin:0;">
+                    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+                    <button class="btn" type="submit">Abmelden</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="num">{{ newsletter | length }}</div>
+                <div class="lbl">Newsletter-Anmeldungen</div>
+            </div>
+            <div class="stat">
+                <div class="num">{{ interest | length }}</div>
+                <div class="lbl">Interessensbekundungen</div>
+            </div>
+            <div class="stat">
+                <div class="num">{{ interest | selectattr('kind', 'equalto', 'supporter') | list | length }}</div>
+                <div class="lbl">davon Unterstützer</div>
+            </div>
+        </div>
+
+        <section class="block">
+            <h2>Newsletter-Anmeldungen</h2>
+            <div class="table-scroll">
+                {% if newsletter %}
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>E-Mail</th><th>Einwilligung</th><th>Angemeldet am</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for r in newsletter %}
+                        <tr>
+                            <td class="muted">{{ r.id }}</td>
+                            <td>{{ r.email }}</td>
+                            <td>{{ "ja" if r.consent else "nein" }}</td>
+                            <td class="muted">{{ r.created_at.strftime('%Y-%m-%d %H:%M') if r.created_at else '' }}</td>
+                            <td class="actions">
+                                <form method="post" action="{{ url_for('admin.delete_newsletter', signup_id=r.id) }}"
+                                      style="margin:0;" onsubmit="return confirm('Anmeldung von {{ r.email }} wirklich löschen?');">
+                                    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+                                    <button class="btn-del" type="submit">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty">Noch keine Anmeldungen.</div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="block">
+            <h2>Interessensbekundungen</h2>
+            <div class="table-scroll">
+                {% if interest %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Art</th><th>E-Mail</th><th>Name</th><th>Adresse</th>
+                            <th>Beitrag</th><th>Konfiguration</th><th>Eingetragen am</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in interest %}
+                        <tr>
+                            <td class="muted">{{ r.id }}</td>
+                            <td>
+                                {% if r.kind == 'supporter' %}<span class="badge badge--supporter">Unterstützer</span>
+                                {% else %}<span class="badge">Interesse</span>{% endif %}
+                            </td>
+                            <td>{{ r.email or '' }}</td>
+                            <td>{{ r.name or '' }}</td>
+                            <td class="wrap">
+                                {%- if r.street or r.city -%}
+                                    {{ r.street }}{% if r.zip or r.city %}, {{ r.zip }} {{ r.city }}{% endif %}
+                                    {% if r.country %}<span class="muted"> ({{ r.country }})</span>{% endif %}
+                                {%- endif -%}
+                            </td>
+                            <td>{{ (r.contribution ~ ' €') if r.contribution else '' }}</td>
+                            <td class="wrap config-cell">
+                                {%- if r.config_display -%}
+                                    {% for label, value in r.config_display %}
+                                        <span class="cfg"><span class="cfg-k">{{ label }}</span><span class="cfg-v">{{ value }}</span></span>
+                                    {% endfor %}
+                                {%- else -%}
+                                    <span class="muted">—</span>
+                                {%- endif -%}
+                            </td>
+                            <td class="muted">{{ r.created_at.strftime('%Y-%m-%d %H:%M') if r.created_at else '' }}</td>
+                            <td class="actions">
+                                <form method="post" action="{{ url_for('admin.delete_interest', submission_id=r.id) }}"
+                                      style="margin:0;" onsubmit="return confirm('Eintrag #{{ r.id }} wirklich löschen?');">
+                                    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+                                    <button class="btn-del" type="submit">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty">Noch keine Interessensbekundungen.</div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</body>
+</html>

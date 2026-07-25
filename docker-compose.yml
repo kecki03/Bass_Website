@@ -26,6 +26,10 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql+pymysql://${MYSQL_USER:-bass}:${MYSQL_PASSWORD:-basspass}@db:3306/${MYSQL_DATABASE:-bass}?charset=utf8mb4
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:-}
     ports:
       - "5000:5000"
     depends_on:

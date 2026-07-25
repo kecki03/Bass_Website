@@ -1,10 +1,33 @@
+import os
 import re
+import secrets
+from datetime import timedelta
 
 from flask import Flask, render_template, jsonify, request, send_from_directory
 
 import db
+from admin import admin_bp
 
 app = Flask(__name__)
+
+# ---------------------------------------------------------------------------
+# Sicherheit / Sessions.
+# SECRET_KEY signiert die Session-Cookies (Login). In Produktion MUSS
+# FLASK_SECRET_KEY gesetzt sein – sonst bekommt jeder gunicorn-Worker einen
+# eigenen Zufallsschluessel und Logins gehen zwischen den Workern verloren.
+# ---------------------------------------------------------------------------
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
+_is_prod = os.environ.get("FLASK_ENV") == "production" or not app.debug
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,          # kein JS-Zugriff aufs Cookie
+    SESSION_COOKIE_SAMESITE="Lax",         # CSRF-Grundschutz beim Cookie-Versand
+    SESSION_COOKIE_SECURE=_is_prod,        # in Prod nur ueber HTTPS senden
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
+    MAX_CONTENT_LENGTH=1 * 1024 * 1024,    # 1 MB Request-Limit
+)
+
+app.register_blueprint(admin_bp)
 
 # Datenbank-Tabellen beim Start anlegen (wartet, bis MySQL erreichbar ist).
 db.init_db()
@@ -34,10 +57,11 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 OPTIONS = {
     "neck": {
         "label": "Hals",
+        # color = Holz-Tönung, die im 3D-Modell auf die Holztextur gelegt wird.
         "choices": [
-            {"id": "maple", "name": "Ahorn", "delta": 0},
-            {"id": "rosewood", "name": "Palisander", "delta": 80},
-            {"id": "ebony", "name": "Ebenholz", "delta": 150},
+            {"id": "maple", "name": "Ahorn", "delta": 0, "color": "#e8c79a"},
+            {"id": "rosewood", "name": "Palisander", "delta": 80, "color": "#6e4326"},
+            {"id": "ebony", "name": "Ebenholz", "delta": 150, "color": "#2a2422"},
         ],
     },
     "pickups": {
@@ -57,22 +81,40 @@ OPTIONS = {
         ],
     },
     "body": {
-        "label": "Korpus-Farbe",
+        "label": "Korpus · Dual-Color-Filament",
+        # Echte Dual-Color-Silk-Filamente von 3DJake. color = Farbe frontal,
+        # color2 = Farbe im flachen Winkel; der Verlauf entsteht im 3D-Viewer.
+        # url = Produktseite zum Ansehen/Kaufen.
         "choices": [
-            {"id": "nebula", "name": "Nebula", "delta": 0, "swatch": "linear-gradient(135deg,#6d5cff,#c74bd6)", "hue": 0, "sat": 1},
-            {"id": "amber", "name": "Amber Sunset", "delta": 50, "swatch": "linear-gradient(135deg,#ff9d3c,#ff4d4d)", "hue": 120, "sat": 1.15},
-            {"id": "crimson", "name": "Crimson", "delta": 50, "swatch": "linear-gradient(135deg,#ff4d6d,#a01030)", "hue": 80, "sat": 1.2},
-            {"id": "emerald", "name": "Emerald", "delta": 50, "swatch": "linear-gradient(135deg,#2ee6a0,#0f8f5f)", "hue": 210, "sat": 1.1},
-            {"id": "ice", "name": "Ice Cyan", "delta": 50, "swatch": "linear-gradient(135deg,#57e0ff,#2a7fd6)", "hue": 270, "sat": 1.1},
-            {"id": "graphite", "name": "Graphite", "delta": 0, "swatch": "linear-gradient(135deg,#6a6a72,#2b2b30)", "hue": 0, "sat": 0},
+            {"id": "silk_blue_magenta", "name": "Silk Blue Magenta", "delta": 0, "swatch": "linear-gradient(135deg,#e21d93,#1c4fd6)", "color": "#e21d93", "color2": "#1c4fd6", "url": "https://www.3djake.de/elegoo/pla-silk-blue-magenta"},
+            {"id": "blue_hawaii", "name": "Blue Hawaii", "delta": 0, "swatch": "linear-gradient(135deg,#1e5fd6,#16b98a)", "color": "#1e5fd6", "color2": "#16b98a", "url": "https://www.3djake.de/bambu-lab/pla-silk-dual-color-blue-hawaii"},
+            {"id": "velvet_eclipse", "name": "Velvet Eclipse", "delta": 60, "swatch": "linear-gradient(135deg,#cc2030,#17131b)", "color": "#cc2030", "color2": "#17131b", "url": "https://www.3djake.de/bambu-lab/pla-silk-dual-color-velvet-eclipse"},
+            {"id": "red_gold", "name": "Red Gold", "delta": 30, "swatch": "linear-gradient(135deg,#cf1f28,#e6b23a)", "color": "#cf1f28", "color2": "#e6b23a", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-red-gold"},
+            {"id": "midnight_blaze", "name": "Midnight Blaze", "delta": 60, "swatch": "linear-gradient(135deg,#1e326e,#ff5030)", "color": "#1e326e", "color2": "#ff5030", "url": "https://www.3djake.de/bambu-lab/pla-silk-dual-color-midnight-blaze"},
+            {"id": "black_gold", "name": "Black Gold", "delta": 30, "swatch": "linear-gradient(135deg,#17171a,#e0b23a)", "color": "#17171a", "color2": "#e0b23a", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-black-gold"},
+            {"id": "gilded_rose", "name": "Gilded Rose", "delta": 60, "swatch": "linear-gradient(135deg,#e6a84a,#e0568f)", "color": "#e6a84a", "color2": "#e0568f", "url": "https://www.3djake.de/bambu-lab/pla-silk-dual-color-gilded-rose"},
+            {"id": "pink_gold", "name": "Pink Gold", "delta": 30, "swatch": "linear-gradient(135deg,#e84f9a,#e6b23a)", "color": "#e84f9a", "color2": "#e6b23a", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-pink-gold"},
+            {"id": "neon_city", "name": "Neon City", "delta": 60, "swatch": "linear-gradient(135deg,#2a5fe0,#e21d93)", "color": "#2a5fe0", "color2": "#e21d93", "url": "https://www.3djake.de/bambu-lab/pla-silk-dual-color-neon-city"},
+            {"id": "south_beach", "name": "South Beach", "delta": 60, "swatch": "linear-gradient(135deg,#ff4d94,#23c0d0)", "color": "#ff4d94", "color2": "#23c0d0", "url": "https://www.3djake.de/bambu-lab/pla-silk-south-beach"},
+            {"id": "black_blue", "name": "Black Blue", "delta": 30, "swatch": "linear-gradient(135deg,#16161c,#1f5fd6)", "color": "#16161c", "color2": "#1f5fd6", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-black-blue"},
+            {"id": "black_green", "name": "Black Green", "delta": 30, "swatch": "linear-gradient(135deg,#14161a,#1fb85f)", "color": "#14161a", "color2": "#1fb85f", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-black-green"},
+            {"id": "black_purple", "name": "Black Purple", "delta": 30, "swatch": "linear-gradient(135deg,#16121c,#7a2fd6)", "color": "#16121c", "color2": "#7a2fd6", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-black-purple"},
+            {"id": "blue_green", "name": "Blue Green", "delta": 30, "swatch": "linear-gradient(135deg,#1f6fd6,#17b98a)", "color": "#1f6fd6", "color2": "#17b98a", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-blue-green"},
+            {"id": "green_purple", "name": "Green Purple", "delta": 30, "swatch": "linear-gradient(135deg,#1fb85f,#7a2fd6)", "color": "#1fb85f", "color2": "#7a2fd6", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-green-purple"},
+            {"id": "black_white", "name": "Black White", "delta": 30, "swatch": "linear-gradient(135deg,#17171a,#e8e8ee)", "color": "#17171a", "color2": "#e8e8ee", "url": "https://www.3djake.de/sunlu/silk-pla-dual-color-black-white"},
+            {"id": "yin_yang", "name": "Yin Yang", "delta": 40, "swatch": "linear-gradient(135deg,#101014,#eef0f4)", "color": "#101014", "color2": "#eef0f4", "url": "https://www.3djake.de/azurefilm/pla-silk-dual-color-yin-yang"},
+            {"id": "crimson_steel", "name": "Crimson Steel", "delta": 40, "swatch": "linear-gradient(135deg,#b21f2a,#8a9099)", "color": "#b21f2a", "color2": "#8a9099", "url": "https://www.3djake.de/azurefilm/pla-silk-dual-color-crimson-steel"},
+            {"id": "golden_shadow", "name": "Golden Shadow", "delta": 40, "swatch": "linear-gradient(135deg,#e0a63a,#2a2620)", "color": "#e0a63a", "color2": "#2a2620", "url": "https://www.3djake.de/azurefilm/pla-silk-dual-color-golden-shadow"},
+            {"id": "black_red", "name": "Black Red", "delta": 30, "swatch": "linear-gradient(135deg,#17141a,#d81f2a)", "color": "#17141a", "color2": "#d81f2a", "url": "https://www.3djake.de/anycubic/pla-silk-dual-color-black-red"},
         ],
     },
     "hardware": {
         "label": "Metallteile",
+        # color/metallic/rough = Metall-Look der Hardware im 3D-Modell.
         "choices": [
-            {"id": "chrome", "name": "Chrom", "delta": 0, "swatch": "linear-gradient(135deg,#e9edf2,#9aa3ad)"},
-            {"id": "black", "name": "Schwarz matt", "delta": 40, "swatch": "linear-gradient(135deg,#3a3a3f,#0d0d10)"},
-            {"id": "gold", "name": "Gold", "delta": 90, "swatch": "linear-gradient(135deg,#ffd97a,#c79320)"},
+            {"id": "chrome", "name": "Chrom", "delta": 0, "swatch": "linear-gradient(135deg,#e9edf2,#9aa3ad)", "color": "#c9ccd2", "metallic": 1, "rough": 0.12},
+            {"id": "black", "name": "Schwarz matt", "delta": 40, "swatch": "linear-gradient(135deg,#3a3a3f,#0d0d10)", "color": "#0e0e12", "metallic": 1, "rough": 0.5},
+            {"id": "gold", "name": "Gold", "delta": 90, "swatch": "linear-gradient(135deg,#ffd97a,#c79320)", "color": "#ffcf5a", "metallic": 1, "rough": 0.22},
         ],
     },
 }

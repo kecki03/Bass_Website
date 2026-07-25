@@ -94,3 +94,70 @@ def add_interest(record):
     with SessionLocal() as session:
         session.add(InterestSubmission(**record))
         session.commit()
+
+
+def delete_newsletter(signup_id):
+    """Loescht eine Newsletter-Anmeldung. Gibt True zurueck, wenn etwas geloescht wurde."""
+    with SessionLocal() as session:
+        obj = session.get(NewsletterSignup, signup_id)
+        if obj is None:
+            return False
+        session.delete(obj)
+        session.commit()
+        return True
+
+
+def delete_interest(submission_id):
+    """Loescht eine Interessensbekundung. Gibt True zurueck, wenn etwas geloescht wurde."""
+    with SessionLocal() as session:
+        obj = session.get(InterestSubmission, submission_id)
+        if obj is None:
+            return False
+        session.delete(obj)
+        session.commit()
+        return True
+
+
+def get_newsletter_signups():
+    """Alle Newsletter-Anmeldungen als Liste von dicts (neueste zuerst)."""
+    with SessionLocal() as session:
+        rows = (
+            session.query(NewsletterSignup)
+            .order_by(NewsletterSignup.created_at.desc(), NewsletterSignup.id.desc())
+            .all()
+        )
+        return [
+            {
+                "id": r.id,
+                "email": r.email,
+                "consent": r.consent,
+                "created_at": r.created_at,
+            }
+            for r in rows
+        ]
+
+
+def get_interest_submissions():
+    """Alle Interessensbekundungen als Liste von dicts (neueste zuerst)."""
+    with SessionLocal() as session:
+        rows = (
+            session.query(InterestSubmission)
+            .order_by(InterestSubmission.created_at.desc(), InterestSubmission.id.desc())
+            .all()
+        )
+        return [
+            {
+                "id": r.id,
+                "kind": r.kind,
+                "email": r.email,
+                "config": r.config,
+                "name": r.name,
+                "street": r.street,
+                "zip": r.zip,
+                "city": r.city,
+                "country": r.country,
+                "contribution": r.contribution,
+                "created_at": r.created_at,
+            }
+            for r in rows
+        ]
