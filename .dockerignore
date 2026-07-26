@@ -12,3 +12,9 @@ data/
 .idea/
 # Original-CAD-Ablage in der Wurzel; ausgeliefert wird static/models/Bassembly.glb
 /Bassembly.glb
+
+# Ungenutzte, sehr grosse Original-Fotos (App nutzt bass2_web.jpg + studio-PNGs)
+static/img/bass1.jpg
+static/img/bass2.jpg
+static/img/bass2_cutout.png
+static/img/bass_cutout.png

@@ -28,7 +28,8 @@
                 <picture>
                     <!-- Mobil: aufrechtes (hochkant) Foto, Desktop: liegendes Foto -->
                     <source media="(max-width: 760px)" srcset="{{ url_for('static', filename='img/bass_studio.png') }}">
-                    <img class="hero__bass" src="{{ url_for('static', filename='img/bass_studio_h.png') }}" alt="3D Bros Nebula Bass">
+                    <img class="hero__bass" src="{{ url_for('static', filename='img/bass_studio_h.png') }}" alt="3D Bros Nebula Bass"
+                         fetchpriority="high" decoding="async">
                 </picture>
             </div>
             <div class="hero__content">
@@ -77,7 +78,8 @@
     <section class="section section--split" id="design">
         <div class="wrap split">
             <div class="split__media reveal">
-                <img src="{{ url_for('static', filename='img/bass2.jpg') }}" alt="Nebula Bass im Detail">
+                <img src="{{ url_for('static', filename='img/bass2_web.jpg') }}" alt="Nebula Bass im Detail"
+                     width="1200" height="1600" loading="lazy" decoding="async">
             </div>
             <div class="split__text">
                 <p class="eyebrow reveal">Das Design</p>
