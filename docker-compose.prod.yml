@@ -1,35 +1,33 @@
-services:
-  db:
-    image: mysql:8.4
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-bass}
-      MYSQL_USER: ${MYSQL_USER:-bass}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-basspass}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
-    volumes:
-      - db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpass}"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
+# Prod-Deployment. Eigenstaendige Datei (nutzt das fertige ECR-Image):
+#
+#   docker compose -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# WICHTIG: MySQL laeuft auf dem Prod-Host bereits NATIV (nicht in Docker).
+# Deshalb gibt es hier KEINEN db-Container mehr -> spart ~350-450 MB RAM.
+# Der web-Container haengt sich per Host-Netz an die lokale MySQL (127.0.0.1:3306).
 
+services:
   web:
     image: 106153342961.dkr.ecr.eu-north-1.amazonaws.com/bass-website:latest
     restart: unless-stopped
+    # Host-Netzwerk: der Container teilt sich das Netz des Hosts und erreicht die
+    # native MySQL direkt ueber 127.0.0.1. Zugleich die schlankste Variante
+    # (kein eigenes Bridge-Netz, kein NAT). gunicorn haengt direkt an :5000.
+    network_mode: host
     environment:
-      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-bass}:${MYSQL_PASSWORD:-basspass}@db:3306/${MYSQL_DATABASE:-bass}?charset=utf8mb4
+      # MySQL laeuft nativ auf dem Host -> ueber 127.0.0.1 ansprechen (nicht "db").
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-bass}:${MYSQL_PASSWORD:-basspass}@127.0.0.1:3306/${MYSQL_DATABASE:-bass}?charset=utf8mb4
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:-}
       FLASK_ENV: production
-    ports:
-      - "5000:5000"
-    depends_on:
-      db:
-        condition: service_healthy
-
-volumes:
-  db_data:
+      # gunicorn-Worker. Wird vom Image nativ gelesen. Auf kleinen Instanzen
+      # WEB_WORKERS=1 in der .env setzen (spart ~40-60 MB pro Worker).
+      # Hinweis: greift erst, wenn das neue Image (ohne fest verdrahtete Worker)
+      # gebaut und nach ECR gepusht wurde.
+      WEB_CONCURRENCY: ${WEB_WORKERS:-2}
+    # Harte Speicher-Obergrenze, damit der Container das Hostsystem nie auffrisst.
+    mem_limit: ${WEB_MEM_LIMIT:-384m}
+    memswap_limit: ${WEB_MEM_LIMIT:-384m}

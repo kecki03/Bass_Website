@@ -16,4 +16,10 @@ COPY . .
 EXPOSE 5000
 
 # Produktionsserver (gunicorn). "app:app" = Flask-Instanz "app" aus app.py
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "app:app"]
+# - Worker-Anzahl NICHT fest verdrahtet: gunicorn liest sie aus WEB_CONCURRENCY
+#   (in docker-compose gesetzt). So laesst sich der RAM-Verbrauch pro Umgebung
+#   steuern, ohne das Image neu zu bauen.
+# - --max-requests: jeder Worker wird nach ~500 Requests neu gestartet. Faengt
+#   langsam wachsenden Speicher (Fragmentierung/Leaks) ab, ohne Downtime.
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", \
+     "--max-requests", "500", "--max-requests-jitter", "50", "app:app"]

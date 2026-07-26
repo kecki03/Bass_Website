@@ -30,6 +30,8 @@ services:
       ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:-}
+      # gunicorn-Worker (Default 2). In Prod ueber .env / Override kleiner setzbar.
+      WEB_CONCURRENCY: ${WEB_WORKERS:-2}
     ports:
       - "5000:5000"
     depends_on:
