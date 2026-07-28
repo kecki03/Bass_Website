@@ -800,6 +800,8 @@ html { scroll-behavior: smooth; }
 .buy:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(255,255,255,0.14); }
 .buy:active { transform: translateY(0); }
 .buy.added { background: var(--accent); color: #0a0a0d; }
+.buy:disabled { opacity: .45; cursor: not-allowed; }
+.buy:disabled:hover { transform: none; box-shadow: none; }
 
 .summary__note {
     margin-top: 14px;
@@ -928,6 +930,10 @@ body.modal-open { overflow: hidden; }
 .modal__title { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
 .modal__lead { color: #b9b9c4; font-size: 14px; line-height: 1.6; margin-bottom: 22px; }
 .modal__form { display: flex; flex-direction: column; gap: 14px; }
+.modal__sep { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
+.field__opt { font-style: normal; text-transform: none; letter-spacing: 0; opacity: .6; }
+/* Der PayPal-Link nutzt .buy, soll aber als Block zentriert stehen */
+a.buy { display: block; text-align: center; text-decoration: none; }
 
 /* Formularfelder */
 .field { display: flex; flex-direction: column; gap: 6px; }

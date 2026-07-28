@@ -39,12 +39,14 @@ db.init_db()
 # ---------------------------------------------------------------------------
 DEV_PHASE = True
 
-# Beitrag fuer die "ernsthaftes Interesse"-Bekundung: Unterstuetzung der
-# Entwicklung, damit das Produkt auf den Markt kommt. Als Dankeschoen gibt es
-# ein kleines Geschenk.
-# Rechtlicher Hinweis: Wegen dieser Gegenleistung ist es streng genommen keine
-# steuerlich absetzbare "Spende", sondern ein Crowdfunding-/Unterstuetzerbeitrag.
-SUPPORTER_CONTRIBUTION = 50
+# Freiwillige Spende ueber PayPal. WICHTIG (rechtlich): Es gibt bewusst KEINE
+# Gegenleistung (kein Geschenk, keine Vorbestellung, kein Anspruch auf den Bass) –
+# nur so bleibt es eine echte freiwillige Zuwendung und kein anmeldepflichtiger
+# Verkauf/Crowdfunding-Beitrag. Der Betrag ist frei und wird direkt bei PayPal
+# eingegeben; diese App bucht nichts ab.
+#
+# >>> HIER deinen PayPal.me-/Spendenlink eintragen: <<<
+PAYPAL_DONATE_URL = "https://www.paypal.com/paypalme/DEINPAYPAL"
 
 # Basispreis des Basses in Euro (waehrend der Entwicklungsphase nicht sichtbar)
 BASE_PRICE = 1299
@@ -132,7 +134,7 @@ def configurator():
         options=OPTIONS,
         base_price=BASE_PRICE,
         dev_phase=DEV_PHASE,
-        supporter_contribution=SUPPORTER_CONTRIBUTION,
+        paypal_donate_url=PAYPAL_DONATE_URL,
     )
 
 
@@ -183,11 +185,10 @@ def api_interest():
     """Interessensbekundung aus dem Konfigurator.
 
     kind = "interest"  -> unverbindliches Interesse (nur Konfiguration + optional E-Mail)
-    kind = "supporter" -> ernsthaftes Interesse mit Unterstuetzer-Beitrag (Adresse noetig)
-
-    WICHTIG (Zahlung): Der 50-€-Beitrag wird hier NICHT abgebucht. Fuer echte
-    Zahlungen einen Anbieter (Stripe/PayPal/Mollie) einbinden und den Nutzer nach
-    dem Speichern zur Checkout-URL weiterleiten. Diese Route legt nur die Anfrage ab.
+    kind = "supporter" -> freiwilliger Kontakt fuer Werbezwecke (Adresse/E-Mail, alles
+                          optional). Die Spende selbst laeuft ueber PayPal und wird
+                          hier NICHT verarbeitet – diese Route legt nur die (freiwillig)
+                          hinterlassenen Kontaktdaten ab.
     """
     data = request.get_json(silent=True) or request.form
     kind = (data.get("kind") or "interest").strip()
@@ -200,7 +201,7 @@ def api_interest():
     record = {"kind": kind, "config": config, "email": email or None}
 
     if kind == "supporter":
-        # Fuer die Reservierung brauchen wir Name + Lieferadresse fuers Dankeschoen.
+        # Wer die Adresse hinterlegen will, muss Name + komplette Anschrift angeben.
         required = {
             "name": (data.get("name") or "").strip(),
             "street": (data.get("street") or "").strip(),
@@ -212,16 +213,18 @@ def api_interest():
         if not email:
             missing.append("email")
         if missing:
-            return jsonify({"ok": False, "error": "Bitte fülle alle Pflichtfelder aus."}), 400
+            return jsonify({
+                "ok": False,
+                "error": "Bitte fülle alle Felder aus, dann klappt's mit der Post.",
+            }), 400
         record.update(required)
-        record["contribution"] = SUPPORTER_CONTRIBUTION
 
     db.add_interest(record)
 
     if kind == "supporter":
         message = (
-            "Danke, dass du die Entwicklung unterstützt! Wir haben deinen Beitrag "
-            "notiert und melden uns mit den nächsten Schritten dazu."
+            "Danke! Wir melden uns, "
+            "wenn es was zu erzählen gibt."
         )
     else:
         message = "Danke für dein Interesse! Wir halten dich auf dem Laufenden."

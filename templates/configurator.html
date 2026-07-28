@@ -24,7 +24,7 @@
 
     <header class="topbar topbar--solid">
         <a class="brand" href="{{ url_for('home') }}">3D BROS</a>
-        <span class="topbar__right">Nebula · Konfigurator</span>
+        <span class="topbar__right">Chisel · Konfigurator</span>
     </header>
 
     <main class="config__grid">
@@ -34,7 +34,7 @@
             <div class="stage__glow"></div>
             <div id="bassViewer" class="stage__model"
                  data-model="{{ url_for('static', filename='models/Bassembly.glb') }}"
-                 aria-label="Dein 3D Bros Nebula Bass – 3D-Modell zum Drehen">
+                 aria-label="Dein 3D Bros Chisel Bass – 3D-Modell zum Drehen">
                 <div class="stage__spinner" data-viewer-loading></div>
             </div>
 
@@ -67,7 +67,7 @@
         <aside class="panel">
             <div class="panel__head">
                 <p class="panel__eyebrow">Dein Instrument</p>
-                <h1 class="panel__title">NEBULA Bass</h1>
+                <h1 class="panel__title">CHISEL Bass</h1>
                 <p class="panel__desc">Stell dir deinen Bass zusammen. Jede Änderung siehst du sofort links am Instrument.</p>
             </div>
 
@@ -127,18 +127,18 @@
             <div class="summary">
                 <div class="dev-banner">
                     <span class="dev-banner__tag">In Entwicklung</span>
-                    <p>Der Nebula Bass ist noch nicht im Verkauf. Zeig uns, dass dir dein
+                    <p>Der Chisel Bass ist noch nicht im Verkauf. Zeig uns, dass dir dein
                        Design gefällt – wir melden uns zum Release bei dir.</p>
                 </div>
 
                 <button id="interestBtn" class="buy">Interesse bekunden</button>
 
                 <button id="supporterBtn" class="buy buy--outline">
-                    Ernsthaftes Interesse · {{ supporter_contribution }} € Unterstützung
+                    💛 Freiwillig spenden
                 </button>
                 <p class="summary__note">
-                    Mit deinem Beitrag unterstützt du die Entwicklung und hilfst, den Bass
-                    wirklich auf den Markt zu bringen. Als Dankeschön gibt es ein kleines Geschenk.
+                    Du willst deinen eigenen CHISEL Bass bestellen? 
+                    Hilf uns mit einer freiwilligen Spende, ihn auf den Markt zu bringen! 
                 </p>
             </div>
         </aside>
@@ -169,16 +169,25 @@
         </div>
     </div>
 
-    <!-- Modal: ernsthaftes Interesse mit Unterstuetzer-Beitrag -->
+    <!-- Modal: freiwillige PayPal-Spende + optionaler Werbe-Kontakt -->
     <div id="supporterModal" class="modal" hidden>
         <div class="modal__backdrop" data-close></div>
         <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="supporterTitle">
             <button class="modal__x" data-close aria-label="Schließen">×</button>
-            <h2 id="supporterTitle" class="modal__title">Ernsthaftes Interesse</h2>
-            <p class="modal__lead">Mit einem Beitrag von
-               <strong>{{ supporter_contribution }} €</strong> unterstützt du die Entwicklung des
-               Nebula Bass und hilfst, dass er es wirklich auf den Markt schafft. Als Dankeschön
-               bekommst du ein kleines Geschenk – für den Versand brauchen wir deine Adresse.</p>
+            <h2 id="supporterTitle" class="modal__title">💛 Freiwillig spenden</h2>
+            <p class="modal__lead">Du feierst unser Projekt und willst eines Tages deinen eigenen customized CHISEL Bass in Händen halten? Mit einer Spende
+                würdest du unser Projekt riesig unterstützen und die Markteinführung erst realistisch machen!
+               Den Betrag deiner Spende kannst du natürlich frei wählen. Danke &lt;3 </p>
+
+            <a class="buy" href="{{ paypal_donate_url }}" target="_blank" rel="noopener">
+                Zur PayPal-Spende →
+            </a>
+
+            <hr class="modal__sep">
+
+            <p class="modal__lead">Magst du Post von uns? Lass optional deine
+               Adresse da, dann schicken wir vielleicht eine kleine Überraschung <span> ;)</span>
+               Und no worries, wir spammen nicht.</p>
             <form id="supporterForm" class="modal__form">
                 <label class="field">
                     <span>Name</span>
@@ -186,7 +195,7 @@
                 </label>
                 <label class="field">
                     <span>E-Mail</span>
-                    <input type="email" name="email" required placeholder="du@beispiel.de">
+                    <input type="email" name="email" placeholder="du@beispiel.de" required>
                 </label>
                 <label class="field">
                     <span>Straße & Hausnummer</span>
@@ -208,13 +217,12 @@
                 </label>
                 <label class="check">
                     <input type="checkbox" name="consent" required>
-                    <span>Ich möchte die Entwicklung mit meinem Beitrag unterstützen und bin
-                          mit der Verarbeitung meiner Daten einverstanden.
+                    <span>Ja, ihr dürft mich für Werbezwecke kontaktieren.
                           (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
                 </label>
-                <button type="submit" class="buy">Beitrag absenden</button>
-                <p class="form__note">Der Beitrag wird noch nicht abgebucht – wir schicken dir die
-                   Zahlungs-Details per E-Mail.</p>
+                <button type="submit" class="buy buy--outline">Adresse hinterlegen</button>
+                <p class="form__note">Die Spende läuft ausschließlich über PayPal oben – hier wird
+                   nichts abgebucht. Diese Angaben sind rein freiwillig.</p>
                 <p class="form__msg" data-msg></p>
             </form>
         </div>

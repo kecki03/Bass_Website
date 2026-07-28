@@ -221,4 +221,16 @@
         e.preventDefault();
         submitInterest(this, "supporter");
     });
+
+    // "Adresse hinterlegen" bleibt gesperrt, bis alle Pflichtfelder (inkl.
+    // Consent-Haken) ausgefuellt sind. checkValidity() prueft alle required-Felder.
+    if (supporterForm) {
+        var supporterSubmit = supporterForm.querySelector('button[type="submit"]');
+        var syncSupporterBtn = function () {
+            if (supporterSubmit) supporterSubmit.disabled = !supporterForm.checkValidity();
+        };
+        supporterForm.addEventListener("input", syncSupporterBtn);
+        supporterForm.addEventListener("change", syncSupporterBtn);
+        syncSupporterBtn(); // Startzustand: gesperrt
+    }
 })();

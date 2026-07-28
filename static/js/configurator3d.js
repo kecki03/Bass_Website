@@ -1,4 +1,4 @@
-// 3D-Viewer fuer den Nebula Bass mit Dual-Color-Fresnel-Shader am Korpus.
+// 3D-Viewer fuer den Chisel Bass mit Dual-Color-Fresnel-Shader am Korpus.
 // Laedt das GLB per three.js, richtet Beleuchtung/Steuerung ein und stellt
 // window.BassViewer bereit, ueber das der Konfigurator (configurator.js) die
 // Farben setzt.
