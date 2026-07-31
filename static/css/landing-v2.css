@@ -1,0 +1,284 @@
+/* ============================================================
+   3D bros — Landing v2  (Vollbild-Slides, transparente Topbar)
+   Nur für die Startseite. Konfigurator/Rechtsseiten -> style.css.
+   ============================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg:      #f0efec;
+    --panel:   #ffffff;
+    --ink:     #0b0b0d;
+    --muted:   #75757c;
+    --line:    rgba(0,0,0,0.14);
+    --accent:  #6d4bff;
+    --maxw:    1280px;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html, body { overflow-x: hidden; }
+
+body.landing-v2 {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    /* Flex-Spalte -> Reihenfolge der Sektionen per order je Viewport steuerbar.
+       DOM-Reihenfolge (= mobil) ist: … About, Release, Galerie, Footer. */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+/* Ab Tablet/Desktop: Galerie wieder VOR den Release/Newsletter (wie ursprünglich) */
+@media (min-width: 961px) {
+    #gallery { order: 1; }
+    #release { order: 2; }
+    .footer   { order: 3; }
+}
+.landing-v2 :where(a) { color: inherit; text-decoration: none; }
+.landing-v2 img { display: block; max-width: 100%; }
+
+.mono {
+    font-family: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    letter-spacing: 0.14em; text-transform: uppercase;
+}
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 34px; }
+
+/* ---------- Topbar (immer transparent) ---------- */
+.topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 34px;
+    background: transparent;               /* immer transparent */
+    color: #fff;                           /* über dunklen Sektionen hell ... */
+    text-shadow: 0 1px 14px rgba(0,0,0,0.35);
+    transition: color .3s ease, text-shadow .3s ease;
+}
+.topbar.is-dark { color: var(--ink); text-shadow: none; }   /* ... über hellen Sektionen dunkel */
+.topbar__brand {
+    font-family: "Space Mono", monospace;
+    font-weight: 700; font-size: 17px; letter-spacing: 0.04em;
+    color: inherit;
+}
+.topbar__nav { display: flex; align-items: center; gap: 30px; }
+.topbar__nav a {
+    font-family: "Space Mono", monospace;
+    font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: inherit; opacity: .82; transition: opacity .2s;
+}
+.topbar__nav a:hover { opacity: 1; }
+/* Konfigurator-Link: auf Desktop immer sichtbar; die Hero-Ausblendung passiert
+   nur mobil (siehe Media-Query weiter unten). */
+.topbar__nav a.nav-konf { transition: opacity .3s ease; }
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 26px; border-radius: 999px;
+    font-family: "Space Mono", monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid var(--ink); background: var(--ink); color: var(--panel);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .3s, background .2s, color .2s;
+}
+.btn svg { transition: transform .3s; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,0.18); }
+.btn:hover svg { transform: translateX(4px); }
+.btn--xl { padding: 21px 42px; font-size: 16px; letter-spacing: 0.1em; border-radius: 999px; }
+.btn--light { background: #fff; color: var(--ink); border-color: #fff; }
+.btn--light:hover { background: rgba(255,255,255,0.86); }
+
+/* ---------- HERO ---------- */
+.hero {
+    position: relative; height: 100vh; min-height: 600px;
+    display: flex; align-items: center; overflow: hidden;
+}
+.hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.hero::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(8,8,11,0.78) 0%, rgba(8,8,11,0.40) 42%, rgba(8,8,11,0) 72%),
+        linear-gradient(0deg, rgba(8,8,11,0.5) 0%, rgba(8,8,11,0) 40%);
+}
+.hero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 34px; width: 100%; color: #fff; }
+.hero__title { font-size: clamp(56px, 9.5vw, 140px); font-weight: 700; line-height: 0.92; letter-spacing: -0.04em; margin-bottom: 40px; }
+.hero__title span { display: block; }
+.hero__title .accent { color: #a894ff; }
+
+/* ---------- MODULARITÄT (Vollbild) ---------- */
+.section--modular {
+    position: relative; height: 100vh; min-height: 620px;
+    overflow: hidden; display: flex; align-items: center;
+    background: var(--bg);                 /* hell wie „About Us" */
+}
+.modular__left {
+    position: relative; z-index: 3;
+    width: min(46%, 520px);
+    padding-left: max(34px, calc((100vw - var(--maxw)) / 2 + 34px));
+    padding-right: 20px;
+    color: var(--ink);
+}
+.modular__title {
+    font-size: clamp(40px, 6vw, 92px); font-weight: 700;
+    letter-spacing: -0.03em; line-height: 0.95; color: var(--ink); margin-bottom: 30px;
+}
+.modular__title .accent { color: var(--accent); }
+
+/* Ausklapp-Box (helle Variante) */
+.dropbox {
+    border: 1px solid var(--line); border-radius: 16px;
+    background: rgba(255,255,255,0.65); backdrop-filter: blur(6px);
+    padding: 20px 22px; cursor: pointer; max-width: 420px;
+}
+.dropbox__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dropbox__head h3 { font-size: 15px; font-weight: 700; letter-spacing: 0.02em; color: var(--ink); }
+.dropbox__chev { transition: transform .4s ease; color: var(--accent); flex-shrink: 0; }
+.dropbox__more {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows .45s ease, margin-top .45s ease, opacity .45s ease;
+    opacity: 0; margin-top: 0;
+}
+.dropbox__more > div { overflow: hidden; }
+.dropbox__more p { font-size: 14px; line-height: 1.65; color: #43434a; }
+.dropbox:hover .dropbox__more,
+.dropbox:focus-within .dropbox__more,
+.dropbox.is-open .dropbox__more { grid-template-rows: 1fr; opacity: 1; margin-top: 16px; }
+.dropbox:hover .dropbox__chev,
+.dropbox.is-open .dropbox__chev { transform: rotate(180deg); }
+
+/* Freigestellter Bass rechts – Hals läuft rechts aus dem Bild */
+.mod-anim {
+    position: absolute; z-index: 2;
+    top: 50%; right: -6%;
+    transform: translateY(-50%);
+    width: 66%; aspect-ratio: 1600 / 1067;
+    pointer-events: none;
+}
+.mod-frame {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; opacity: 0;
+    transition: opacity .8s ease-in-out;   /* langsamer, weicher Crossfade */
+    filter: drop-shadow(0 26px 44px rgba(40,20,80,0.18));
+}
+.mod-frame.is-active { opacity: 1; }
+.mod-anim:not(.is-ready) .mod-frame[data-frame="633"] { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .mod-frame { transition: none; }
+}
+
+/* ---------- THE PROCESS (bildschirmfüllendes Video) ---------- */
+.section--process {
+    position: relative; height: 78vh; min-height: 520px;
+    overflow: hidden; background: #000;
+}
+.process__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.process__overlay {
+    position: absolute; inset: 0; z-index: 1;
+    display: flex; align-items: flex-end;
+    padding: 9vh 34px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.28) 100%);
+}
+.process__title {
+    max-width: var(--maxw); margin: 0 auto; width: 100%;
+    font-size: clamp(52px, 11vw, 168px); font-weight: 700;
+    color: #fff; letter-spacing: -0.03em; line-height: 0.95;
+}
+
+/* ---------- Section-Grundgerüst (About / Release) ---------- */
+.section { padding: 110px 0; }
+.sec-title { font-size: clamp(38px, 6.5vw, 84px); font-weight: 700; line-height: 0.98; letter-spacing: -0.03em; }
+
+/* ---------- ABOUT US ---------- */
+.about__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 54px; align-items: center; }
+.about__text p { font-size: 17px; line-height: 1.7; color: #3a3a40; margin-bottom: 18px; max-width: 520px; }
+.about__stats { display: flex; gap: 44px; margin-top: 34px; flex-wrap: wrap; }
+.about__stat .n { font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+.about__stat .l { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.founders { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.founder {
+    position: relative; aspect-ratio: 3 / 4;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    overflow: hidden; display: flex; align-items: flex-end; padding: 18px;
+}
+.founder::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0 12px, transparent 12px 24px); }
+.founder__ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #b6b6bc; font-size: 11px; }
+.founder__name { position: relative; z-index: 1; font-size: 13px; color: var(--muted); }
+
+/* ---------- GALERIE ---------- */
+.section--gallery { padding: 0; }
+.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.gallery figure { position: relative; margin: 0; aspect-ratio: 3 / 2; overflow: hidden; }
+.gallery img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.gallery figure:hover img { transform: scale(1.05); }
+
+/* ---------- Release / Newsletter ---------- */
+/* Desktop: normale Abstände (.section = 110px). Mobil kompakter -> Media-Query. */
+.release { text-align: center; }
+.release__tag {
+    display: inline-block; padding: 6px 14px; border-radius: 999px;
+    background: var(--accent); color: #fff;
+    font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 22px;
+}
+.release__title { font-size: clamp(32px, 5.5vw, 62px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 30px; }
+.newsletter { max-width: 480px; margin: 0 auto; }
+.newsletter__row { display: flex; gap: 10px; border: 1px solid var(--ink); border-radius: 999px; padding: 6px 6px 6px 20px; background: var(--panel); }
+.newsletter input[type="email"] { flex: 1; border: none; background: transparent; color: var(--ink); font-family: inherit; font-size: 15px; outline: none; }
+.newsletter__row .btn { white-space: nowrap; }
+.check { display: flex; gap: 10px; align-items: flex-start; max-width: 420px; margin: 18px auto 0; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: left; cursor: pointer; }
+.check input { margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
+.check a { color: var(--accent); text-decoration: underline; }
+.form__msg { margin-top: 12px; font-size: 13px; min-height: 1em; }
+.form__msg.is-error { color: #d62b3c; }
+.form__success { color: #1f9d55; font-size: 15px; line-height: 1.6; padding: 8px 0; }
+
+/* ---------- Footer ---------- */
+.footer { border-top: 1px solid var(--line); padding: 40px 34px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.footer__brand { font-family: "Space Mono", monospace; font-weight: 700; letter-spacing: 0.04em; font-size: 15px; }
+.footer__note { color: var(--muted); font-size: 12px; }
+.footer__links { display: flex; gap: 22px; }
+.footer__links a { color: var(--muted); font-size: 12px; transition: color .2s; }
+.footer__links a:hover { color: var(--ink); }
+
+/* ---------- Screenshot-Modus ---------- */
+.shot .hero, .shot .section--modular { height: 760px; min-height: 0; }
+.shot .section--process { height: 560px; min-height: 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+    .topbar__nav { gap: 18px; }
+    .topbar__nav a:not(:last-child) { display: none; }   /* mobil nur Konfigurator */
+    /* mobil: Konfigurator im Hero ausblenden, ab der 2. Sektion einblenden */
+    .topbar__nav a.nav-konf { opacity: 0; pointer-events: none; }
+    .topbar.past-hero .topbar__nav a.nav-konf { opacity: .82; pointer-events: auto; }
+    /* mobil: Release/About-Naht deutlich kompakter. Höhere Spezifität (.landing-v2 …),
+       damit die spätere 76px-.section-Regel der 600er-Query sie nicht überschreibt. */
+    .landing-v2 .section--about { padding-bottom: 22px; }
+    .landing-v2 .release { padding-top: 16px; padding-bottom: 34px; }
+    .about__grid { grid-template-columns: 1fr; gap: 36px; }
+    .founders { max-width: 460px; }
+    .gallery { grid-template-columns: repeat(2, 1fr); }
+    /* Modularität mobil: Text oben, Bass darunter/rechts angeschnitten */
+    .section--modular { height: auto; min-height: 100vh; padding: 120px 0 60px; align-items: flex-start; }
+    .modular__left { width: 100%; max-width: 560px; padding-right: 34px; }
+    .mod-anim { position: relative; top: auto; right: -10%; transform: none; width: 108%; margin-top: 30px; }
+    .section--modular { display: flex; flex-direction: column; justify-content: flex-start; }
+}
+@media (max-width: 600px) {
+    .wrap { padding: 0 22px; }
+    .topbar { padding: 18px 22px; }
+    .section { padding: 76px 0; }
+    /* Hero mobil: Inhalt nach unten-links, Button etwas tiefer, Bild weiter links */
+    .hero { align-items: flex-end; }
+    .hero__inner { padding: 0 22px 7vh; }
+    .hero__bg { object-position: 41% center; }
+    .gallery { grid-template-columns: 1fr; }
+    .newsletter__row { flex-direction: column; border-radius: 20px; padding: 14px; }
+    .newsletter input[type="email"] { padding: 8px 6px; text-align: center; }
+    .newsletter__row .btn { justify-content: center; }
+    .footer { flex-direction: column; align-items: flex-start; }
+    .process__title { font-size: clamp(44px, 15vw, 90px); }
+}

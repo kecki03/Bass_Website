@@ -132,12 +132,8 @@
         }
         if (group === "hardware") {
             if (stageHardware) stageHardware.textContent = btn.dataset.name;
-            if (glow) {
-                glow.style.background =
-                    "radial-gradient(circle, " +
-                    (hardwareGlow[btn.dataset.id] || hardwareGlow.chrome) +
-                    ", rgba(0,0,0,0) 65%)";
-            }
+            // Hintergrund-Glow bleibt bewusst fest (in CSS definiert) und wechselt
+            // nicht mehr je Metallteil.
         }
     }
 

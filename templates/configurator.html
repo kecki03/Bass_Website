@@ -6,7 +6,7 @@
     <title>3D Bros — Konfigurator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Polyfill fuer Importmaps (aeltere mobile Browser, z. B. iOS-Safari < 16.4) -->
     <script async src="https://unpkg.com/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
@@ -132,14 +132,6 @@
                 </div>
 
                 <button id="interestBtn" class="buy">Interesse bekunden</button>
-
-                <button id="supporterBtn" class="buy buy--outline">
-                    💛 Freiwillig spenden
-                </button>
-                <p class="summary__note">
-                    Du willst deinen eigenen CHISEL Bass bestellen? 
-                    Hilf uns mit einer freiwilligen Spende, ihn auf den Markt zu bringen! 
-                </p>
             </div>
         </aside>
 
@@ -164,65 +156,6 @@
                           (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
                 </label>
                 <button type="submit" class="buy">Absenden</button>
-                <p class="form__msg" data-msg></p>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: freiwillige PayPal-Spende + optionaler Werbe-Kontakt -->
-    <div id="supporterModal" class="modal" hidden>
-        <div class="modal__backdrop" data-close></div>
-        <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="supporterTitle">
-            <button class="modal__x" data-close aria-label="Schließen">×</button>
-            <h2 id="supporterTitle" class="modal__title">💛 Freiwillig spenden</h2>
-            <p class="modal__lead">Du feierst unser Projekt und willst eines Tages deinen eigenen customized CHISEL Bass in Händen halten? Mit einer Spende
-                würdest du unser Projekt riesig unterstützen und die Markteinführung erst realistisch machen!
-               Den Betrag deiner Spende kannst du natürlich frei wählen. Danke &lt;3 </p>
-
-            <a class="buy" href="{{ paypal_donate_url }}" target="_blank" rel="noopener">
-                Zur PayPal-Spende →
-            </a>
-
-            <hr class="modal__sep">
-
-            <p class="modal__lead">Magst du Post von uns? Lass optional deine
-               Adresse da, dann schicken wir vielleicht eine kleine Überraschung <span> ;)</span>
-               Und no worries, wir spammen nicht.</p>
-            <form id="supporterForm" class="modal__form">
-                <label class="field">
-                    <span>Name</span>
-                    <input type="text" name="name" required>
-                </label>
-                <label class="field">
-                    <span>E-Mail</span>
-                    <input type="email" name="email" placeholder="du@beispiel.de" required>
-                </label>
-                <label class="field">
-                    <span>Straße & Hausnummer</span>
-                    <input type="text" name="street" required>
-                </label>
-                <div class="field-row">
-                    <label class="field field--sm">
-                        <span>PLZ</span>
-                        <input type="text" name="zip" required>
-                    </label>
-                    <label class="field">
-                        <span>Ort</span>
-                        <input type="text" name="city" required>
-                    </label>
-                </div>
-                <label class="field">
-                    <span>Land</span>
-                    <input type="text" name="country" value="Deutschland" required>
-                </label>
-                <label class="check">
-                    <input type="checkbox" name="consent" required>
-                    <span>Ja, ihr dürft mich für Werbezwecke kontaktieren.
-                          (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
-                </label>
-                <button type="submit" class="buy buy--outline">Adresse hinterlegen</button>
-                <p class="form__note">Die Spende läuft ausschließlich über PayPal oben – hier wird
-                   nichts abgebucht. Diese Angaben sind rein freiwillig.</p>
                 <p class="form__msg" data-msg></p>
             </form>
         </div>
