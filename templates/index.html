@@ -3,147 +3,149 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>3D Bros — Chisel Bass</title>
+    <title>3D bros — Ein Bass aus dem 3D-Drucker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-v2.css') }}">
 </head>
-<body class="landing">
+<body class="landing-v2">
 
-    <header class="topbar topbar--fixed">
-        <span class="brand">3D BROS</span>
+    <!-- ===================== TOPBAR (immer transparent, feste Links) ===================== -->
+    <header class="topbar">
+        <a class="topbar__brand" href="#top">3D bros</a>
         <nav class="topbar__nav">
-            <a href="#konzept">Konzept</a>
-            <a href="#design">Design</a>
-            <a href="#ueber-uns">Über uns</a>
-            <a class="topbar__cta" href="{{ url_for('configurator') }}">Konfigurieren</a>
+            <a href="#modular">Modularität</a>
+            <a href="#process">Process</a>
+            <a href="#about">About</a>
+            <a class="nav-konf" href="{{ url_for('configurator') }}">Konfigurator</a>
         </nav>
     </header>
 
-    <!-- HERO -->
-    <section class="hero">
-        <a class="hero__link" href="{{ url_for('configurator') }}" aria-label="Zum Konfigurator">
-            <div class="hero__stage">
-                <picture>
-                    <!-- Mobil: aufrechtes (hochkant) Foto, Desktop: liegendes Foto -->
-                    <source media="(max-width: 760px)" srcset="{{ url_for('static', filename='img/bass_studio.png') }}">
-                    <img class="hero__bass" src="{{ url_for('static', filename='img/bass_studio_h.png') }}" alt="3D Bros Chisel Bass"
-                         fetchpriority="high" decoding="async">
-                </picture>
-            </div>
-            <div class="hero__content">
-                <p class="hero__eyebrow">Der erste seiner Art</p>
-                <p class="hero__sub">Ein modularer Bass aus dem 3D-Drucker.<br>Kein Katalog. Nur dieses eine Instrument — ganz nach dir.</p>
-                <span class="cta">
-                    Jetzt konfigurieren
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </span>
-            </div>
-        </a>
-        <a class="hero__scroll" href="#konzept" aria-label="Nach unten scrollen">
-            <span>Mehr entdecken</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-        </a>
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="top" data-nav="light">
+        <img class="hero__bg" src="{{ url_for('static', filename='img/site/hero.jpg') }}"
+             alt="3D-gedruckter Bass in Nahaufnahme" fetchpriority="high" decoding="async">
+        <div class="hero__inner">
+            <h1 class="hero__title">
+                <span>Bold.</span>
+                <span>Modular.</span>
+                <span class="accent">Bespoke.</span>
+            </h1>
+            <a class="btn btn--xl" href="{{ url_for('configurator') }}">
+                Konfigurieren
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+        </div>
     </section>
 
-    <!-- KONZEPT / PHILOSOPHIE -->
-    <section class="section" id="konzept">
+    <!-- ===================== MODULARITÄT (Vollbild) ===================== -->
+    <section class="section--modular" id="modular" data-nav="dark">
+        <div class="modular__left">
+            <h2 class="modular__title">One&nbsp;Base.<br><span class="accent">Many&nbsp;Looks.</span></h2>
+            <div class="dropbox" tabindex="0" role="button" aria-expanded="false">
+                <div class="dropbox__head">
+                    <h3>So funktioniert das Prinzip</h3>
+                    <svg class="dropbox__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div class="dropbox__more">
+                    <div>
+                        <p>Das Mittelteil aus carbonfaser­verstärktem ABS beherbergt alle technischen Bauteile und verschmilzt mit wenigen Schrauben mit den austauschbaren Körperteilen. Dadurch lassen sich mit einem System einfach individuelle Korpus­designs realisieren und nach Belieben ändern.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Freigestellter Bass, rechts, Hals läuft rechts aus dem Bild -->
+        <div class="mod-anim" id="modAnim" aria-hidden="true">
+            <img class="mod-frame" data-frame="633" src="{{ url_for('static', filename='img/site/seq/633.webp') }}" alt="Bass-Aufbau" decoding="async">
+            <img class="mod-frame" data-frame="632" src="{{ url_for('static', filename='img/site/seq/632.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="631" src="{{ url_for('static', filename='img/site/seq/631.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="630" src="{{ url_for('static', filename='img/site/seq/630.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="628" src="{{ url_for('static', filename='img/site/seq/628.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="634" src="{{ url_for('static', filename='img/site/seq/634.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="636" src="{{ url_for('static', filename='img/site/seq/636.webp') }}" alt="" decoding="async">
+        </div>
+    </section>
+
+    <!-- ===================== THE PROCESS (bildschirmfüllendes Video) ===================== -->
+    <section class="section--process" id="process" data-nav="light">
+        <video class="process__video" autoplay muted loop playsinline preload="metadata"
+               poster="{{ url_for('static', filename='img/site/gal_3.jpg') }}">
+            <source src="{{ url_for('static', filename='img/site/process.mp4') }}" type="video/mp4">
+        </video>
+        <div class="process__overlay">
+            <h2 class="process__title">The Process</h2>
+        </div>
+    </section>
+
+    <!-- ===================== ABOUT US ===================== -->
+    <section class="section section--about" id="about" data-nav="dark">
         <div class="wrap">
-            <p class="eyebrow reveal">Die Idee</p>
-            <h2 class="section__title reveal">Ein Bass aus dem Drucker.<br>Modular bis in die letzte Schraube.</h2>
-            <p class="section__lead reveal">Wir haben den Bass gebaut, den wir uns immer gewünscht haben — bezahlbar, wandelbar und komplett dein eigenes Ding. Kein Massenprodukt von der Stange, sondern Schicht für Schicht gedruckt und Teil für Teil konfiguriert.</p>
-
-            <div class="cards">
-                <div class="card reveal">
-                    <span class="card__num">01</span>
-                    <h3 class="card__title">Modular</h3>
-                    <p class="card__text">Hals, Pick-Ups, Stimmer und Hardware lassen sich einzeln tauschen. Deine Klangvorstellung ändert sich? Dein Bass ändert sich mit — ohne Löten, ohne Werkstatt.</p>
+            <div class="about__grid">
+                <div class="about__text">
+                    <h2 class="sec-title" style="margin-bottom:24px">About Us</h2>
+                    <p>Wir sind zwei Studenten und Hobbymusiker. Angefangen hat alles mit einer simplen Frage: Warum ist ein guter Bass so teuer — und warum kann man ihn danach nie wieder verändern?</p>
+                    <p>Also haben wir angefangen, selbst zu drucken, zu schrauben und zu experimentieren. Aus einem Feierabendprojekt zwischen Vorlesungen und Bandproben sind die 3D bros geworden — kein Konzern, keine Fabrik, nur wir zwei und ganz viel Herzblut.</p>
+                    <div class="about__stats">
+                        <div class="about__stat"><div class="n">2</div><div class="l mono">Gründer</div></div>
+                        <div class="about__stat"><div class="n">1</div><div class="l mono">Modell</div></div>
+                        <div class="about__stat"><div class="n">&infin;</div><div class="l mono">Konfigurationen</div></div>
+                    </div>
                 </div>
-                <div class="card reveal">
-                    <span class="card__num">02</span>
-                    <h3 class="card__title">3D-gedruckt</h3>
-                    <p class="card__text">Der facettierte Korpus entsteht Schicht für Schicht im 3D-Drucker. Jedes Muster ein Unikat — leicht, robust und mit einer Oberfläche, die man sonst nirgends findet.</p>
-                </div>
-                <div class="card reveal">
-                    <span class="card__num">03</span>
-                    <h3 class="card__title">Konfigurierbar</h3>
-                    <p class="card__text">Stell dir online genau das Instrument zusammen, das zu dir passt — Farbe, Klang, Haptik. Was du im Konfigurator siehst, drucken und bauen wir für dich.</p>
+                <div class="founders">
+                    <div class="founder">
+                        <span class="founder__ph mono">Foto folgt</span>
+                        <span class="founder__name mono">Gründer 01</span>
+                    </div>
+                    <div class="founder">
+                        <span class="founder__ph mono">Foto folgt</span>
+                        <span class="founder__name mono">Gründer 02</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- DESIGN mit Foto -->
-    <section class="section section--split" id="design">
-        <div class="wrap split">
-            <div class="split__media reveal">
-                <img src="{{ url_for('static', filename='img/bass2_web.jpg') }}" alt="Chisel Bass im Detail"
-                     width="1200" height="1600" loading="lazy" decoding="async">
-            </div>
-            <div class="split__text">
-                <p class="eyebrow reveal">Das Design</p>
-                <h2 class="section__title reveal">Facetten, die man sieht<br>und fühlt.</h2>
-                <p class="section__lead reveal">Die kristalline Low-Poly-Oberfläche ist kein Aufkleber und keine Folie — sie ist die Form selbst. Tausende kleine Dreiecke brechen das Licht, sodass der Korpus je nach Blickwinkel von tiefem Violett zu leuchtendem Blau wandert.</p>
-                <ul class="ticks reveal">
-                    <li>Handgefinishte Oberfläche aus dem 3D-Druck</li>
-                    <li>Leichter Korpus, angenehm ausbalanciert</li>
-                    <li>Jedes Exemplar ein optisches Unikat</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- ÜBER UNS -->
-    <section class="section section--about" id="ueber-uns">
+    <!-- ===================== RELEASE / NEWSLETTER (direkt nach About Us) ===================== -->
+    <section class="section release" id="release" data-nav="dark">
         <div class="wrap">
-            <p class="eyebrow reveal">Über uns</p>
-            <h2 class="section__title reveal">Zwei Studenten, ein Drucker,<br>viel zu viele Ideen.</h2>
-            <p class="section__lead reveal">Wir sind zwei Studenten und Hobbymusiker. Angefangen hat alles mit einer simplen Frage: Warum ist ein guter Bass so teuer — und warum kann man ihn danach nie wieder verändern? Also haben wir angefangen, selbst zu drucken, zu schrauben und zu experimentieren.</p>
-            <p class="section__lead reveal">Aus einem Feierabendprojekt zwischen Vorlesungen und Bandproben sind die 3D Bros geworden: der Versuch, einen Bass zu bauen, der so individuell ist wie die Musik, die man damit macht. Kein Konzern, keine Fabrik — nur wir zwei, unser Drucker und ganz viel Herzblut.</p>
-            <div class="stats reveal">
-                <div class="stat"><span class="stat__num">2</span><span class="stat__label">Gründer</span></div>
-                <div class="stat"><span class="stat__num">1</span><span class="stat__label">Modell — dieses</span></div>
-                <div class="stat"><span class="stat__num">∞</span><span class="stat__label">Konfigurationen</span></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA / Newsletter -->
-    <section class="section cta-band" id="release">
-        <div class="wrap cta-band__inner reveal">
-            <span class="dev-banner__tag dev-banner__tag--lg">In Entwicklung</span>
-            <h2 class="cta-band__title">Sei beim Release dabei.</h2>
-            <p class="cta-band__sub">Der Chisel Bass ist noch nicht fertig. Trag dich ein und wir
-               sagen dir als Erstes Bescheid, sobald es losgeht.</p>
-
+            <span class="release__tag">In Entwicklung</span>
+            <h2 class="release__title">Sei beim Release dabei.</h2>
             <form id="newsletterForm" class="newsletter">
                 <div class="newsletter__row">
                     <input type="email" name="email" required placeholder="deine@email.de" aria-label="E-Mail-Adresse">
-                    <button type="submit" class="cta cta--solid">
+                    <button type="submit" class="btn">
                         Benachrichtigen
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </button>
                 </div>
-                <label class="check check--center">
+                <label class="check">
                     <input type="checkbox" name="consent" required>
                     <span>Ich möchte per E-Mail zum Release benachrichtigt werden.
                           (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
                 </label>
                 <p class="form__msg" data-msg></p>
             </form>
-
-            <p class="cta-band__sub" style="margin-top:36px">Schon eine Idee im Kopf?</p>
-            <a class="cta" href="{{ url_for('configurator') }}">
-                Zum Konfigurator
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
         </div>
     </section>
 
+    <!-- ===================== GALERIE (Vollbreite, randlos) ===================== -->
+    <section class="section--gallery" id="gallery" data-nav="light">
+        <div class="gallery">
+            <figure><img src="{{ url_for('static', filename='img/site/gal_1.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_2.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_3.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_4.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_5.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_6.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+        </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
     <footer class="footer">
-        <span class="brand">3D BROS</span>
-        <span class="footer__note">Handgefertigt & 3D-gedruckt · Ein Studentenprojekt</span>
+        <span class="footer__brand">3D bros</span>
+        <span class="footer__note">3D-gedruckt · Ein Studentenprojekt</span>
         <nav class="footer__links">
             <a href="{{ url_for('impressum') }}">Impressum</a>
             <a href="{{ url_for('datenschutz') }}">Datenschutz</a>

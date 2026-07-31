@@ -13,8 +13,15 @@ data/
 # Original-CAD-Ablage in der Wurzel; ausgeliefert wird static/models/Bassembly.glb
 /Bassembly.glb
 
-# Ungenutzte, sehr grosse Original-Fotos (App nutzt bass2_web.jpg + studio-PNGs)
+# Ungenutzte, sehr grosse Original-Fotos (App nutzt jetzt static/img/site/*)
 static/img/bass1.jpg
 static/img/bass2.jpg
 static/img/bass2_cutout.png
 static/img/bass_cutout.png
+static/img/bass_studio_h.png
+
+# Unkomprimierte Kamera-Original-Fotos/Videos
+source_photos/
+Bilder_Videos/
+Website_Vorlage.png
+*.docx

@@ -115,7 +115,7 @@ OPTIONS = {
         # color/metallic/rough = Metall-Look der Hardware im 3D-Modell.
         "choices": [
             {"id": "chrome", "name": "Chrom", "delta": 0, "swatch": "linear-gradient(135deg,#e9edf2,#9aa3ad)", "color": "#c9ccd2", "metallic": 1, "rough": 0.12},
-            {"id": "black", "name": "Schwarz matt", "delta": 40, "swatch": "linear-gradient(135deg,#3a3a3f,#0d0d10)", "color": "#0e0e12", "metallic": 1, "rough": 0.5},
+            {"id": "black", "name": "Schwarz", "delta": 40, "swatch": "linear-gradient(135deg,#3a3a3f,#0d0d10)", "color": "#0e0e12", "metallic": 1, "rough": 0.5},
             {"id": "gold", "name": "Gold", "delta": 90, "swatch": "linear-gradient(135deg,#ffd97a,#c79320)", "color": "#ffcf5a", "metallic": 1, "rough": 0.22},
         ],
     },

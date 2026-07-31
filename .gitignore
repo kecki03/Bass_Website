@@ -1,6 +1,15 @@
 # Nutzerdaten (E-Mail-Anmeldungen etc.) nicht hochladen
 data/
 
+# Original-Fotos/Videos (unkomprimierte Kamera-Uploads). Ausgeliefert wird static/img/site/*
+source_photos/
+Bilder_Videos/
+
+# Arbeitsdateien / Skizzen, die nicht ins Repo gehören
+Website_Vorlage.png
+Protokoll*.docx
+~$*
+
 # Umgebungsvariablen mit Zugangsdaten
 .env
 
