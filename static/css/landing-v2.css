@@ -11,15 +11,37 @@
     --ink:     #0b0b0d;
     --muted:   #75757c;
     --line:    rgba(0,0,0,0.14);
-    --accent:  #6d4bff;
+    --accent:  #be19ff;
     --maxw:    1280px;
+    /* Haupt-Schrift (grosse Schlagworte + Fliesstext). Frueher "Space Grotesk". */
+    --sans:    "Manrope", system-ui, sans-serif;
+    /* Technische Monospace-Schrift (Logo, Buttons, Labels). Hier zentral
+       aendern, um die Schrift ueberall auf der Startseite zu wechseln.
+       Frueher "Space Mono" – das hatte die auffaelligen Slab-Serifen an B/D. */
+    --mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 html, body { overflow-x: hidden; }
 
+/* ---------- Scrollbar (schlank, abgerundet, dezent) ---------- */
+/* Firefox */
+html { scrollbar-width: thin; scrollbar-color: rgba(11,11,13,0.28) transparent; }
+/* WebKit (Chrome/Edge/Safari): schwebender Pill-Thumb dank transparentem
+   Rand + background-clip; faerbt beim Hover in die Akzentfarbe. */
+::-webkit-scrollbar { width: 11px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: rgba(11,11,13,0.26);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    transition: background-color .2s;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); background-clip: padding-box; }
+
 body.landing-v2 {
-    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-family: var(--sans);
     background: var(--bg);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
@@ -40,7 +62,7 @@ body.landing-v2 {
 .landing-v2 img { display: block; max-width: 100%; }
 
 .mono {
-    font-family: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-family: var(--mono);
     letter-spacing: 0.14em; text-transform: uppercase;
 }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 34px; }
@@ -61,13 +83,13 @@ body.landing-v2 {
 }
 .topbar.is-dark { color: var(--ink); text-shadow: none; }   /* ... über hellen Sektionen dunkel */
 .topbar__brand {
-    font-family: "Space Mono", monospace;
+    font-family: var(--mono);
     font-weight: 700; font-size: 17px; letter-spacing: 0.04em;
     color: inherit;
 }
 .topbar__nav { display: flex; align-items: center; gap: 30px; }
 .topbar__nav a {
-    font-family: "Space Mono", monospace;
+    font-family: var(--mono);
     font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
     color: inherit; opacity: .82; transition: opacity .2s;
 }
@@ -80,7 +102,7 @@ body.landing-v2 {
 .btn {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 15px 26px; border-radius: 999px;
-    font-family: "Space Mono", monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
     border: 1px solid var(--ink); background: var(--ink); color: var(--panel);
     cursor: pointer;
     transition: transform .2s, box-shadow .3s, background .2s, color .2s;
@@ -105,9 +127,9 @@ body.landing-v2 {
         linear-gradient(0deg, rgba(8,8,11,0.5) 0%, rgba(8,8,11,0) 40%);
 }
 .hero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 34px; width: 100%; color: #fff; }
-.hero__title { font-size: clamp(56px, 9.5vw, 140px); font-weight: 700; line-height: 0.92; letter-spacing: -0.04em; margin-bottom: 40px; }
+.hero__title { font-size: clamp(56px, 9.5vw, 140px); font-weight: 800; line-height: 0.94; letter-spacing: -0.02em; margin-bottom: 40px; }
 .hero__title span { display: block; }
-.hero__title .accent { color: #a894ff; }
+.hero__title .accent { color: #be19ff; }
 
 /* ---------- MODULARITÄT (Vollbild) ---------- */
 .section--modular {
@@ -144,11 +166,17 @@ body.landing-v2 {
 }
 .dropbox__more > div { overflow: hidden; }
 .dropbox__more p { font-size: 14px; line-height: 1.65; color: #43434a; }
-.dropbox:hover .dropbox__more,
-.dropbox:focus-within .dropbox__more,
+/* Auf Touch NUR per Tap (.is-open) auf-/zuklappen. */
 .dropbox.is-open .dropbox__more { grid-template-rows: 1fr; opacity: 1; margin-top: 16px; }
-.dropbox:hover .dropbox__chev,
 .dropbox.is-open .dropbox__chev { transform: rotate(180deg); }
+/* Zusaetzlich per Hover/Fokus – aber NUR mit echtem Zeiger (Desktop). Sonst
+   hielte :focus-within das Feld auf Touch offen und der Tap zum Schliessen
+   wuerde nicht mehr greifen. */
+@media (hover: hover) and (pointer: fine) {
+    .dropbox:hover .dropbox__more,
+    .dropbox:focus-within .dropbox__more { grid-template-rows: 1fr; opacity: 1; margin-top: 16px; }
+    .dropbox:hover .dropbox__chev { transform: rotate(180deg); }
+}
 
 /* Freigestellter Bass rechts – Hals läuft rechts aus dem Bild */
 .mod-anim {
@@ -184,8 +212,9 @@ body.landing-v2 {
 }
 .process__title {
     max-width: var(--maxw); margin: 0 auto; width: 100%;
-    font-size: clamp(52px, 11vw, 168px); font-weight: 700;
-    color: #fff; letter-spacing: -0.03em; line-height: 0.95;
+    font-size: clamp(52px, 11vw, 168px); font-weight: 800;
+    color: rgba(255,255,255,0.72); letter-spacing: -0.02em; line-height: 0.95;
+    text-align: center;
 }
 
 /* ---------- Section-Grundgerüst (About / Release) ---------- */
@@ -221,9 +250,10 @@ body.landing-v2 {
 .release__tag {
     display: inline-block; padding: 6px 14px; border-radius: 999px;
     background: var(--accent); color: #fff;
-    font-family: "Space Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 22px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 22px;
 }
-.release__title { font-size: clamp(32px, 5.5vw, 62px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 30px; }
+.release__title { font-size: clamp(32px, 5.5vw, 62px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 16px; }
+.release__lead { max-width: 520px; margin: 0 auto 30px; color: var(--muted); font-size: 15px; line-height: 1.65; }
 .newsletter { max-width: 480px; margin: 0 auto; }
 .newsletter__row { display: flex; gap: 10px; border: 1px solid var(--ink); border-radius: 999px; padding: 6px 6px 6px 20px; background: var(--panel); }
 .newsletter input[type="email"] { flex: 1; border: none; background: transparent; color: var(--ink); font-family: inherit; font-size: 15px; outline: none; }
@@ -237,7 +267,7 @@ body.landing-v2 {
 
 /* ---------- Footer ---------- */
 .footer { border-top: 1px solid var(--line); padding: 40px 34px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-.footer__brand { font-family: "Space Mono", monospace; font-weight: 700; letter-spacing: 0.04em; font-size: 15px; }
+.footer__brand { font-family: var(--mono); font-weight: 700; letter-spacing: 0.04em; font-size: 15px; }
 .footer__note { color: var(--muted); font-size: 12px; }
 .footer__links { display: flex; gap: 22px; }
 .footer__links a { color: var(--muted); font-size: 12px; transition: color .2s; }

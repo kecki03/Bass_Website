@@ -6,7 +6,7 @@
     <title>3D bros — Ein Bass aus dem 3D-Drucker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-v2.css') }}">
 </head>
 <body class="landing-v2">
@@ -16,8 +16,8 @@
         <a class="topbar__brand" href="#top">3D bros</a>
         <nav class="topbar__nav">
             <a href="#modular">Modularität</a>
-            <a href="#process">Process</a>
-            <a href="#about">About</a>
+            <a href="#process">Prozess</a>
+            <a href="#about">Über uns</a>
             <a class="nav-konf" href="{{ url_for('configurator') }}">Konfigurator</a>
         </nav>
     </header>
@@ -42,7 +42,7 @@
     <!-- ===================== MODULARITÄT (Vollbild) ===================== -->
     <section class="section--modular" id="modular" data-nav="dark">
         <div class="modular__left">
-            <h2 class="modular__title">One&nbsp;Base.<br><span class="accent">Many&nbsp;Looks.</span></h2>
+            <h2 class="modular__title">Eine&nbsp;Basis.<br><span class="accent">Dein&nbsp;Look.</span></h2>
             <div class="dropbox" tabindex="0" role="button" aria-expanded="false">
                 <div class="dropbox__head">
                     <h3>So funktioniert das Prinzip</h3>
@@ -50,7 +50,9 @@
                 </div>
                 <div class="dropbox__more">
                     <div>
-                        <p>Das Mittelteil aus carbonfaser­verstärktem ABS beherbergt alle technischen Bauteile und verschmilzt mit wenigen Schrauben mit den austauschbaren Körperteilen. Dadurch lassen sich mit einem System einfach individuelle Korpus­designs realisieren und nach Belieben ändern.</p>
+                        <p>Im Mittelteil aus carbonfaserverstärktem ABS steckt die komplette Technik. 
+                            Die austauschbaren Korpusteile werden mit wenigen Schrauben befestigt und ermöglichen es,
+                             den Look deiner Gitarre jederzeit individuell anzupassen. </p>
                     </div>
                 </div>
             </div>
@@ -75,7 +77,7 @@
             <source src="{{ url_for('static', filename='img/site/process.mp4') }}" type="video/mp4">
         </video>
         <div class="process__overlay">
-            <h2 class="process__title">The Process</h2>
+            <h2 class="process__title">Der Prozess</h2>
         </div>
     </section>
 
@@ -85,8 +87,14 @@
             <div class="about__grid">
                 <div class="about__text">
                     <h2 class="sec-title" style="margin-bottom:24px">About Us</h2>
-                    <p>Wir sind zwei Studenten und Hobbymusiker. Angefangen hat alles mit einer simplen Frage: Warum ist ein guter Bass so teuer — und warum kann man ihn danach nie wieder verändern?</p>
-                    <p>Also haben wir angefangen, selbst zu drucken, zu schrauben und zu experimentieren. Aus einem Feierabendprojekt zwischen Vorlesungen und Bandproben sind die 3D bros geworden — kein Konzern, keine Fabrik, nur wir zwei und ganz viel Herzblut.</p>
+                    <p>Warum sind alle Bässe so ähnlich und unpersönlich? Wir sind Maschinenbauer, Designer und Musiker aus Leidenschaft und haben 
+                        mit unserem Produkt eine Antwort auf diese Frage geschaffen.
+                    </p>
+                    <p>Eine Woche lang verschachtelten wir uns in unserer Wohnung. 
+                        Wir haben gezeichnet, diskutiert und experimentiert. 
+                        Die Idee war es, eine noch nie gesehene dreidimensionale Oberfläche zu erstellen. 
+                        Sie verleiht dem Bass Tiefe, Textur und Charakter sowie unendlich mögliche Farbkombinationen.
+                    </p>
                     <div class="about__stats">
                         <div class="about__stat"><div class="n">2</div><div class="l mono">Gründer</div></div>
                         <div class="about__stat"><div class="n">1</div><div class="l mono">Modell</div></div>
@@ -111,7 +119,8 @@
     <section class="section release" id="release" data-nav="dark">
         <div class="wrap">
             <span class="release__tag">In Entwicklung</span>
-            <h2 class="release__title">Sei beim Release dabei.</h2>
+            <h2 class="release__title">Wir haben dein Interesse geweckt?</h2>
+            <p class="release__lead">Wir halten dich gern mit aktuellen Insights auf dem Laufenden und informieren dich bei einem möglichen Verkaufsstart.</p>
             <form id="newsletterForm" class="newsletter">
                 <div class="newsletter__row">
                     <input type="email" name="email" required placeholder="deine@email.de" aria-label="E-Mail-Adresse">
