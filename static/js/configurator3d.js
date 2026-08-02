@@ -194,6 +194,17 @@ function init(mount) {
         }
     }
 
+    // Bauteile, die physisch aus Metall sind, in SolidWorks aber KEINE
+    // metallische Appearance bekamen (z.B. die Klinkenbuchse "Buchse") und
+    // deshalb nicht ueber metalness >= 0.9 erkannt werden. Abgleich per
+    // Bauteilname; Liste bei Bedarf erweiterbar.
+    const EXTRA_HARDWARE_NAMES = ["buchse"];
+    function isExtraHardwareName(name) {
+        if (!name) return false;
+        const n = String(name).toLowerCase();
+        return EXTRA_HARDWARE_NAMES.some((t) => n.includes(t));
+    }
+
     // --- Oeffentliche API (von configurator.js genutzt) ---------------------
     const BassViewer = {
         setBody(a, b) {
@@ -237,6 +248,26 @@ function init(mount) {
             const seen = new Set();
             model.traverse((o) => {
                 if (!o.isMesh) return;
+
+                // Sonderfall: Metallteile ohne metallische Appearance (z.B. die
+                // Klinkenbuchse). Material klonen, damit geteilte Nicht-Metall-
+                // teile (die Regler nutzen dasselbe Material) unberuehrt bleiben,
+                // und wie ein Metallteil registrieren -> faerbt mit den Metall-
+                // teilen mit.
+                if (isExtraHardwareName(o.name || (o.parent && o.parent.name))) {
+                    const src = Array.isArray(o.material) ? o.material : [o.material];
+                    const cloned = src.map((m) => {
+                        if (!m) return m;
+                        const c = m.clone();
+                        c.metalness = 1;
+                        if (c.roughness === undefined) c.roughness = 0.3;
+                        hardwareMats.push(c);
+                        return c;
+                    });
+                    o.material = Array.isArray(o.material) ? cloned : cloned[0];
+                    return;
+                }
+
                 const mats = Array.isArray(o.material) ? o.material : [o.material];
                 let isBody = false;
                 mats.forEach((m) => {
