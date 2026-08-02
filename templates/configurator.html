@@ -121,14 +121,17 @@
                     Alle {{ group.choices|length }} Filamente anzeigen
                 </button>
                 {% endif %}
+                {% if group.note %}
+                <p class="group__note">{{ group.note }}</p>
+                {% endif %}
             </div>
             {% endfor %}
 
             <div class="summary">
                 <div class="dev-banner">
                     <span class="dev-banner__tag">In Entwicklung</span>
-                    <p>Der Chisel Bass ist noch nicht im Verkauf. Zeig uns, dass dir dein
-                       Design gefällt – wir melden uns zum Release bei dir.</p>
+                    <p>Der CHISEL Bass ist noch nicht im Verkauf. Zeig uns, dass dir das
+                       Design gefällt und wir melden uns zum Verkaufsstart bei dir.</p>
                 </div>
 
                 <button id="interestBtn" class="buy">Interesse bekunden</button>

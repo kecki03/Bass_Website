@@ -59,27 +59,18 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 OPTIONS = {
     "neck": {
         "label": "Hals",
+        # Aktuell nur eine Standard-Ausfuehrung; weitere Varianten sind in Pruefung.
         # color = Holz-Tönung, die im 3D-Modell auf die Holztextur gelegt wird.
+        "note": "Weitere Hals-Optionen werden gerade geprüft.",
         "choices": [
-            {"id": "maple", "name": "Ahorn", "delta": 0, "color": "#e8c79a"},
-            {"id": "rosewood", "name": "Palisander", "delta": 80, "color": "#6e4326"},
-            {"id": "ebony", "name": "Ebenholz", "delta": 150, "color": "#2a2422"},
+            {"id": "standard", "name": "Standard", "delta": 0, "color": "#e8c79a"},
         ],
     },
     "pickups": {
         "label": "Pick-Ups",
-        "choices": [
-            {"id": "pj", "name": "PJ Standard", "delta": 0},
-            {"id": "single", "name": "Vintage Single-Coil", "delta": 120},
-            {"id": "humbucker", "name": "Aktive Humbucker", "delta": 220},
-        ],
-    },
-    "tuners": {
-        "label": "Stimmer",
+        "note": "Weitere Pick-Up-Optionen werden gerade geprüft.",
         "choices": [
             {"id": "standard", "name": "Standard", "delta": 0},
-            {"id": "locking", "name": "Locking Tuners", "delta": 90},
-            {"id": "vintage", "name": "Vintage Open-Gear", "delta": 60},
         ],
     },
     "body": {
@@ -120,6 +111,10 @@ OPTIONS = {
         ],
     },
 }
+
+# Anzeige-Reihenfolge im Konfigurator: zuerst die Farbe (Korpus), dann die
+# Metallteile, danach der Rest. dict behaelt ab Python 3.7 die Einfuegereihenfolge.
+OPTIONS = {k: OPTIONS[k] for k in ("body", "hardware", "neck", "pickups")}
 
 
 @app.route("/")

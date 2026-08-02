@@ -626,6 +626,15 @@ html { scroll-behavior: smooth; }
 .group__choices { display: grid; gap: 10px; }
 .group__choices--swatch { grid-template-columns: repeat(3, 1fr); }
 
+/* Hinweis unter Gruppen mit (noch) nur einer Option */
+.group__note {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    font-style: italic;
+}
+
 .choice {
     display: flex;
     align-items: center;
@@ -1028,3 +1037,19 @@ a.buy { display: block; text-align: center; text-decoration: none; }
 /* Rechtsseiten: Fließtext dunkler für Kontrast auf hellem Grund */
 .legal__block p, .legal__list { color: #3a3a40; }
 .legal__note { background: var(--card); }
+
+/* ------------------------------------------------------------------
+   Konfigurator exakt auf Viewport-Höhe (Desktop)
+   Früher rechnete das Layout mit einer festen Topbar-Höhe von 73px
+   (calc(100vh - 73px)). Stimmte die reale Topbar-Höhe nicht exakt,
+   war die Seite ein paar Pixel zu hoch -> minimales Runterscrollen.
+   Per Flex-Spalte füllt das Grid nun exakt den Rest unter der Topbar,
+   egal wie hoch die Topbar tatsächlich ist. Nur Desktop; mobil bleibt
+   der normale Scroll-Fluss (Bühne über Panel).
+   ------------------------------------------------------------------ */
+@media (min-width: 901px) {
+    body.config { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .config__grid { flex: 1 1 auto; min-height: 0; }
+    .panel { max-height: 100%; }
+    .stage__model { height: 100%; max-height: 100%; }
+}
