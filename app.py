@@ -139,6 +139,12 @@ def robots():
     return send_from_directory(app.static_folder, "robots.txt", mimetype="text/plain")
 
 
+@app.route("/sitemap.xml")
+def sitemap():
+    # Aus static/ ausliefern, aber unter der Wurzel-URL /sitemap.xml erreichbar.
+    return send_from_directory(app.static_folder, "sitemap.xml", mimetype="application/xml")
+
+
 @app.route("/impressum")
 def impressum():
     return render_template("impressum.html")

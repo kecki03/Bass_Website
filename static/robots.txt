@@ -1,6 +1,8 @@
-# robots.txt fuer die Bass-Website
-# Entwicklungsphase: komplett fuer Suchmaschinen gesperrt.
-# Vor dem Launch auf "Allow: /" umstellen und ggf. Sitemap ergaenzen.
+# robots.txt fuer Layer Instruments
+# Suchmaschinen duerfen die oeffentlichen Seiten crawlen; Admin bleibt gesperrt.
 
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /admin
+
+Sitemap: https://layerinstruments.com/sitemap.xml
