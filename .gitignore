@@ -31,3 +31,6 @@ env/
 Thumbs.db
 
 *.bat
+# Entpackte Font-Zip (Quelle); ausgeliefert wird static/fonts/element-regular.ttf
+/element-regular/
+/element-regular.zip

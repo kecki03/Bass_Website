@@ -102,7 +102,7 @@ OPTIONS = {
         ],
     },
     "hardware": {
-        "label": "Metallteile",
+        "label": "Farbe der Metallteile",
         # color/metallic/rough = Metall-Look der Hardware im 3D-Modell.
         "choices": [
             {"id": "chrome", "name": "Chrom", "delta": 0, "swatch": "linear-gradient(135deg,#e9edf2,#9aa3ad)", "color": "#c9ccd2", "metallic": 1, "rough": 0.12},

@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>3D Bros — Konfigurator</title>
+    <title>Layer Instruments — Konfigurator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Polyfill fuer Importmaps (aeltere mobile Browser, z. B. iOS-Safari < 16.4) -->
     <script async src="https://unpkg.com/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
@@ -23,7 +23,7 @@
 <body class="config">
 
     <header class="topbar topbar--solid">
-        <a class="brand" href="{{ url_for('home') }}">3D BROS</a>
+        <a class="brand" href="{{ url_for('home') }}">Layer Instruments</a>
         <span class="topbar__right">Chisel · Konfigurator</span>
     </header>
 
@@ -34,7 +34,7 @@
             <div class="stage__glow"></div>
             <div id="bassViewer" class="stage__model"
                  data-model="{{ url_for('static', filename='models/Bassembly.glb') }}"
-                 aria-label="Dein 3D Bros Chisel Bass – 3D-Modell zum Drehen">
+                 aria-label="Dein Layer Instruments Chisel Bass – 3D-Modell zum Drehen">
                 <div class="stage__spinner" data-viewer-loading></div>
             </div>
 

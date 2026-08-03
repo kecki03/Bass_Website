@@ -3,17 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>3D bros — Ein Bass aus dem 3D-Drucker</title>
+    <title>Layer Instruments — Ein Bass aus dem 3D-Drucker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-v2.css') }}">
 </head>
 <body class="landing-v2">
 
     <!-- ===================== TOPBAR (immer transparent, feste Links) ===================== -->
     <header class="topbar">
-        <a class="topbar__brand" href="#top">3D bros</a>
+        <a class="topbar__brand" href="#top">Layer Instruments</a>
         <nav class="topbar__nav">
             <a href="#modular">Modularität</a>
             <a href="#process">Prozess</a>
@@ -24,13 +24,17 @@
 
     <!-- ===================== HERO ===================== -->
     <section class="hero" id="top" data-nav="light">
-        <img class="hero__bg" src="{{ url_for('static', filename='img/site/hero.jpg') }}"
-             alt="3D-gedruckter Bass in Nahaufnahme" fetchpriority="high" decoding="async">
+        <picture>
+            <!-- Mobil: Hochformat-Bild; ab Tablet/Desktop: Querformat -->
+            <source media="(max-width: 600px)" srcset="{{ url_for('static', filename='img/site/hero-mobile.jpg') }}">
+            <img class="hero__bg" src="{{ url_for('static', filename='img/site/hero.jpg') }}"
+                 alt="3D-gedruckter Bass in Nahaufnahme" fetchpriority="high" decoding="async">
+        </picture>
         <div class="hero__inner">
             <h1 class="hero__title">
-                <span>Bold.</span>
-                <span>Modular.</span>
-                <span class="accent">Bespoke.</span>
+                <span>Introducing.</span>
+                <span>Chisel.</span>
+                <span class="accent">Bass.</span>
             </h1>
             <a class="btn btn--xl" href="{{ url_for('configurator') }}">
                 Konfigurieren
@@ -42,31 +46,40 @@
     <!-- ===================== MODULARITÄT (Vollbild) ===================== -->
     <section class="section--modular" id="modular" data-nav="dark">
         <div class="modular__left">
-            <h2 class="modular__title">Eine&nbsp;Basis.<br><span class="accent">Dein&nbsp;Look.</span></h2>
+            <h2 class="modular__title">Modularität.<br>Dein <span class="accent">individueller</span> Look.</h2>
             <div class="dropbox" tabindex="0" role="button" aria-expanded="false">
                 <div class="dropbox__head">
-                    <h3>So funktioniert das Prinzip</h3>
+                    <h3>So funktioniert´s</h3>
                     <svg class="dropbox__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
                 <div class="dropbox__more">
                     <div>
-                        <p>Im Mittelteil aus carbonfaserverstärktem ABS steckt die komplette Technik. 
+                        <p> Die Besonderheit an unserem Bass: Die Teile werden mittels 3D-Druck gefertigt. Dies ermöglicht
+                        einen modularen Aufbau sowie eine Vielzahl an Farbkombinationen. Im robusten Mittelteil aus 
+                        carbonfaserverstärktem ABS steckt die komplette Technik. 
                             Die austauschbaren Korpusteile werden mit wenigen Schrauben befestigt und ermöglichen es,
-                             den Look deiner Gitarre jederzeit individuell anzupassen. </p>
+                            den Look deiner Gitarre jederzeit individuell anzupassen. </p>
                     </div>
                 </div>
             </div>
         </div>
+        <!--Im Mittelteil aus carbonfaserverstärktem ABS steckt die komplette Technik. 
+                            Die austauschbaren Korpusteile werden mit wenigen Schrauben befestigt und ermöglichen es,
+                            den Look deiner Gitarre jederzeit individuell anzupassen. Die Fertigung mittels 
+                            3D-Druck ermöglicht die Modularität und vielfältige Farbvarianten.
+                            3D-Druck ermöglicht uns die Fertigung der Modulbauweise und ausgefallener Farbvarianten.-->
 
         <!-- Freigestellter Bass, rechts, Hals läuft rechts aus dem Bild -->
         <div class="mod-anim" id="modAnim" aria-hidden="true">
-            <img class="mod-frame" data-frame="633" src="{{ url_for('static', filename='img/site/seq/633.webp') }}" alt="Bass-Aufbau" decoding="async">
-            <img class="mod-frame" data-frame="632" src="{{ url_for('static', filename='img/site/seq/632.webp') }}" alt="" decoding="async">
-            <img class="mod-frame" data-frame="631" src="{{ url_for('static', filename='img/site/seq/631.webp') }}" alt="" decoding="async">
-            <img class="mod-frame" data-frame="630" src="{{ url_for('static', filename='img/site/seq/630.webp') }}" alt="" decoding="async">
-            <img class="mod-frame" data-frame="628" src="{{ url_for('static', filename='img/site/seq/628.webp') }}" alt="" decoding="async">
-            <img class="mod-frame" data-frame="634" src="{{ url_for('static', filename='img/site/seq/634.webp') }}" alt="" decoding="async">
-            <img class="mod-frame" data-frame="636" src="{{ url_for('static', filename='img/site/seq/636.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td1" src="{{ url_for('static', filename='img/site/seq/td1.webp') }}" alt="Bass-Aufbau" decoding="async">
+            <img class="mod-frame" data-frame="td2" src="{{ url_for('static', filename='img/site/seq/td2.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td3" src="{{ url_for('static', filename='img/site/seq/td3.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td4" src="{{ url_for('static', filename='img/site/seq/td4.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td5" src="{{ url_for('static', filename='img/site/seq/td5.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td6" src="{{ url_for('static', filename='img/site/seq/td6.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td7" src="{{ url_for('static', filename='img/site/seq/td7.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td8" src="{{ url_for('static', filename='img/site/seq/td8.webp') }}" alt="" decoding="async">
+            <img class="mod-frame" data-frame="td9" src="{{ url_for('static', filename='img/site/seq/td9.webp') }}" alt="" decoding="async">
         </div>
     </section>
 
@@ -95,19 +108,14 @@
                         Die Idee war es, eine noch nie gesehene dreidimensionale Oberfläche zu erstellen. 
                         Sie verleiht dem Bass Tiefe, Textur und Charakter sowie unendlich mögliche Farbkombinationen.
                     </p>
-                    <div class="about__stats">
-                        <div class="about__stat"><div class="n">2</div><div class="l mono">Gründer</div></div>
-                        <div class="about__stat"><div class="n">1</div><div class="l mono">Modell</div></div>
-                        <div class="about__stat"><div class="n">&infin;</div><div class="l mono">Konfigurationen</div></div>
-                    </div>
                 </div>
                 <div class="founders">
                     <div class="founder">
-                        <span class="founder__ph mono">Foto folgt</span>
+                        <img class="founder__img" src="{{ url_for('static', filename='img/site/team_1.jpg') }}" alt="Gründer 01" loading="lazy" decoding="async">
                         <span class="founder__name mono">Gründer 01</span>
                     </div>
                     <div class="founder">
-                        <span class="founder__ph mono">Foto folgt</span>
+                        <img class="founder__img" src="{{ url_for('static', filename='img/site/team_2.jpg') }}" alt="Gründer 02" loading="lazy" decoding="async">
                         <span class="founder__name mono">Gründer 02</span>
                     </div>
                 </div>
@@ -142,18 +150,18 @@
     <!-- ===================== GALERIE (Vollbreite, randlos) ===================== -->
     <section class="section--gallery" id="gallery" data-nav="light">
         <div class="gallery">
-            <figure><img src="{{ url_for('static', filename='img/site/gal_1.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
-            <figure><img src="{{ url_for('static', filename='img/site/gal_2.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
-            <figure><img src="{{ url_for('static', filename='img/site/gal_3.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
-            <figure><img src="{{ url_for('static', filename='img/site/gal_4.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
-            <figure><img src="{{ url_for('static', filename='img/site/gal_5.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
-            <figure><img src="{{ url_for('static', filename='img/site/gal_6.jpg') }}" alt="3D bros Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_1.jpg') }}" alt="Layer Instruments Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_2.jpg') }}" alt="Layer Instruments Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_3.jpg') }}" alt="Layer Instruments Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_4.jpg') }}" alt="Layer Instruments Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_5.jpg') }}" alt="Layer Instruments Bass" loading="lazy" decoding="async"></figure>
+            <figure><img src="{{ url_for('static', filename='img/site/gal_6.jpg') }}" alt="Layer Instruments Bass" loading="lazy" decoding="async"></figure>
         </div>
     </section>
 
     <!-- ===================== FOOTER ===================== -->
     <footer class="footer">
-        <span class="footer__brand">3D bros</span>
+        <span class="footer__brand">Layer Instruments</span>
         <span class="footer__note">3D-gedruckt · Ein Studentenprojekt</span>
         <nav class="footer__links">
             <a href="{{ url_for('impressum') }}">Impressum</a>
