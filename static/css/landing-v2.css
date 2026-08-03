@@ -5,6 +5,16 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Ueberschriften-Schrift "Element" (self-hosted, LED-/Matrix-Display-Font,
+   nur ein Regular-Schnitt). */
+@font-face {
+    font-family: "Element";
+    src: url("../fonts/element-regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     --bg:      #f0efec;
     --panel:   #ffffff;
@@ -13,8 +23,11 @@
     --line:    rgba(0,0,0,0.14);
     --accent:  #be19ff;
     --maxw:    1280px;
-    /* Haupt-Schrift (grosse Schlagworte + Fliesstext). Frueher "Space Grotesk". */
-    --sans:    "Manrope", system-ui, sans-serif;
+    /* Fliesstext-Schrift. Frueher "Space Grotesk", dann "Manrope". */
+    --sans:    "Roboto", system-ui, sans-serif;
+    /* Ueberschriften-Schrift (Element). Faellt auf --sans (Roboto) zurueck,
+       falls die Datei nicht laedt. */
+    --display: "Element", var(--sans);
     /* Technische Monospace-Schrift (Logo, Buttons, Labels). Hier zentral
        aendern, um die Schrift ueberall auf der Startseite zu wechseln.
        Frueher "Space Mono" – das hatte die auffaelligen Slab-Serifen an B/D. */
@@ -83,8 +96,8 @@ body.landing-v2 {
 }
 .topbar.is-dark { color: var(--ink); text-shadow: none; }   /* ... über hellen Sektionen dunkel */
 .topbar__brand {
-    font-family: var(--mono);
-    font-weight: 700; font-size: 17px; letter-spacing: 0.04em;
+    font-family: var(--display);
+    font-weight: 400; font-size: 16px; letter-spacing: 0.02em;
     color: inherit;
 }
 .topbar__nav { display: flex; align-items: center; gap: 30px; }
@@ -122,11 +135,12 @@ body.landing-v2 {
 .hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .hero::after {
     content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    /* Text ist rechtsbuendig -> dunkler Verlauf von RECHTS (helles Studio-Bild). */
     background:
-        linear-gradient(90deg, rgba(8,8,11,0.78) 0%, rgba(8,8,11,0.40) 42%, rgba(8,8,11,0) 72%),
+        linear-gradient(270deg, rgba(8,8,11,0.80) 0%, rgba(8,8,11,0.42) 42%, rgba(8,8,11,0) 72%),
         linear-gradient(0deg, rgba(8,8,11,0.5) 0%, rgba(8,8,11,0) 40%);
 }
-.hero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 34px; width: 100%; color: #fff; }
+.hero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 34px; width: 100%; color: #fff; text-align: right; }
 .hero__title { font-size: clamp(56px, 9.5vw, 140px); font-weight: 800; line-height: 0.94; letter-spacing: -0.02em; margin-bottom: 40px; }
 .hero__title span { display: block; }
 .hero__title .accent { color: #be19ff; }
@@ -145,8 +159,8 @@ body.landing-v2 {
     color: var(--ink);
 }
 .modular__title {
-    font-size: clamp(40px, 6vw, 92px); font-weight: 700;
-    letter-spacing: -0.03em; line-height: 0.95; color: var(--ink); margin-bottom: 30px;
+    font-size: clamp(32px, 4.6vw, 66px); font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1.0; color: var(--ink); margin-bottom: 30px;
 }
 .modular__title .accent { color: var(--accent); }
 
@@ -178,10 +192,11 @@ body.landing-v2 {
     .dropbox:hover .dropbox__chev { transform: rotate(180deg); }
 }
 
-/* Freigestellter Bass rechts – Hals läuft rechts aus dem Bild */
+/* Freigestellter Bass rechts. `right` steuert die Horizontal-Position:
+   groesserer Wert = weiter nach links reingerueckt (-6% = ragt rechts raus). */
 .mod-anim {
     position: absolute; z-index: 2;
-    top: 50%; right: -6%;
+    top: 50%; right: 3%;
     transform: translateY(-50%);
     width: 66%; aspect-ratio: 1600 / 1067;
     pointer-events: none;
@@ -193,7 +208,7 @@ body.landing-v2 {
     filter: drop-shadow(0 26px 44px rgba(40,20,80,0.18));
 }
 .mod-frame.is-active { opacity: 1; }
-.mod-anim:not(.is-ready) .mod-frame[data-frame="633"] { opacity: 1; }
+.mod-anim:not(.is-ready) .mod-frame[data-frame="td1"] { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
     .mod-frame { transition: none; }
 }
@@ -235,7 +250,10 @@ body.landing-v2 {
 }
 .founder::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0 12px, transparent 12px 24px); }
 .founder__ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #b6b6bc; font-size: 11px; }
-.founder__name { position: relative; z-index: 1; font-size: 13px; color: var(--muted); }
+.founder__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+/* dunkler Verlauf unten -> Name bleibt auf dem Foto lesbar */
+.founder::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 42%); pointer-events: none; }
+.founder__name { position: relative; z-index: 2; font-size: 13px; color: #fff; }
 
 /* ---------- GALERIE ---------- */
 .section--gallery { padding: 0; }
@@ -253,6 +271,15 @@ body.landing-v2 {
     font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 22px;
 }
 .release__title { font-size: clamp(32px, 5.5vw, 62px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 16px; }
+
+/* Ueberschriften in Element: nur Family/Weight/Tracking - die font-size &
+   line-height der Einzelklassen (auch in Media-Queries) bleiben erhalten.
+   weight 400 (kein Fake-Bold), letter-spacing 0 (Pixel-Glyphen nicht ueberlappen). */
+.hero__title, .modular__title, .process__title, .sec-title, .release__title {
+    font-family: var(--display);
+    font-weight: 400;
+    letter-spacing: 0;
+}
 .release__lead { max-width: 520px; margin: 0 auto 30px; color: var(--muted); font-size: 15px; line-height: 1.65; }
 .newsletter { max-width: 480px; margin: 0 auto; }
 .newsletter__row { display: flex; gap: 10px; border: 1px solid var(--ink); border-radius: 999px; padding: 6px 6px 6px 20px; background: var(--panel); }
@@ -267,7 +294,7 @@ body.landing-v2 {
 
 /* ---------- Footer ---------- */
 .footer { border-top: 1px solid var(--line); padding: 40px 34px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-.footer__brand { font-family: var(--mono); font-weight: 700; letter-spacing: 0.04em; font-size: 15px; }
+.footer__brand { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; font-size: 15px; }
 .footer__note { color: var(--muted); font-size: 12px; }
 .footer__links { display: flex; gap: 22px; }
 .footer__links a { color: var(--muted); font-size: 12px; transition: color .2s; }
@@ -301,10 +328,15 @@ body.landing-v2 {
     .wrap { padding: 0 22px; }
     .topbar { padding: 18px 22px; }
     .section { padding: 76px 0; }
-    /* Hero mobil: Inhalt nach unten-links, Button etwas tiefer, Bild weiter links */
-    .hero { align-items: flex-end; }
-    .hero__inner { padding: 0 22px 7vh; }
-    .hero__bg { object-position: 41% center; }
+    /* Hero mobil: Paket (Titel + Button) vertikal mittig, rechtsbuendig bleibt. */
+    .hero { align-items: center; }
+    .hero__inner { padding: 0 22px; }
+    /* Titel ~20% groesser als zuvor auf Mobil. */
+    .hero__title { font-size: clamp(34px, 15vw, 50px); }
+    /* Konfigurieren-Button ~30% kleiner auf Mobil. */
+    .hero .btn--xl { padding: 14px 28px; font-size: 11px; }
+    .hero .btn--xl svg { width: 16px; height: 16px; }
+    .hero__bg { object-position: center; }
     .gallery { grid-template-columns: 1fr; }
     .newsletter__row { flex-direction: column; border-radius: 20px; padding: 14px; }
     .newsletter input[type="email"] { padding: 8px 6px; text-align: center; }

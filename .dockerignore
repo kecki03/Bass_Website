@@ -13,6 +13,9 @@ data/
 # Original-CAD-Ablage in der Wurzel; ausgeliefert wird static/models/Bassembly.glb
 /Bassembly.glb
 
+# Entpackte Font-Zip in der Wurzel; ausgeliefert wird static/fonts/element-regular.ttf
+/element-regular/
+
 # Ungenutzte, sehr grosse Original-Fotos (App nutzt jetzt static/img/site/*)
 static/img/bass1.jpg
 static/img/bass2.jpg
@@ -25,3 +28,4 @@ source_photos/
 Bilder_Videos/
 Website_Vorlage.png
 *.docx
+/element-regular.zip
