@@ -30,6 +30,13 @@ services:
       ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:-}
+      # E-Mail-Benachrichtigung bei neuen Eintraegen (leer = deaktiviert).
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      NOTIFY_EMAIL_TO: ${NOTIFY_EMAIL_TO:-}
+      NOTIFY_EMAIL_FROM: ${NOTIFY_EMAIL_FROM:-}
       # gunicorn-Worker (Default 2). In Prod ueber .env / Override kleiner setzbar.
       WEB_CONCURRENCY: ${WEB_WORKERS:-2}
     ports:
