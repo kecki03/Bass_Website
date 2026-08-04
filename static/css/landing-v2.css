@@ -65,12 +65,7 @@ body.landing-v2 {
     flex-direction: column;
     min-height: 100vh;
 }
-/* Ab Tablet/Desktop: Galerie wieder VOR den Release/Newsletter (wie ursprünglich) */
-@media (min-width: 961px) {
-    #gallery { order: 1; }
-    #release { order: 2; }
-    .footer   { order: 3; }
-}
+/* Reihenfolge auf allen Viewports = DOM-Reihenfolge: … About, Release/Newsletter, Galerie, Footer. */
 .landing-v2 :where(a) { color: inherit; text-decoration: none; }
 .landing-v2 img { display: block; max-width: 100%; }
 
@@ -255,12 +250,24 @@ body.landing-v2 {
 .founder::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 42%); pointer-events: none; }
 .founder__name { position: relative; z-index: 2; font-size: 13px; color: #fff; }
 
-/* ---------- GALERIE ---------- */
-.section--gallery { padding: 0; }
-.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
-.gallery figure { position: relative; margin: 0; aspect-ratio: 3 / 2; overflow: hidden; }
-.gallery img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
-.gallery figure:hover img { transform: scale(1.05); }
+/* ---------- GALERIE (abwechselnd Mensch/Detail, randlos, unbeschnitten) ---------- */
+.section--gallery { padding: clamp(48px, 7vw, 110px) 0 0; }
+.gallery__title { margin-bottom: clamp(24px, 4vw, 56px); }
+.gallery-zz { display: flex; flex-direction: column; gap: clamp(30px, 6vw, 96px); padding: 0 0 clamp(40px, 7vw, 110px); }
+.gallery-zz .gz { margin: 0; display: flex; position: relative; }
+.gallery-zz .gz--left  { justify-content: flex-start; }
+.gallery-zz .gz--right { justify-content: flex-end; }
+/* Bild bleibt komplett sichtbar (kein Crop): feste Breite, Höhe automatisch. */
+.gallery-zz .gz img { display: block; height: auto; transition: transform .6s ease; }
+.gallery-zz .gz--land    img { width: min(64%, 1000px); }
+.gallery-zz .gz--portrait img { width: min(40%, 620px); }
+.gallery-zz .gz:hover img { transform: scale(1.02); }
+
+/* PC: aufeinanderfolgende Hochformatbilder überlappen -> nächstes beginnt auf halber Höhe.
+   Da sie links/rechts versetzt sind, kollidieren sie nicht, sondern verzahnen sich. */
+@media (min-width: 961px) {
+    .gallery-zz .gz--portrait + .gz--portrait { margin-top: max(-30vw, -460px); }
+}
 
 /* ---------- Release / Newsletter ---------- */
 /* Desktop: normale Abstände (.section = 110px). Mobil kompakter -> Media-Query. */
@@ -317,7 +324,9 @@ body.landing-v2 {
     .landing-v2 .release { padding-top: 16px; padding-bottom: 34px; }
     .about__grid { grid-template-columns: 1fr; gap: 36px; }
     .founders { max-width: 460px; }
-    .gallery { grid-template-columns: repeat(2, 1fr); }
+    .gallery-zz .gz--nomobile { display: none; }
+    .gallery-zz .gz--land img,
+    .gallery-zz .gz--portrait img { width: 82%; }
     /* Modularität mobil: Text oben, Bass darunter/rechts angeschnitten */
     .section--modular { height: auto; min-height: 100vh; padding: 120px 0 60px; align-items: flex-start; }
     .modular__left { width: 100%; max-width: 560px; padding-right: 34px; }
@@ -331,16 +340,22 @@ body.landing-v2 {
     /* Hero mobil: Paket (Titel + Button) vertikal mittig, rechtsbuendig bleibt. */
     .hero { align-items: center; }
     .hero__inner { padding: 0 22px; }
-    /* Titel ~20% groesser als zuvor auf Mobil. */
-    .hero__title { font-size: clamp(34px, 15vw, 50px); }
+    /* Titel auf Mobil nur minimal groesser; kleinerer Abstand zum Konfigurieren-Button. */
+    .hero__title { font-size: clamp(35px, 14vw, 53px); margin-bottom: 24px; }
     /* Konfigurieren-Button ~30% kleiner auf Mobil. */
     .hero .btn--xl { padding: 14px 28px; font-size: 11px; }
     .hero .btn--xl svg { width: 16px; height: 16px; }
     .hero__bg { object-position: center; }
-    .gallery { grid-template-columns: 1fr; }
+    .gallery-zz { gap: 18px; }
+    .gallery-zz .gz--land img,
+    .gallery-zz .gz--portrait img { width: 100%; }
     .newsletter__row { flex-direction: column; border-radius: 20px; padding: 14px; }
     .newsletter input[type="email"] { padding: 8px 6px; text-align: center; }
     .newsletter__row .btn { justify-content: center; }
     .footer { flex-direction: column; align-items: flex-start; }
     .process__title { font-size: clamp(44px, 15vw, 90px); }
+    /* "Modularität. Dein individueller Look." auf Mobil nur minimal groesser. */
+    .modular__title { font-size: clamp(35px, 9vw, 40px); }
+    /* Durchswitchender Bass auf Mobil etwas weiter nach links (vorher right: -10%). */
+    .mod-anim { right: 4%; }
 }
