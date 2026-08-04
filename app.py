@@ -6,7 +6,8 @@ from datetime import timedelta
 from flask import Flask, render_template, jsonify, request, send_from_directory
 
 import db
-from admin import admin_bp
+import mailer
+from admin import admin_bp, format_config
 
 app = Flask(__name__)
 
@@ -178,7 +179,56 @@ def api_newsletter():
         return jsonify({"ok": False, "error": "Bitte bestätige die Einwilligung."}), 400
 
     db.add_newsletter(email=email, consent=consent)
+
+    mailer.send_notification(
+        subject="Neue Newsletter-Anmeldung – Layer Instruments",
+        body=(
+            "Es hat sich jemand fuer den Newsletter angemeldet.\n\n"
+            f"E-Mail: {email}\n"
+            f"Einwilligung: {'ja' if consent else 'nein'}\n\n"
+            "Alle Eintraege siehst du unter https://layerinstruments.com/admin"
+        ),
+    )
     return jsonify({"ok": True, "message": "Danke! Wir melden uns, sobald es losgeht."})
+
+
+def _notify_interest(record):
+    """Baut die Benachrichtigungs-Mail fuer eine Interessensbekundung und sendet sie."""
+    kind = record.get("kind")
+    is_supporter = kind == "supporter"
+    art = "Unterstuetzer-Anfrage (mit Anschrift)" if is_supporter else "Interessensbekundung"
+
+    lines = [
+        f"Neue {art} ueber die Website.",
+        "",
+        f"E-Mail: {record.get('email') or '– keine angegeben –'}",
+    ]
+
+    if is_supporter:
+        lines += [
+            f"Name: {record.get('name') or ''}",
+            f"Adresse: {record.get('street') or ''}, "
+            f"{record.get('zip') or ''} {record.get('city') or ''}, "
+            f"{record.get('country') or ''}",
+        ]
+
+    config_pairs = format_config(record.get("config"))
+    if config_pairs:
+        lines.append("")
+        lines.append("Konfiguration:")
+        lines += [f"  - {label}: {value}" for label, value in config_pairs]
+
+    lines += [
+        "",
+        "Alle Eintraege siehst du unter https://layerinstruments.com/admin",
+    ]
+
+    subject = (
+        "Neue Unterstuetzer-Anfrage – Layer Instruments"
+        if is_supporter
+        else "Neue Interessensbekundung – Layer Instruments"
+    )
+    mailer.send_notification(subject=subject, body="\n".join(lines))
 
 
 @app.route("/api/interest", methods=["POST"])
@@ -221,6 +271,8 @@ def api_interest():
         record.update(required)
 
     db.add_interest(record)
+
+    _notify_interest(record)
 
     if kind == "supporter":
         message = (
