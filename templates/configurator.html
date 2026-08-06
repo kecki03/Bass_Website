@@ -75,6 +75,11 @@
             <div class="group" data-group="{{ key }}">
                 <div class="group__label">{{ group.label }}</div>
                 {% if key == 'body' %}
+                {# --- Filament-Link-Leiste vorerst DEAKTIVIERT (auf Wunsch). -----------------
+                   Zum spaeteren Reaktivieren: die umschliessende Jinja-Kommentar-Klammer
+                   in dieser Zeile und die schliessende Klammer unten entfernen – dann
+                   erscheint die Leiste wieder wie zuvor. Die url-Felder der Farben in
+                   app.py sind dafuer extra erhalten geblieben.
                 <div class="filament-bar">
                     <a class="filament-bar__link" id="filamentLink"
                        href="{{ group.choices[0].url }}" target="_blank" rel="noopener noreferrer">
@@ -91,6 +96,7 @@
                         </span>
                     </span>
                 </div>
+                --- Ende deaktivierte Filament-Link-Leiste --- #}
                 {% endif %}
                 <div class="group__choices {% if key in ['body','hardware'] %}group__choices--swatch{% endif %} {% if key == 'body' %}is-collapsed{% endif %}"
                      {% if key == 'body' %}id="bodyChoices"{% endif %}>
