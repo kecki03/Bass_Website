@@ -15,6 +15,7 @@ Protokoll*.docx
 
 # Original-CAD-Ablage in der Wurzel (ausgeliefert wird static/models/Bassembly.glb)
 /Bassembly.glb
+/Bassembly_D.glb
 
 # Python
 __pycache__/
