@@ -121,6 +121,9 @@ body.landing-v2 {
 .btn--xl { padding: 21px 42px; font-size: 16px; letter-spacing: 0.1em; border-radius: 999px; }
 .btn--light { background: #fff; color: var(--ink); border-color: #fff; }
 .btn--light:hover { background: rgba(255,255,255,0.86); }
+/* Umrandete Variante (transparent) – z.B. fuer Sekundaer-Aktionen im Kontakt-Hub. */
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn--ghost:hover { background: var(--ink); color: var(--panel); }
 
 /* ---------- HERO ---------- */
 .hero {
@@ -174,7 +177,7 @@ body.landing-v2 {
     opacity: 0; margin-top: 0;
 }
 .dropbox__more > div { overflow: hidden; }
-.dropbox__more p { font-size: 14px; line-height: 1.65; color: #43434a; }
+.dropbox__more p { font-size: 14px; line-height: 1.65; color: #2f2f36; }
 /* Auf Touch NUR per Tap (.is-open) auf-/zuklappen. */
 .dropbox.is-open .dropbox__more { grid-template-rows: 1fr; opacity: 1; margin-top: 16px; }
 .dropbox.is-open .dropbox__chev { transform: rotate(180deg); }
@@ -233,7 +236,7 @@ body.landing-v2 {
 
 /* ---------- ABOUT US ---------- */
 .about__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 54px; align-items: center; }
-.about__text p { font-size: 17px; line-height: 1.7; color: #3a3a40; margin-bottom: 18px; max-width: 520px; }
+.about__text p { font-size: 17px; line-height: 1.7; color: #2a2a30; margin-bottom: 18px; max-width: 520px; }
 .about__stats { display: flex; gap: 44px; margin-top: 34px; flex-wrap: wrap; }
 .about__stat .n { font-size: 42px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
 .about__stat .l { font-size: 12px; color: var(--muted); margin-top: 8px; }
@@ -271,7 +274,7 @@ body.landing-v2 {
 
 /* ---------- Release / Newsletter ---------- */
 /* Desktop: normale Abstände (.section = 110px). Mobil kompakter -> Media-Query. */
-.release { text-align: center; }
+.release { text-align: center; padding: 60px 0; }
 .release__tag {
     display: inline-block; padding: 6px 14px; border-radius: 999px;
     background: var(--accent); color: #fff;
@@ -287,11 +290,37 @@ body.landing-v2 {
     font-weight: 400;
     letter-spacing: 0;
 }
-.release__lead { max-width: 520px; margin: 0 auto 30px; color: var(--muted); font-size: 15px; line-height: 1.65; }
+.release__lead { max-width: 520px; margin: 0 auto 30px; color: #2a2a30; font-size: 17px; line-height: 1.7; }
 .newsletter { max-width: 480px; margin: 0 auto; }
 .newsletter__row { display: flex; gap: 10px; border: 1px solid var(--ink); border-radius: 999px; padding: 6px 6px 6px 20px; background: var(--panel); }
 .newsletter input[type="email"] { flex: 1; border: none; background: transparent; color: var(--ink); font-family: inherit; font-size: 15px; outline: none; }
 .newsletter__row .btn { white-space: nowrap; }
+/* Kontakt-Hub (E-Mail + Instagram als Buttons) */
+.contact-hub { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.contact-hub .btn { text-transform: none; letter-spacing: 0.02em; }
+/* E-Mail-Feld mit rechts integriertem Kopier-Button (ein gemeinsames Feld) */
+.email-field {
+    display: inline-flex; align-items: stretch; overflow: hidden;
+    border: 1px solid var(--ink); background: var(--ink); color: var(--panel);
+    border-radius: 999px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em;
+}
+.email-field__addr {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 16px 15px 24px; color: inherit; white-space: nowrap;
+    transition: opacity .2s;
+}
+.email-field__addr:hover { opacity: .82; }
+.email-field__text { overflow: hidden; text-overflow: ellipsis; }
+.email-field__copy {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 18px; border: 0; background: transparent; color: inherit;
+    border-left: 1px solid rgba(255,255,255,0.22);
+    cursor: pointer; transition: background .2s, color .2s;
+}
+.email-field__copy:hover { background: rgba(255,255,255,0.14); }
+.email-field__copy svg { width: 18px; height: 18px; display: block; }
+.email-field__copy.is-copied { color: #74e0a0; }
 .check { display: flex; gap: 10px; align-items: flex-start; max-width: 420px; margin: 18px auto 0; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: left; cursor: pointer; }
 .check input { margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
 .check a { color: var(--accent); text-decoration: underline; }
@@ -307,6 +336,17 @@ body.landing-v2 {
 .footer__links a { color: var(--muted); font-size: 12px; transition: color .2s; }
 .footer__links a:hover { color: var(--ink); }
 
+/* ---------- Instagram-Icon (Topbar + Footer) ---------- */
+/* Erbt jeweils die Textfarbe (currentColor), passt sich also wie die Schrift an. */
+.nav-insta { display: inline-flex; align-items: center; }
+/* Icon bekommt denselben Schimmer wie die Leisten-Schrift (ueber dunklen
+   Sektionen), damit es auch auf hellen Bildbereichen sichtbar bleibt; ueber
+   hellen Sektionen (is-dark) faellt der Schatten weg – exakt wie beim Text. */
+.nav-insta svg { width: 20px; height: 20px; display: block; filter: drop-shadow(0 1px 10px rgba(0,0,0,0.35)); }
+.topbar.is-dark .nav-insta svg { filter: none; }
+.footer-insta { display: inline-flex; align-items: center; }
+.footer-insta svg { width: 18px; height: 18px; display: block; }
+
 /* ---------- Screenshot-Modus ---------- */
 .shot .hero, .shot .section--modular { height: 760px; min-height: 0; }
 .shot .section--process { height: 560px; min-height: 0; }
@@ -314,10 +354,18 @@ body.landing-v2 {
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
     .topbar__nav { gap: 18px; }
-    .topbar__nav a:not(:last-child) { display: none; }   /* mobil nur Konfigurator */
+    .topbar__nav a:not(.nav-konf):not(.nav-insta) { display: none; }   /* mobil nur Konfigurator + Instagram */
     /* mobil: Konfigurator im Hero ausblenden, ab der 2. Sektion einblenden */
-    .topbar__nav a.nav-konf { opacity: 0; pointer-events: none; }
-    .topbar.past-hero .topbar__nav a.nav-konf { opacity: .82; pointer-events: auto; }
+    .topbar__nav a.nav-konf,
+    .topbar__nav a.nav-insta { opacity: 0; pointer-events: none; }
+    .topbar.past-hero .topbar__nav a.nav-konf,
+    .topbar.past-hero .topbar__nav a.nav-insta { opacity: .82; pointer-events: auto; }
+    /* Mobil: "Konfigurator" in der Element-Schrift wie "Layer Instruments"
+       (statt breiter Mono-Grossschrift) – optisch stimmig und schmaler. */
+    .topbar__nav a.nav-konf {
+        font-family: var(--display); text-transform: none;
+        letter-spacing: 0.02em; font-size: 16px;
+    }
     /* mobil: Release/About-Naht deutlich kompakter. Höhere Spezifität (.landing-v2 …),
        damit die spätere 76px-.section-Regel der 600er-Query sie nicht überschreibt. */
     .landing-v2 .section--about { padding-bottom: 22px; }
@@ -342,8 +390,9 @@ body.landing-v2 {
     .hero__inner { padding: 0 22px; }
     /* Titel auf Mobil nur minimal groesser; kleinerer Abstand zum Konfigurieren-Button. */
     .hero__title { font-size: clamp(35px, 14vw, 53px); margin-bottom: 24px; }
-    /* Konfigurieren-Button ~30% kleiner auf Mobil. */
-    .hero .btn--xl { padding: 14px 28px; font-size: 11px; }
+    /* Konfigurieren-Button ~30% kleiner auf Mobil + weisser Hintergrund,
+       damit er sich vom dunklen Hero-Bild abhebt. */
+    .hero .btn--xl { padding: 14px 28px; font-size: 11px; background: #fff; color: var(--ink); border-color: #fff; }
     .hero .btn--xl svg { width: 16px; height: 16px; }
     .hero__bg { object-position: center; }
     .gallery-zz { gap: 18px; }
@@ -352,6 +401,19 @@ body.landing-v2 {
     .newsletter__row { flex-direction: column; border-radius: 20px; padding: 14px; }
     .newsletter input[type="email"] { padding: 8px 6px; text-align: center; }
     .newsletter__row .btn { justify-content: center; }
+    /* Kontaktanfrage auf Mobil: Text linksbuendig wie die anderen Sektionen,
+       Buttons weiterhin zentriert und in kleinerer Schrift (damit alles passt). */
+    .release { text-align: left; }
+    .release__lead { margin-left: 0; margin-right: 0; }
+    /* Fliesstext auf Mobil kleiner: "Ueber uns" + "Kontaktanfrage". */
+    .about__text p, .release__lead { font-size: 14px; }
+    .contact-hub { flex-direction: column; align-items: center; }
+    .contact-hub > .btn,
+    .contact-hub .email-field { width: 100%; max-width: 340px; }
+    .contact-hub > .btn { justify-content: center; font-size: 11px; }
+    .email-field { font-size: 11px; }
+    .email-field__addr { flex: 1; min-width: 0; padding: 14px 10px 14px 16px; gap: 8px; }
+    .email-field__copy { padding: 0 14px; }
     .footer { flex-direction: column; align-items: flex-start; }
     .process__title { font-size: clamp(44px, 15vw, 90px); }
     /* "Modularität. Dein individueller Look." auf Mobil nur minimal groesser. */

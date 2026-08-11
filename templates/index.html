@@ -37,6 +37,9 @@
             <a href="#process">Prozess</a>
             <a href="#about">Über uns</a>
             <a class="nav-konf" href="{{ url_for('configurator') }}">Konfigurator</a>
+            <a class="nav-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
         </nav>
     </header>
 
@@ -144,24 +147,23 @@
     <!-- ===================== RELEASE / NEWSLETTER (direkt nach About Us) ===================== -->
     <section class="section release" id="release" data-nav="dark">
         <div class="wrap">
-            <span class="release__tag">In Entwicklung</span>
-            <h2 class="release__title">Wir haben dein Interesse geweckt?</h2>
-            <p class="release__lead">Wir halten dich gern mit aktuellen Insights auf dem Laufenden und informieren dich bei einem möglichen Verkaufsstart.</p>
-            <form id="newsletterForm" class="newsletter">
-                <div class="newsletter__row">
-                    <input type="email" name="email" required placeholder="deine@email.de" aria-label="E-Mail-Adresse">
-                    <button type="submit" class="btn">
-                        Benachrichtigen
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <h2 class="release__title">Kontaktanfrage</h2>
+            <p class="release__lead">Du willst einen Bass, hast Fragen zum Projekt oder magst uns Feedback geben? Melde dich gerne bei uns per E-Mail oder Instagram-Privatnachricht!</p>
+            <div class="contact-hub">
+                <div class="email-field">
+                    <a class="email-field__addr" href="mailto:info@layerinstruments.com">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                        <span class="email-field__text">info@layerinstruments.com</span>
+                    </a>
+                    <button type="button" class="email-field__copy" data-copy="info@layerinstruments.com" aria-label="E-Mail-Adresse kopieren" title="Adresse kopieren">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     </button>
                 </div>
-                <label class="check">
-                    <input type="checkbox" name="consent" required>
-                    <span>Ich möchte per E-Mail zum Release benachrichtigt werden.
-                          (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
-                </label>
-                <p class="form__msg" data-msg></p>
-            </form>
+                <a class="btn btn--ghost" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    @layer.instruments
+                </a>
+            </div>
         </div>
     </section>
 
@@ -189,6 +191,9 @@
         <nav class="footer__links">
             <a href="{{ url_for('impressum') }}">Impressum</a>
             <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+            <a class="footer-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
         </nav>
     </footer>
 

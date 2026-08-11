@@ -119,4 +119,42 @@
                 });
         });
     }
+
+    // ----- E-Mail-Adresse in die Zwischenablage kopieren -------------------
+    var COPY_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    var CHECK_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+    document.querySelectorAll("[data-copy]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var text = btn.getAttribute("data-copy");
+
+            function feedback() {
+                btn.classList.add("is-copied");
+                btn.innerHTML = CHECK_ICON;
+                btn.setAttribute("title", "Kopiert!");
+                setTimeout(function () {
+                    btn.classList.remove("is-copied");
+                    btn.innerHTML = COPY_ICON;
+                    btn.setAttribute("title", "Adresse kopieren");
+                }, 1600);
+            }
+
+            function fallback() {
+                var ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.position = "fixed";
+                ta.style.opacity = "0";
+                document.body.appendChild(ta);
+                ta.focus(); ta.select();
+                try { document.execCommand("copy"); feedback(); } catch (e) {}
+                document.body.removeChild(ta);
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(feedback).catch(fallback);
+            } else {
+                fallback();
+            }
+        });
+    });
 })();
