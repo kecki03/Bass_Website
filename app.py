@@ -60,18 +60,35 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 OPTIONS = {
     "neck": {
         "label": "Hals",
-        # Aktuell nur eine Standard-Ausfuehrung; weitere Varianten sind in Pruefung.
+        # Aktuell nur eine Ausfuehrung (Dr. Parts); weitere Hals-Optionen folgen.
         # color = Holz-Tönung, die im 3D-Modell auf die Holztextur gelegt wird.
-        "note": "Weitere Hals-Optionen werden gerade geprüft.",
+        "note": "Weitere Hals-Optionen folgen in Kürze.",
         "choices": [
-            {"id": "standard", "name": "Standard", "delta": 0, "color": "#e8c79a"},
+            {"id": "drparts", "name": "Dr. Parts: Palisander", "delta": 0, "color": "#e8c79a"},
+        ],
+    },
+    "metal_brand": {
+        "label": "Metallteile",
+        # Marke der Metallteile (Bridge, Tuners, Knobs, Output-Jack). Bestimmt zusammen
+        # mit der Farbe den Preis (siehe PRICING["metal"]). Harley Benton: nur
+        # Chrom/Schwarz. Gotoh: Chrom/Schwarz/Gold (Gold wird im JS nur bei Gotoh gezeigt).
+        "choices": [
+            {"id": "harley_benton", "name": "Harley Benton", "delta": 0},
+            {"id": "gotoh", "name": "Gotoh", "delta": 0},
         ],
     },
     "pickups": {
         "label": "Pick-Ups",
-        "note": "Weitere Pick-Up-Optionen werden gerade geprüft.",
         "choices": [
-            {"id": "standard", "name": "Standard", "delta": 0},
+            {"id": "seymour", "name": "Seymour Duncan SPB-3", "delta": 0, "price": 110},
+            {"id": "emg", "name": "EMG Geezer Butler PHZ", "delta": 0, "price": 91},
+        ],
+    },
+    "potis": {
+        "label": "Potentiometer",
+        "choices": [
+            {"id": "allparts", "name": "Allparts 500kΩ", "delta": 0, "price": 26},
+            {"id": "bareknuckle", "name": "Bare Knuckle 550kΩ", "delta": 0, "price": 34},
         ],
     },
     "body": {
@@ -111,8 +128,53 @@ OPTIONS = {
 }
 
 # Anzeige-Reihenfolge im Konfigurator: zuerst die Farbe (Korpus), dann die
-# Metallteile, danach der Rest. dict behaelt ab Python 3.7 die Einfuegereihenfolge.
-OPTIONS = {k: OPTIONS[k] for k in ("body", "hardware", "neck", "pickups")}
+# Metallteil-Marke + Farbe, Pickups, Potis, Hals. dict behaelt ab Python 3.7 die
+# Einfuegereihenfolge.
+OPTIONS = {k: OPTIONS[k] for k in ("body", "metal_brand", "hardware", "pickups", "potis", "neck")}
+
+# ---------------------------------------------------------------------------
+# Preis-Kalkulation (Quelle: Kalkulations-Tabelle).
+# Metallteile-Preis haengt von Marke UND Farbe ab (Bridge + Tuners + 2x Knobs +
+# Output-Jack; Chrom = Nickel-Jack). Alles in Euro.
+#
+# Gesamtpreis = (Summe aller Teile + Arbeitszeit + Shipping) * (1 + Gewinn)
+#   Teile = Metall + Pickups + Potis + Hals + Fix-Teile (3D-Druck, Schrauben, Saiten)
+# ---------------------------------------------------------------------------
+PRICING = {
+    "metal": {                                   # [Marke][Farbe] -> Summe Metallteile
+        "harley_benton": {"chrome": 48, "black": 61},
+        "gotoh": {"chrome": 164, "black": 201, "gold": 216},
+    },
+    "pickups": {"seymour": 110, "emg": 91},
+    "potis": {"allparts": 26, "bareknuckle": 34},
+    "neck": {"drparts": 69},
+    "fixed_parts": 100,   # 3D-Druck 60 + Schrauben/Kabel/Kondensator 20 + Saiten 20
+    "labor": 100,         # Arbeitszeit
+    "shipping": 30,       # Shipping & Packaging
+    "profit": 1.20,       # +20 % Gewinn
+}
+
+
+def compute_price(config):
+    """Gesamtpreis (gerundet, Euro) fuer eine Konfiguration.
+
+    config: dict der Auswahl-IDs je Gruppe, z.B.
+        {"metal_brand": "gotoh", "hardware": "gold", "pickups": "seymour",
+         "potis": "allparts", "neck": "drparts"}
+    Fehlt/ungueltig etwas, wird der jeweils erste (guenstigste sinnvolle) Wert genommen.
+    """
+    brand = config.get("metal_brand") or "harley_benton"
+    color = config.get("hardware") or "chrome"
+    metal_by_brand = PRICING["metal"].get(brand, PRICING["metal"]["harley_benton"])
+    metal = metal_by_brand.get(color, next(iter(metal_by_brand.values())))
+
+    pickups = PRICING["pickups"].get(config.get("pickups"), PRICING["pickups"]["seymour"])
+    potis = PRICING["potis"].get(config.get("potis"), PRICING["potis"]["allparts"])
+    neck = PRICING["neck"].get(config.get("neck"), PRICING["neck"]["drparts"])
+
+    parts = metal + pickups + potis + neck + PRICING["fixed_parts"]
+    total = (parts + PRICING["labor"] + PRICING["shipping"]) * PRICING["profit"]
+    return round(total)
 
 
 @app.route("/")
@@ -126,6 +188,7 @@ def configurator():
         "configurator.html",
         options=OPTIONS,
         base_price=BASE_PRICE,
+        pricing=PRICING,
         dev_phase=DEV_PHASE,
         paypal_donate_url=PAYPAL_DONATE_URL,
     )
@@ -155,7 +218,7 @@ def datenschutz():
 
 @app.route("/api/options")
 def api_options():
-    return jsonify({"base_price": BASE_PRICE, "options": OPTIONS})
+    return jsonify({"base_price": BASE_PRICE, "options": OPTIONS, "pricing": PRICING})
 
 
 @app.route("/api/newsletter", methods=["POST"])

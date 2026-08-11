@@ -68,7 +68,9 @@
             <div class="panel__head">
                 <p class="panel__eyebrow">Dein Instrument</p>
                 <h1 class="panel__title">CHISEL Bass</h1>
-                <p class="panel__desc">Stell dir deinen Bass zusammen. Jede Änderung siehst du sofort links am Instrument.</p>
+                <p class="panel__desc">Stell dir deinen Bass zusammen. Jede Änderung siehst du sofort links am Instrument. Bitte Beachte,
+                    dass der Konfigurator noch in Entwicklung ist und sich verfügbare Teile sowie Farben beim Verkaufsstart ändern können.
+                </p>
             </div>
 
             {% for key, group in options.items() %}
@@ -136,11 +138,18 @@
             <div class="summary">
                 <div class="dev-banner">
                     <span class="dev-banner__tag">In Entwicklung</span>
-                    <p>Der CHISEL Bass ist noch nicht im Verkauf. Zeig uns, dass dir das
-                       Design gefällt und wir melden uns zum Verkaufsstart bei dir.</p>
+                    <p>Der CHISEL Bass ist noch nicht im Verkauf. Der Preis ist ein
+                       Richtwert je nach Konfiguration. Zeig uns, dass dir das Design
+                       gefällt, und wir melden uns zum Verkaufsstart bei dir.</p>
                 </div>
 
                 <button id="interestBtn" class="buy">Interesse bekunden</button>
+            </div>
+
+            <!-- Sticky-Preisfenster: bleibt beim Scrollen immer unten sichtbar -->
+            <div class="price-sticky">
+                <span class="price-sticky__label">Richtpreis · inkl. Aufbau &amp; Versand</span>
+                <span class="price-sticky__value" id="totalPrice">–</span>
             </div>
         </aside>
 
@@ -173,6 +182,7 @@
     <script>
         window.BASE_PRICE = {{ base_price }};
         window.DEV_PHASE = {{ 'true' if dev_phase else 'false' }};
+        window.PRICING = {{ pricing | tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/configurator.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/configurator3d.js') }}"></script>

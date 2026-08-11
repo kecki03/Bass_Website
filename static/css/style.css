@@ -809,6 +809,21 @@ html { scroll-behavior: smooth; }
 .summary__row > span:first-child { color: var(--muted); font-size: 14px; letter-spacing: 0.04em; }
 .summary__price { font-size: 32px; font-weight: 700; }
 
+/* Sticky-Preisfenster: immer unten im Panel sichtbar (ohne ganz runterzuscrollen).
+   Blutet an die Panel-Kanten, damit der opake Hintergrund den Scroll-Inhalt verdeckt. */
+.price-sticky {
+    position: sticky; bottom: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    margin: 20px calc(-1 * clamp(28px, 4vw, 60px)) -48px;
+    padding: 14px clamp(28px, 4vw, 60px);
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.06);
+}
+.price-sticky__label { color: var(--muted); font-size: 12px; letter-spacing: 0.04em; }
+/* Bewusst OHNE Element-Schrift – normale Schrift (--sans). */
+.price-sticky__value { font-size: 26px; font-weight: 700; white-space: nowrap; }
+
 .buy {
     width: 100%;
     padding: 17px;

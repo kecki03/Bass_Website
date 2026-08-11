@@ -104,6 +104,55 @@
         }
     }
 
+    // ----- Preis-Kalkulation ------------------------------------------------
+    // Gesamtpreis = (Metall + Pickups + Potis + Hals + Fix-Teile + Arbeit +
+    // Shipping) * Gewinn. Metallpreis haengt von Marke UND Farbe ab.
+    function recalcPrice() {
+        var P = window.PRICING;
+        var el = document.getElementById("totalPrice");
+        if (!P || !el) return;
+
+        var brand = (state.metal_brand && state.metal_brand.id) || "harley_benton";
+        var color = (state.hardware && state.hardware.id) || "chrome";
+        var metalByBrand = P.metal[brand] || P.metal.harley_benton;
+        var metal = (color in metalByBrand)
+            ? metalByBrand[color]
+            : metalByBrand[Object.keys(metalByBrand)[0]];
+
+        var pickups = P.pickups[state.pickups && state.pickups.id];
+        if (pickups === undefined) pickups = P.pickups.seymour;
+        var potis = P.potis[state.potis && state.potis.id];
+        if (potis === undefined) potis = P.potis.allparts;
+        var neck = P.neck[state.neck && state.neck.id];
+        if (neck === undefined) neck = P.neck.drparts;
+
+        var parts = metal + pickups + potis + neck + P.fixed_parts;
+        var total = (parts + P.labor + P.shipping) * P.profit;
+        el.textContent = Math.round(total).toLocaleString("de-DE") + " €";
+    }
+
+    // Metall-Farben je nach Marke ein-/ausblenden: Gold gibt es nur bei Gotoh.
+    // Ist eine nicht verfuegbare Farbe aktiv, wird auf Chrom zurueckgeschaltet.
+    function updateMetalColorAvailability() {
+        var P = window.PRICING;
+        if (!P) return;
+        var brand = (state.metal_brand && state.metal_brand.id) || "harley_benton";
+        var allowed = P.metal[brand] || {};
+        var needSwitch = false;
+        document.querySelectorAll('.choice[data-group="hardware"]').forEach(function (btn) {
+            var ok = Object.prototype.hasOwnProperty.call(allowed, btn.dataset.id);
+            var wrap = btn.closest(".choice-wrap") || btn;
+            wrap.style.display = ok ? "" : "none";
+            btn.disabled = !ok;
+            if (btn.classList.contains("is-active") && !ok) needSwitch = true;
+        });
+        if (needSwitch) {
+            var fallback = document.querySelector('.choice[data-group="hardware"][data-id="chrome"]')
+                || document.querySelector('.choice[data-group="hardware"]:not([disabled])');
+            if (fallback) selectChoice(fallback);
+        }
+    }
+
     function selectChoice(btn) {
         var group = btn.dataset.group;
 
@@ -135,6 +184,10 @@
             // Hintergrund-Glow bleibt bewusst fest (in CSS definiert) und wechselt
             // nicht mehr je Metallteil.
         }
+        // Bei Marken-Wechsel Metall-Farben-Verfuegbarkeit anpassen (Gold nur Gotoh),
+        // danach immer den Preis neu berechnen.
+        if (group === "metal_brand") updateMetalColorAvailability();
+        recalcPrice();
     }
 
     // ----- Info-Tooltips: Tap-Toggle (v.a. Mobile) -------------------------
@@ -164,6 +217,10 @@
     document.querySelectorAll(".choice.is-active").forEach(function (btn) {
         selectChoice(btn);
     });
+
+    // Startzustand konsistent machen: Metall-Farben-Verfuegbarkeit + Preis.
+    updateMetalColorAvailability();
+    recalcPrice();
 
     // ----- Formulare absenden ----------------------------------------------
 
