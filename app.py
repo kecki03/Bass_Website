@@ -79,9 +79,10 @@ OPTIONS = {
     },
     "pickups": {
         "label": "Pick-Ups",
+        # Reihenfolge: guenstigste Option zuerst (= Basisausstattung, vorausgewaehlt).
         "choices": [
-            {"id": "seymour", "name": "Seymour Duncan SPB-3", "delta": 0, "price": 110},
             {"id": "emg", "name": "EMG Geezer Butler PHZ", "delta": 0, "price": 91},
+            {"id": "seymour", "name": "Seymour Duncan SPB-3", "delta": 0, "price": 110},
         ],
     },
     "potis": {

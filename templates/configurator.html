@@ -65,6 +65,7 @@
 
         <!-- Optionen -->
         <aside class="panel">
+            <div class="panel__scroll">
             <div class="panel__head">
                 <p class="panel__eyebrow">Dein Instrument</p>
                 <h1 class="panel__title">CHISEL Bass</h1>
@@ -119,6 +120,7 @@
                             <span class="choice__swatch" style="background:{{ c.swatch }}"></span>
                             {% endif %}
                             <span class="choice__name">{{ c.name }}</span>
+                            <span class="choice__extra" data-extra></span>
                         </button>
                     </div>
                     {% endfor %}
@@ -145,8 +147,9 @@
 
                 <button id="interestBtn" class="buy">Interesse bekunden</button>
             </div>
+            </div><!-- /.panel__scroll -->
 
-            <!-- Sticky-Preisfenster: bleibt beim Scrollen immer unten sichtbar -->
+            <!-- Preisleiste als fixer Footer unten im Panel -->
             <div class="price-sticky">
                 <span class="price-sticky__label">Richtpreis · inkl. Aufbau &amp; Versand</span>
                 <span class="price-sticky__value" id="totalPrice">–</span>

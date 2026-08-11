@@ -129,6 +129,47 @@
         var parts = metal + pickups + potis + neck + P.fixed_parts;
         var total = (parts + P.labor + P.shipping) * P.profit;
         el.textContent = Math.round(total).toLocaleString("de-DE") + " €";
+        updateExtras();
+    }
+
+    // Preis-Beitrag einer Option (bei Metall abhaengig von Marke UND Farbe).
+    function contributionFor(group, id) {
+        var P = window.PRICING;
+        if (!P) return undefined;
+        if (group === "pickups") return P.pickups[id];
+        if (group === "potis") return P.potis[id];
+        if (group === "hardware") {
+            var b = (state.metal_brand && state.metal_brand.id) || "harley_benton";
+            return P.metal[b] ? P.metal[b][id] : undefined;
+        }
+        if (group === "metal_brand") {
+            var c = (state.hardware && state.hardware.id) || "chrome";
+            return (P.metal[id] && (c in P.metal[id])) ? P.metal[id][c] : undefined;
+        }
+        return undefined;
+    }
+
+    // "+ X €" je Option = Aufpreis gegenueber der guenstigsten (Standard-)Option
+    // derselben Gruppe. Aktualisiert sich mit (Metallpreis haengt von Marke+Farbe ab).
+    function updateExtras() {
+        ["metal_brand", "hardware", "pickups", "potis"].forEach(function (group) {
+            var btns = Array.prototype.slice.call(
+                document.querySelectorAll('.choice[data-group="' + group + '"]'));
+            var contribs = [];
+            btns.forEach(function (b) {
+                var c = contributionFor(group, b.dataset.id);
+                if (c !== undefined) contribs.push(c);
+            });
+            if (!contribs.length) return;
+            var base = Math.min.apply(null, contribs);
+            btns.forEach(function (b) {
+                var ex = b.querySelector("[data-extra]");
+                if (!ex) return;
+                var c = contributionFor(group, b.dataset.id);
+                var d = (c === undefined) ? 0 : (c - base);
+                ex.textContent = d > 0 ? ("+ " + Math.round(d) + " €") : "";
+            });
+        });
     }
 
     // Metall-Farben je nach Marke ein-/ausblenden: Gold gibt es nur bei Gotoh.

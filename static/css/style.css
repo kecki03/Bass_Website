@@ -614,10 +614,19 @@ html { scroll-behavior: smooth; }
 
 /* Panel */
 .panel {
-    padding: 48px clamp(28px, 4vw, 60px);
     border-left: 1px solid var(--line);
-    overflow-y: auto;
     max-height: calc(100vh - 73px);
+    /* Flex-Spalte: der Inhalt scrollt oben (.panel__scroll), die Preisleiste
+       bleibt als Footer immer unten buendig sichtbar. */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.panel__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 48px clamp(28px, 4vw, 60px);
 }
 .panel__eyebrow {
     color: var(--accent);
@@ -674,6 +683,11 @@ html { scroll-behavior: smooth; }
 .choice__name { flex: 1; font-weight: 500; }
 .choice__delta { color: var(--muted); font-size: 12px; }
 .choice.is-active .choice__delta { color: var(--fg); }
+/* Aufpreis gegenueber der Standard-/Basisoption, rechts am Button. */
+.choice__extra { margin-left: auto; color: var(--muted); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.choice.is-active .choice__extra { color: var(--fg); }
+.choice__extra:empty { display: none; }
+.group__choices--swatch .choice__extra { margin-left: 0; }
 
 /* Swatch-Varianten (Farbe / Metall) */
 .group__choices--swatch .choice {
@@ -812,10 +826,9 @@ html { scroll-behavior: smooth; }
 /* Sticky-Preisfenster: immer unten im Panel sichtbar (ohne ganz runterzuscrollen).
    Blutet an die Panel-Kanten, damit der opake Hintergrund den Scroll-Inhalt verdeckt. */
 .price-sticky {
-    position: sticky; bottom: 0; z-index: 5;
+    flex-shrink: 0;                 /* fixer Footer unten im Panel, scrollt nicht mit */
     display: flex; align-items: center; justify-content: space-between; gap: 14px;
-    margin: 20px calc(-1 * clamp(28px, 4vw, 60px)) -48px;
-    padding: 14px clamp(28px, 4vw, 60px);
+    padding: 16px clamp(28px, 4vw, 60px);
     background: var(--bg);
     border-top: 1px solid var(--line);
     box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.06);
@@ -999,6 +1012,9 @@ a.buy { display: block; text-align: center; text-decoration: none; }
     .config__grid { grid-template-columns: 1fr; }
     .stage { min-height: 52vh; padding: 30px; }
     .panel { border-left: none; border-top: 1px solid var(--line); max-height: none; }
+    /* Mobil: kein innerer Scroll (die Seite scrollt); Preisleiste klebt am Viewport-Boden. */
+    .panel__scroll { overflow: visible; }
+    .price-sticky { position: sticky; bottom: 0; z-index: 5; }
     .stage__img { max-height: 48vh; }
     .stage__model { height: 52vh; max-height: 52vh; }
 }
