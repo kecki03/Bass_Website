@@ -351,6 +351,20 @@ body.landing-v2 {
 .shot .hero, .shot .section--modular { height: 760px; min-height: 0; }
 .shot .section--process { height: 560px; min-height: 0; }
 
+/* ---------- Grosse Monitore: Inhalt mitwachsen lassen ---------- */
+/* Bis ~1600px (Laptop) bleibt alles unveraendert. Erst ab 1650px waechst die
+   zentrale Spalte fluid mit (90vw, gedeckelt bei 2200px), damit die Seite auf
+   grossen Bildschirmen nicht in einer schmalen 1280er-Spalte "schwimmt". Topbar
+   und Footer werden dabei an den Inhalt ausgerichtet, statt in die Ecken zu kleben. */
+@media (min-width: 1650px) {
+    :root { --maxw: min(2200px, 90vw); }
+    .topbar,
+    .footer {
+        padding-left:  max(34px, calc((100vw - var(--maxw)) / 2 + 34px));
+        padding-right: max(34px, calc((100vw - var(--maxw)) / 2 + 34px));
+    }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
     .topbar__nav { gap: 18px; }
