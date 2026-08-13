@@ -274,7 +274,15 @@ body.landing-v2 {
 
 /* ---------- Release / Newsletter ---------- */
 /* Desktop: normale Abstände (.section = 110px). Mobil kompakter -> Media-Query. */
-.release { text-align: center; padding: 60px 0; }
+/* Eigener, dezent lavendelfarbener Ton (harmoniert mit dem lila Akzent), damit
+   sich die Kontakt-Sektion als Band vom warmen Seiten-Hintergrund abhebt. Feine
+   Trennlinien oben/unten definieren die Kante. */
+.release {
+    text-align: center; padding: 60px 0;
+    background: #eeeaf4;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
 .release__tag {
     display: inline-block; padding: 6px 14px; border-radius: 999px;
     background: var(--accent); color: #fff;
