@@ -1,7 +1,9 @@
+import hashlib
 import os
 import re
 import secrets
-from datetime import timedelta
+from datetime import date, timedelta
+from urllib.parse import urlparse
 
 from flask import Flask, render_template, jsonify, request, send_from_directory
 
@@ -343,6 +345,117 @@ def api_interest():
     else:
         message = "Danke für dein Interesse! Wir halten dich auf dem Laufenden."
     return jsonify({"ok": True, "message": message})
+
+
+# ---------------------------------------------------------------------------
+# Cookielose Eigen-Analytics.
+# Der Browser schickt via static/js/track.js nur {path, referrer}. Erst hier am
+# Server werden daraus anonymisiert Besucher-Hash, Land und Geraet abgeleitet.
+# Es wird KEINE IP gespeichert und KEIN Cookie gesetzt -> kein Cookie-Banner noetig.
+# ---------------------------------------------------------------------------
+
+# Salt fuer den taeglich rotierenden Besucher-Hash. Eigener ANALYTICS_SALT
+# bevorzugt; sonst der Session-Secret (in Prod ohnehin gesetzt).
+_ANALYTICS_SALT = os.environ.get("ANALYTICS_SALT") or app.secret_key
+
+# Offline-GeoIP (IP -> Land am Server, IP verlaesst den Server nicht). Optional:
+# fehlt das Paket, laeuft der Rest ohne Laenderzuordnung weiter.
+try:
+    from geoip2fast import GeoIP2Fast
+    _geoip = GeoIP2Fast()
+except Exception:
+    _geoip = None
+
+# Bots/Crawler nicht mitzaehlen (grober UA-Filter).
+_BOT_RE = re.compile(
+    r"bot|crawl|spider|slurp|preview|fetch|monitor|curl|wget|python-requests|"
+    r"headless|lighthouse|pingdom|facebookexternalhit|whatsapp|telegram|embed",
+    re.I,
+)
+
+# Eigene Hosts gelten als "direkt" (kein externer Referrer).
+_OWN_HOSTS = {"layerinstruments.com", "layerinstruments.de", "localhost", "127.0.0.1"}
+
+
+def _track_ip():
+    fwd = request.headers.get("X-Forwarded-For", "")
+    if fwd:
+        return fwd.split(",")[0].strip()
+    return request.remote_addr or ""
+
+
+def _visitor_hash(ip, ua):
+    """Taeglich rotierender Anonym-Hash – keine Wiedererkennung ueber Tage."""
+    raw = f"{_ANALYTICS_SALT}|{ip}|{ua}|{date.today().isoformat()}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _device_from_ua(ua):
+    u = ua.lower()
+    if "ipad" in u or "tablet" in u or ("android" in u and "mobile" not in u):
+        return "tablet"
+    if "mobi" in u or "iphone" in u or "android" in u:
+        return "mobile"
+    return "desktop"
+
+
+def _country_from_ip(ip):
+    if not _geoip or not ip:
+        return None
+    try:
+        result = _geoip.lookup(ip)
+        code = getattr(result, "country_code", None)
+        if code and code not in ("--", "XX", ""):
+            return code
+    except Exception:
+        pass
+    return None
+
+
+def _referrer_domain(referrer):
+    """Referrer-URL -> nackte Quell-Domain; eigene Domain = direkt (None)."""
+    if not referrer:
+        return None
+    try:
+        host = (urlparse(referrer).hostname or "").lower()
+    except Exception:
+        return None
+    if host.startswith("www."):
+        host = host[4:]
+    if not host or host in _OWN_HOSTS:
+        return None
+    return host
+
+
+@app.route("/api/track", methods=["POST"])
+def api_track():
+    """Nimmt das Beacon entgegen und legt einen anonymen Seitenaufruf ab.
+
+    Antwortet immer mit 204 (No Content) – Tracking darf den Client nie stoeren.
+    """
+    ua = request.headers.get("User-Agent", "")
+    if not ua or _BOT_RE.search(ua):
+        return ("", 204)
+
+    data = request.get_json(silent=True) or {}
+    path = (data.get("path") or "").strip()
+    # Nur echte Seitenpfade; Admin/API selbst nicht tracken.
+    if not path.startswith("/") or path.startswith(("/admin", "/api", "//")):
+        return ("", 204)
+
+    ip = _track_ip()
+    try:
+        db.add_page_view(
+            path=path,
+            referrer=_referrer_domain((data.get("referrer") or "").strip()),
+            country=_country_from_ip(ip),
+            device=_device_from_ua(ua),
+            visitor=_visitor_hash(ip, ua),
+        )
+    except Exception:
+        # Analytics ist "best effort" – ein DB-Fehler darf nichts kaputtmachen.
+        pass
+    return ("", 204)
 
 
 if __name__ == "__main__":

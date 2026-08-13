@@ -54,6 +54,44 @@
             background: rgba(255,77,109,.10); border: 1px solid rgba(255,77,109,.35); color: #ff9db0;
         }
         .btn-del:hover { background: rgba(255,77,109,.20); border-color: rgba(255,77,109,.6); }
+        /* --- Analytics --- */
+        .an-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px;
+        }
+        .an-card {
+            background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px;
+        }
+        .an-card .num { font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1.15; }
+        .an-card .sub { color: var(--muted); font-size: .8rem; }
+        .an-card .lbl { font-size: .82rem; margin-bottom: 4px; }
+        .an-cols {
+            display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 18px; align-items: start; margin-bottom: 8px;
+        }
+        .an-panel {
+            background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+        }
+        .an-panel h3 { margin: 0 0 12px; font-size: .92rem; font-weight: 600; }
+        .an-chart { display: flex; align-items: flex-end; gap: 4px; height: 130px; }
+        .an-chart .bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+        .an-chart .bar > i {
+            display: block; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 2px;
+            opacity: .85; transition: opacity .15s;
+        }
+        .an-chart .bar:hover > i { opacity: 1; }
+        .an-chart .bar > span { color: var(--muted); font-size: .62rem; text-align: center; margin-top: 5px; white-space: nowrap; }
+        .an-list { list-style: none; margin: 0; padding: 0; }
+        .an-list li {
+            display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; font-size: .84rem;
+            border-top: 1px solid rgba(255,255,255,.05);
+        }
+        .an-list li:first-child { border-top: 0; }
+        .an-list .k { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .an-list .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+        .an-list .empty-row { color: var(--muted); border: 0; }
+        @media (max-width: 780px) {
+            .an-grid { grid-template-columns: 1fr; }
+            .an-cols { grid-template-columns: 1fr; }
+        }
         .config-cell { min-width: 260px; }
         .cfg {
             display: inline-flex; align-items: stretch; margin: 2px 4px 2px 0; border-radius: 7px;
@@ -90,6 +128,103 @@
                 <div class="lbl">davon Unterstützer</div>
             </div>
         </div>
+
+        {% if analytics %}
+        <section class="block">
+            <h2>Reichweite <span class="muted" style="font-weight:400; font-size:.85rem;">· cookielos, letzte {{ analytics.detail_days }} Tage im Detail</span></h2>
+
+            <div class="an-grid">
+                <div class="an-card">
+                    <div class="lbl muted">Heute</div>
+                    <div class="num">{{ analytics.today.views }}</div>
+                    <div class="sub">Aufrufe · {{ analytics.today.visitors }} Besucher</div>
+                </div>
+                <div class="an-card">
+                    <div class="lbl muted">Letzte 7 Tage</div>
+                    <div class="num">{{ analytics.d7.views }}</div>
+                    <div class="sub">Aufrufe · {{ analytics.d7.visitors }} Besucher</div>
+                </div>
+                <div class="an-card">
+                    <div class="lbl muted">Letzte 30 Tage</div>
+                    <div class="num">{{ analytics.d30.views }}</div>
+                    <div class="sub">Aufrufe · {{ analytics.d30.visitors }} Besucher</div>
+                </div>
+            </div>
+
+            <div class="an-panel" style="margin-bottom:18px;">
+                <h3>Aufrufe pro Tag</h3>
+                <div class="an-chart">
+                    {% for label, count in analytics.series %}
+                    <div class="bar" title="{{ label }} — {{ count }} Aufrufe">
+                        <i style="height: {{ (count / analytics.series_max * 100) | round(1) }}%;"></i>
+                        <span>{{ label }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="an-cols">
+                <div class="an-panel">
+                    <h3>Top-Seiten</h3>
+                    <ul class="an-list">
+                        {% for path, n in analytics.top_paths %}
+                        <li><span class="k">{{ path }}</span><span class="n">{{ n }}</span></li>
+                        {% else %}
+                        <li class="empty-row">Noch keine Daten.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="an-panel">
+                    <h3>Herkunft</h3>
+                    <ul class="an-list">
+                        {% for ref, n in analytics.top_referrers %}
+                        <li><span class="k">{{ ref }}</span><span class="n">{{ n }}</span></li>
+                        {% else %}
+                        <li class="empty-row">Nur Direktzugriffe.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="an-panel">
+                    <h3>Länder</h3>
+                    <ul class="an-list">
+                        {% for country, n in analytics.top_countries %}
+                        <li><span class="k">{{ country }}</span><span class="n">{{ n }}</span></li>
+                        {% else %}
+                        <li class="empty-row">Keine Länderdaten.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="an-cols" style="grid-template-columns: 1fr 1fr;">
+                <div class="an-panel">
+                    <h3>Geräte</h3>
+                    <ul class="an-list">
+                        {% for device, n in analytics.devices %}
+                        <li><span class="k">{{ {'mobile':'Handy','tablet':'Tablet','desktop':'Desktop'}.get(device, device) }}</span><span class="n">{{ n }}</span></li>
+                        {% else %}
+                        <li class="empty-row">Noch keine Daten.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="an-panel">
+                    <h3>Konfigurator</h3>
+                    <ul class="an-list">
+                        <li><span class="k">Besucher im Konfigurator</span><span class="n">{{ analytics.konf_visitors }}</span></li>
+                        <li><span class="k">Interessensbekundungen</span><span class="n">{{ analytics.interest_recent }}</span></li>
+                        <li>
+                            <span class="k">Conversion</span>
+                            <span class="n">
+                                {%- if analytics.konf_visitors -%}
+                                    {{ (analytics.interest_recent / analytics.konf_visitors * 100) | round(1) }} %
+                                {%- else -%}—{%- endif -%}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        {% endif %}
 
         <section class="block">
             <h2>Newsletter-Anmeldungen</h2>

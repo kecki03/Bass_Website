@@ -86,7 +86,25 @@
         </section>
 
         <section class="legal__block">
-            <h2>7. Weitergabe an Dritte</h2>
+            <h2>7. Reichweitenmessung (cookielos)</h2>
+            <p>Zur Verbesserung unseres Angebots messen wir die Nutzung unserer Website mit
+               einer selbst betriebenen, <strong>cookielosen</strong> Statistik. Es werden
+               <strong>keine Cookies</strong> gesetzt und <strong>keine Daten an Dritte</strong>
+               weitergegeben. Erfasst werden lediglich die aufgerufene Seite, die
+               Quell-Domain (Referrer), der grobe Geräte-Typ (Mobil/Tablet/Desktop) sowie
+               das ungefähre Herkunftsland.</p>
+            <p>Das <strong>Herkunftsland</strong> wird direkt auf unserem Server offline aus
+               der IP-Adresse abgeleitet; die <strong>IP-Adresse selbst wird dabei nicht
+               gespeichert</strong> und verlässt unseren Server nicht. Zur Unterscheidung von
+               Besuchen bilden wir einen <strong>anonymen, täglich wechselnden Prüfwert</strong>
+               (Hash aus IP, Browser-Kennung und Datum). Eine Wiedererkennung über einzelne
+               Tage hinaus oder ein Rückschluss auf deine Person ist damit nicht möglich.</p>
+            <p><strong>Rechtsgrundlage:</strong> unser berechtigtes Interesse an einer
+               datensparsamen, anonymen Reichweitenmessung (Art. 6 Abs. 1 lit. f DSGVO).</p>
+        </section>
+
+        <section class="legal__block">
+            <h2>8. Weitergabe an Dritte</h2>
             <p>Eine Weitergabe deiner Daten an Dritte erfolgt nicht, außer an
                Dienstleister (z.&nbsp;B. Hosting), die uns bei der Bereitstellung der
                Website unterstützen und dabei ausschließlich in unserem Auftrag tätig
@@ -94,7 +112,7 @@
         </section>
 
         <section class="legal__block">
-            <h2>8. Deine Rechte</h2>
+            <h2>9. Deine Rechte</h2>
             <p>Dir stehen gegenüber uns folgende Rechte hinsichtlich deiner
                personenbezogenen Daten zu:</p>
             <ul class="legal__list">
@@ -124,5 +142,6 @@
         </nav>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/track.js') }}" defer></script>
 </body>
 </html>

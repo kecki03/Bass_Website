@@ -7,7 +7,7 @@ Entwicklung ohne Docker kann sie auf eine eigene MySQL-Instanz zeigen.
 
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import (
     JSON,
@@ -17,6 +17,8 @@ from sqlalchemy import (
     Integer,
     String,
     create_engine,
+    distinct,
+    func,
 )
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -68,6 +70,27 @@ class InterestSubmission(Base):
     country = Column(String(128))
     contribution = Column(Integer)
     created_at = Column(DateTime, default=_now)
+
+
+class PageView(Base):
+    """Ein anonymer Seitenaufruf fuer die Eigen-Analytics (cookielos).
+
+    Es werden KEINE personenbezogenen Daten gespeichert: `visitor` ist ein
+    taeglich rotierender Hash (IP+UA+Salt+Datum) – keine Wiedererkennung ueber
+    Tage hinweg, keine IP-Speicherung. `country` wird offline aus der IP
+    abgeleitet (die IP selbst wird nicht gespeichert). `referrer` ist nur die
+    Quell-Domain.
+    """
+
+    __tablename__ = "page_views"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    created_at = Column(DateTime, default=_now, index=True)
+    path = Column(String(255))
+    referrer = Column(String(255))      # nur Domain, z.B. "instagram.com"; None = direkt
+    country = Column(String(2))         # ISO-Laendercode, z.B. "DE"
+    device = Column(String(16))         # "mobile" | "tablet" | "desktop"
+    visitor = Column(String(64), index=True)  # taeglich rotierender Anonym-Hash
 
 
 def init_db(retries=15, delay=3):
@@ -161,3 +184,84 @@ def get_interest_submissions():
             }
             for r in rows
         ]
+
+
+# ---------------------------------------------------------------------------
+# Analytics (cookielose Eigen-Statistik)
+# ---------------------------------------------------------------------------
+def add_page_view(path=None, referrer=None, country=None, device=None, visitor=None):
+    with SessionLocal() as session:
+        session.add(PageView(
+            path=(path[:255] if path else None),
+            referrer=(referrer[:255] if referrer else None),
+            country=(country[:2] if country else None),
+            device=(device[:16] if device else None),
+            visitor=(visitor[:64] if visitor else None),
+        ))
+        session.commit()
+
+
+def _naive(dt):
+    """Zeitzonenlose UTC-Zeit (passend zu den in MySQL naiv gespeicherten Werten)."""
+    return dt.replace(tzinfo=None) if dt.tzinfo else dt
+
+
+def _period_stats(session, days):
+    cutoff = _naive(_now()) - timedelta(days=days)
+    views = session.query(func.count(PageView.id)).filter(PageView.created_at >= cutoff).scalar() or 0
+    visitors = session.query(func.count(distinct(PageView.visitor))).filter(
+        PageView.created_at >= cutoff).scalar() or 0
+    return {"views": views, "visitors": visitors}
+
+
+def get_analytics(detail_days=30, series_days=14):
+    """Alle Kennzahlen fuer das Admin-Analytics-Panel in einem dict."""
+    with SessionLocal() as session:
+        cutoff = _naive(_now()) - timedelta(days=detail_days)
+        recent = PageView.created_at >= cutoff
+
+        def top(col, limit, extra=None):
+            q = session.query(col, func.count(PageView.id)).filter(recent)
+            if extra is not None:
+                q = q.filter(extra)
+            return [(v, n) for v, n in
+                    q.group_by(col).order_by(func.count(PageView.id).desc()).limit(limit).all()]
+
+        top_paths = top(PageView.path, 10)
+        top_referrers = top(PageView.referrer, 10,
+                            (PageView.referrer.isnot(None)) & (PageView.referrer != ""))
+        top_countries = top(PageView.country, 15, PageView.country.isnot(None))
+        devices = top(PageView.device, 5)
+
+        # Taeglicher Verlauf (letzte series_days Tage), fehlende Tage mit 0 auffuellen
+        today = _naive(_now()).date()
+        start = today - timedelta(days=series_days - 1)
+        rows = (session.query(func.date(PageView.created_at), func.count(PageView.id))
+                .filter(PageView.created_at >= datetime(start.year, start.month, start.day))
+                .group_by(func.date(PageView.created_at)).all())
+        by_day = {str(d): n for d, n in rows}
+        series = []
+        for i in range(series_days - 1, -1, -1):
+            day = today - timedelta(days=i)
+            series.append((day.strftime("%d.%m."), by_day.get(str(day), 0)))
+
+        # Konfigurator-Nutzung (eindeutige Besucher, die den Konfigurator geoeffnet haben)
+        konf_visitors = session.query(func.count(distinct(PageView.visitor))).filter(
+            recent, PageView.path.like("%konfigurator%")).scalar() or 0
+        interest_recent = session.query(func.count(InterestSubmission.id)).filter(
+            InterestSubmission.created_at >= cutoff).scalar() or 0
+
+        return {
+            "today": _period_stats(session, 1),
+            "d7": _period_stats(session, 7),
+            "d30": _period_stats(session, 30),
+            "top_paths": top_paths,
+            "top_referrers": top_referrers,
+            "top_countries": top_countries,
+            "devices": devices,
+            "series": series,
+            "series_max": max([n for _, n in series] + [1]),
+            "detail_days": detail_days,
+            "konf_visitors": konf_visitors,
+            "interest_recent": interest_recent,
+        }

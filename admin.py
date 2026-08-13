@@ -177,11 +177,16 @@ def dashboard():
     interest = db.get_interest_submissions()
     for row in interest:
         row["config_display"] = format_config(row["config"])
+    try:
+        analytics = db.get_analytics()
+    except Exception:
+        analytics = None
     resp = Response(
         render_template(
             "admin/dashboard.html",
             newsletter=newsletter,
             interest=interest,
+            analytics=analytics,
             csrf_token=csrf_token(),
         )
     )
