@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ person.name }} — Layer Instruments</title>
+    <meta name="description" content="{{ person.name }} – {{ person.role }}.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-v2.css') }}">
+    <style>
+        .person-wrap { max-width: var(--maxw); margin: 0 auto; padding: 150px 34px 90px; width: 100%; flex: 1 0 auto; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px; color: var(--muted);
+            font-size: 14px; margin-bottom: 34px; transition: color .2s;
+        }
+        .back-link:hover { color: var(--ink); }
+        .person {
+            display: grid; grid-template-columns: 0.85fr 1.15fr;
+            gap: clamp(28px, 5vw, 72px); align-items: center;
+        }
+        .person__photo {
+            width: 100%; aspect-ratio: 3 / 4; border-radius: 22px; overflow: hidden;
+            border: 1px solid var(--line); background: var(--panel);
+            box-shadow: 0 26px 60px rgba(0,0,0,0.14);
+        }
+        .person__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .person__eyebrow {
+            font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.16em;
+            font-size: 12px; color: var(--accent); margin-bottom: 14px;
+        }
+        .person__name {
+            font-family: var(--display); font-weight: 700; letter-spacing: -0.02em;
+            line-height: 1.0; font-size: clamp(38px, 5.4vw, 72px); color: var(--ink);
+        }
+        .person__role { color: var(--muted); font-size: 17px; margin-top: 14px; }
+        .person__facts { list-style: none; margin: 30px 0 0; padding: 0; }
+        .person__facts li {
+            position: relative; padding: 14px 0 14px 30px; font-size: 17px; line-height: 1.5;
+            color: #2a2a30; border-top: 1px solid var(--line);
+        }
+        .person__facts li:first-child { border-top: 0; }
+        /* kleiner Akzent-Marker vor jedem Stichpunkt */
+        .person__facts li::before {
+            content: ""; position: absolute; left: 0; top: 22px;
+            width: 9px; height: 9px; border-radius: 3px; background: var(--accent);
+        }
+        @media (max-width: 780px) {
+            .person-wrap { padding: 120px 22px 70px; }
+            .person { grid-template-columns: 1fr; gap: 26px; }
+            .person__photo { max-width: 420px; }
+        }
+    </style>
+</head>
+<body class="landing-v2">
+
+    <header class="topbar is-dark">
+        <a class="topbar__brand" href="{{ url_for('home') }}">Layer Instruments</a>
+        <nav class="topbar__nav">
+            <a href="{{ url_for('home') }}#about">Über uns</a>
+            <a class="nav-konf" href="{{ url_for('configurator') }}">Konfigurator</a>
+            <a class="nav-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+        </nav>
+    </header>
+
+    <main class="person-wrap">
+        <a class="back-link" href="{{ url_for('home') }}#about">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+            Zurück zu „Über uns"
+        </a>
+
+        <div class="person">
+            <div class="person__photo">
+                <img src="{{ url_for('static', filename=person.img) }}" alt="{{ person.name }}">
+            </div>
+            <div class="person__info">
+                <p class="person__eyebrow">Layer Instruments</p>
+                <h1 class="person__name">{{ person.name }}</h1>
+                <p class="person__role">{{ person.role }}</p>
+                <ul class="person__facts">
+                    {% for fact in person.facts %}
+                    <li>{{ fact }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <span class="footer__brand">Layer Instruments</span>
+        <span class="footer__note">3D-gedruckt · Ein Studentenprojekt</span>
+        <nav class="footer__links">
+            <a href="{{ url_for('impressum') }}">Impressum</a>
+            <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+            <a class="footer-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+        </nav>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/track.js') }}" defer></script>
+</body>
+</html>

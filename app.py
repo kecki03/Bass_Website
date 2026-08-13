@@ -5,7 +5,7 @@ import secrets
 from datetime import date, timedelta
 from urllib.parse import urlparse
 
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, abort, render_template, jsonify, request, send_from_directory
 
 import db
 import mailer
@@ -180,9 +180,49 @@ def compute_price(config):
     return round(total)
 
 
+# ---------------------------------------------------------------------------
+# Team / Gruender. Jede Person hat eine eigene Detailseite unter /team/<slug>.
+# Reihenfolge der Stichpunkte = Anzeigereihenfolge.
+# ---------------------------------------------------------------------------
+TEAM = {
+    "perotin": {
+        "name": "Perotin Götz",
+        "short": "Perotin",
+        "role": "Mitgründer von Layer Instruments",
+        "img": "img/site/team_1.jpg",
+        "facts": [
+            "Gebürtiger Vorarlberger, Österreich",
+            "Wohnt in Graz",
+            "Studiert Industriedesign an der FH Joanneum Graz",
+            "Hobby-Schlagzeuger",
+        ],
+    },
+    "clemens": {
+        "name": "Clemens Keckeis",
+        "short": "Clemens",
+        "role": "Mitgründer von Layer Instruments",
+        "img": "img/site/team_2.jpg",
+        "facts": [
+            "Gebürtiger Vorarlberger, Österreich",
+            "Wohnt in Berlin",
+            "Studiert Schienenfahrzeugtechnik an der TU Berlin",
+            "Hobby-Bassist",
+        ],
+    },
+}
+
+
 @app.route("/")
 def home():
     return render_template("index.html", dev_phase=DEV_PHASE)
+
+
+@app.route("/team/<slug>")
+def team_member(slug):
+    person = TEAM.get(slug)
+    if not person:
+        abort(404)
+    return render_template("founder.html", person=person, slug=slug)
 
 
 @app.route("/konfigurator")

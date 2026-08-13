@@ -131,14 +131,14 @@
                     </p>
                 </div>
                 <div class="founders">
-                    <div class="founder">
-                        <img class="founder__img" src="{{ url_for('static', filename='img/site/team_1.jpg') }}" alt="Gründer 01" loading="lazy" decoding="async">
-                        <span class="founder__name mono">Gründer 01</span>
-                    </div>
-                    <div class="founder">
-                        <img class="founder__img" src="{{ url_for('static', filename='img/site/team_2.jpg') }}" alt="Gründer 02" loading="lazy" decoding="async">
-                        <span class="founder__name mono">Gründer 02</span>
-                    </div>
+                    <a class="founder" href="{{ url_for('team_member', slug='perotin') }}" aria-label="Mehr über Perotin">
+                        <img class="founder__img" src="{{ url_for('static', filename='img/site/team_1.jpg') }}" alt="Perotin Götz" loading="lazy" decoding="async">
+                        <span class="founder__name mono">Perotin</span>
+                    </a>
+                    <a class="founder" href="{{ url_for('team_member', slug='clemens') }}" aria-label="Mehr über Clemens">
+                        <img class="founder__img" src="{{ url_for('static', filename='img/site/team_2.jpg') }}" alt="Clemens Keckeis" loading="lazy" decoding="async">
+                        <span class="founder__name mono">Clemens</span>
+                    </a>
                 </div>
             </div>
         </div>
