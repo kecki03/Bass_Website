@@ -251,6 +251,18 @@ def get_analytics(detail_days=30, series_days=14):
         interest_recent = session.query(func.count(InterestSubmission.id)).filter(
             InterestSubmission.created_at >= cutoff).scalar() or 0
 
+        # Letzte Einzelaufrufe (Zeit, Seite, Herkunft, Land, Geraet) – ohne den
+        # visitor-Hash, es geht nur um die Verknuepfung der anonymen Merkmale.
+        recent_rows = (session.query(
+                PageView.created_at, PageView.path, PageView.referrer,
+                PageView.country, PageView.device)
+            .order_by(PageView.id.desc()).limit(40).all())
+        recent_views = [
+            {"created_at": r[0], "path": r[1], "referrer": r[2],
+             "country": r[3], "device": r[4]}
+            for r in recent_rows
+        ]
+
         return {
             "today": _period_stats(session, 1),
             "d7": _period_stats(session, 7),
@@ -264,4 +276,5 @@ def get_analytics(detail_days=30, series_days=14):
             "detail_days": detail_days,
             "konf_visitors": konf_visitors,
             "interest_recent": interest_recent,
+            "recent_views": recent_views,
         }

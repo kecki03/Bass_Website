@@ -223,6 +223,30 @@
                     </ul>
                 </div>
             </div>
+
+            <h3 style="font-size:.95rem; margin:26px 0 12px;">Letzte Besuche</h3>
+            <div class="table-scroll">
+                {% if analytics.recent_views %}
+                <table>
+                    <thead>
+                        <tr><th>Zeit (UTC)</th><th>Seite</th><th>Herkunft</th><th>Land</th><th>Gerät</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for v in analytics.recent_views %}
+                        <tr>
+                            <td class="muted">{{ v.created_at.strftime('%d.%m. %H:%M') if v.created_at else '' }}</td>
+                            <td>{{ v.path }}</td>
+                            <td>{{ v.referrer or 'Direkt' }}</td>
+                            <td>{{ v.country or '—' }}</td>
+                            <td>{{ {'mobile':'Handy','tablet':'Tablet','desktop':'Desktop'}.get(v.device, v.device or '—') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty">Noch keine Besuche erfasst.</div>
+                {% endif %}
+            </div>
         </section>
         {% endif %}
 
