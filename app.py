@@ -1,4 +1,5 @@
 import hashlib
+import math
 import os
 import re
 import secrets
@@ -62,11 +63,15 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 OPTIONS = {
     "neck": {
         "label": "Hals",
-        # Aktuell nur eine Ausfuehrung (Dr. Parts); weitere Hals-Optionen folgen.
-        # color = Holz-Tönung, die im 3D-Modell auf die Holztextur gelegt wird.
-        "note": "Weitere Hals-Optionen folgen in Kürze.",
+        # Standard (Dr. Parts) und Premium (White Stork Guitars). color = Holz-Tönung,
+        # die im 3D-Modell auf die Holztextur gelegt wird (Maple = heller als Palisander).
+        # badge/desc werden im Konfigurator angezeigt (Premium-Kennzeichnung + Details).
         "choices": [
-            {"id": "drparts", "name": "Dr. Parts: Palisander", "delta": 0, "color": "#e8c79a"},
+            {"id": "drparts", "name": "Dr. Parts: Palisander", "delta": 0, "color": "#e8c79a",
+             "desc": "Solider Standard-Hals aus Palisander."},
+            {"id": "whitestork", "name": "White Stork Guitars", "delta": 0, "color": "#e8d6a6",
+             "badge": "Premium",
+             "desc": "Hochwertiger Maple-Hals · Griffbrett aus Indian Rosewood · 20 Bünde · Clear High Gloss Nitro-Finish."},
         ],
     },
     "metal_brand": {
@@ -76,7 +81,7 @@ OPTIONS = {
         # Chrom/Schwarz. Gotoh: Chrom/Schwarz/Gold (Gold wird im JS nur bei Gotoh gezeigt).
         "choices": [
             {"id": "harley_benton", "name": "Harley Benton", "delta": 0},
-            {"id": "gotoh", "name": "Gotoh", "delta": 0},
+            {"id": "gotoh", "name": "Gotoh", "delta": 0, "badge": "Premium"},
         ],
     },
     "pickups": {
@@ -150,7 +155,7 @@ PRICING = {
     },
     "pickups": {"seymour": 110, "emg": 91},
     "potis": {"allparts": 26, "bareknuckle": 34},
-    "neck": {"drparts": 69},
+    "neck": {"drparts": 69, "whitestork": 350},   # White Stork = Premium (Maple/Rosewood)
     "fixed_parts": 100,   # 3D-Druck 60 + Schrauben/Kabel/Kondensator 20 + Saiten 20
     "labor": 100,         # Arbeitszeit
     "shipping": 30,       # Shipping & Packaging
@@ -158,8 +163,22 @@ PRICING = {
 }
 
 
+def round_up_to_5(value):
+    """Auf das naechste Vielfache von 5 aufrunden (fuer angezeigte Teil-Aufpreise)."""
+    return int(math.ceil(value / 5.0) * 5)
+
+
+def round_up_to_9(value):
+    """Auf die naechste auf 9 endende ganze Zahl aufrunden (nur fuer den Gesamtpreis).
+
+    Beispiele: 1290 -> 1299, 1300 -> 1309, 1299 -> 1299.
+    """
+    n = int(math.ceil(value))
+    return n + ((9 - n % 10) % 10)
+
+
 def compute_price(config):
-    """Gesamtpreis (gerundet, Euro) fuer eine Konfiguration.
+    """Gesamtpreis (auf 9er-Endung aufgerundet, Euro) fuer eine Konfiguration.
 
     config: dict der Auswahl-IDs je Gruppe, z.B.
         {"metal_brand": "gotoh", "hardware": "gold", "pickups": "seymour",
@@ -177,7 +196,7 @@ def compute_price(config):
 
     parts = metal + pickups + potis + neck + PRICING["fixed_parts"]
     total = (parts + PRICING["labor"] + PRICING["shipping"]) * PRICING["profit"]
-    return round(total)
+    return round_up_to_9(total)
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +210,7 @@ TEAM = {
         "role": "Mitgründer von Layer Instruments",
         "img": "img/site/team_1.jpg",
         "facts": [
-            "Gebürtiger Vorarlberger, Österreich",
+            "Geboren in Vorarlberg, Österreich",
             "Wohnt in Graz",
             "Studiert Industriedesign an der FH Joanneum Graz",
             "Hobby-Schlagzeuger",
@@ -203,7 +222,7 @@ TEAM = {
         "role": "Mitgründer von Layer Instruments",
         "img": "img/site/team_2.jpg",
         "facts": [
-            "Gebürtiger Vorarlberger, Österreich",
+            "Geboren in Vorarlberg, Österreich",
             "Wohnt in Berlin",
             "Studiert Schienenfahrzeugtechnik an der TU Berlin",
             "Hobby-Bassist",

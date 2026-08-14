@@ -680,7 +680,18 @@ html { scroll-behavior: smooth; }
     border-color: var(--accent);
     background: rgba(139,108,255,0.12);
 }
-.choice__name { flex: 1; font-weight: 500; }
+/* Name + optionale Beschreibung/Badge stapeln sich in einer Spalte. */
+.choice__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.choice__name { font-weight: 500; }
+.choice__desc { font-size: 12px; line-height: 1.45; color: var(--muted); }
+.choice.is-active .choice__desc { color: var(--fg); }
+/* Premium-Kennzeichnung (z.B. am hochwertigen Hals) */
+.choice__badge {
+    display: inline-block; vertical-align: middle; margin-left: 7px;
+    padding: 1px 8px; border-radius: 999px;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--accent); color: #fff;
+}
 .choice__delta { color: var(--muted); font-size: 12px; }
 .choice.is-active .choice__delta { color: var(--fg); }
 /* Aufpreis gegenueber der Standard-/Basisoption, rechts am Button. */
@@ -1012,8 +1023,9 @@ a.buy { display: block; text-align: center; text-decoration: none; }
     .config__grid { grid-template-columns: 1fr; }
     .stage { min-height: 52vh; padding: 30px; }
     .panel { border-left: none; border-top: 1px solid var(--line); max-height: none; }
-    /* Mobil: kein innerer Scroll (die Seite scrollt); Preisleiste klebt am Viewport-Boden. */
-    .panel__scroll { overflow: visible; }
+    /* Mobil: kein innerer Scroll (die Seite scrollt); Preisleiste klebt am Viewport-Boden.
+       Extra Abstand unten, damit die letzte Option nicht hinter der Preisleiste verschwindet. */
+    .panel__scroll { overflow: visible; padding-bottom: 92px; }
     .price-sticky { position: sticky; bottom: 0; z-index: 5; }
     .stage__img { max-height: 48vh; }
     .stage__model { height: 52vh; max-height: 52vh; }

@@ -104,6 +104,15 @@
         }
     }
 
+    // ----- Rundung ----------------------------------------------------------
+    // Alle angezeigten Aufpreise werden auf das naechste 5er-Vielfache
+    // aufgerundet; der Gesamtpreis auf die naechste auf 9 endende Zahl.
+    function roundUp5(n) { return Math.ceil(n / 5) * 5; }
+    function roundUp9(n) {
+        n = Math.ceil(n);
+        return n + ((9 - (n % 10)) % 10);   // z.B. 1290->1299, 1300->1309
+    }
+
     // ----- Preis-Kalkulation ------------------------------------------------
     // Gesamtpreis = (Metall + Pickups + Potis + Hals + Fix-Teile + Arbeit +
     // Shipping) * Gewinn. Metallpreis haengt von Marke UND Farbe ab.
@@ -128,7 +137,7 @@
 
         var parts = metal + pickups + potis + neck + P.fixed_parts;
         var total = (parts + P.labor + P.shipping) * P.profit;
-        el.textContent = Math.round(total).toLocaleString("de-DE") + " €";
+        el.textContent = roundUp9(total).toLocaleString("de-DE") + " €";
         updateExtras();
     }
 
@@ -138,6 +147,7 @@
         if (!P) return undefined;
         if (group === "pickups") return P.pickups[id];
         if (group === "potis") return P.potis[id];
+        if (group === "neck") return P.neck[id];
         if (group === "hardware") {
             var b = (state.metal_brand && state.metal_brand.id) || "harley_benton";
             return P.metal[b] ? P.metal[b][id] : undefined;
@@ -149,10 +159,13 @@
         return undefined;
     }
 
-    // "+ X €" je Option = Aufpreis gegenueber der guenstigsten (Standard-)Option
-    // derselben Gruppe. Aktualisiert sich mit (Metallpreis haengt von Marke+Farbe ab).
+    // "+ X €" je Option = realer Mehrpreis gegenueber der guenstigsten (Standard-)
+    // Option derselben Gruppe – inkl. Gewinnaufschlag, auf 5er aufgerundet. So
+    // entspricht der Aufpreis dem tatsaechlichen Anstieg des Richtpreises.
     function updateExtras() {
-        ["metal_brand", "hardware", "pickups", "potis"].forEach(function (group) {
+        var P = window.PRICING;
+        if (!P) return;
+        ["metal_brand", "hardware", "pickups", "potis", "neck"].forEach(function (group) {
             var btns = Array.prototype.slice.call(
                 document.querySelectorAll('.choice[data-group="' + group + '"]'));
             var contribs = [];
@@ -166,8 +179,8 @@
                 var ex = b.querySelector("[data-extra]");
                 if (!ex) return;
                 var c = contributionFor(group, b.dataset.id);
-                var d = (c === undefined) ? 0 : (c - base);
-                ex.textContent = d > 0 ? ("+ " + Math.round(d) + " €") : "";
+                var d = (c === undefined) ? 0 : (c - base) * P.profit;
+                ex.textContent = d > 0 ? ("+ " + roundUp5(d) + " €") : "";
             });
         });
     }
