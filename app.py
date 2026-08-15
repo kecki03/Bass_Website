@@ -144,8 +144,9 @@ OPTIONS = {k: OPTIONS[k] for k in ("body", "metal_brand", "hardware", "pickups",
 # Metallteile-Preis haengt von Marke UND Farbe ab (Bridge + Tuners + 2x Knobs +
 # Output-Jack; Chrom = Nickel-Jack). Alles in Euro.
 #
-# Gesamtpreis = (Summe aller Teile + Arbeitszeit + Lackierung + Shipping) * Marge
+# Netto  = (Summe aller Teile + Arbeitszeit + Lackierung + Shipping) * Marge
 #   Teile = Metall + Pickups + Potis + Hals + Fix-Teile (3D-Druck, Schrauben, Saiten)
+# Brutto = Netto * USt-Faktor (Endpreis, den der Kunde sieht)
 # ---------------------------------------------------------------------------
 PRICING = {
     "metal": {                                   # [Marke][Farbe] -> Summe Metallteile
@@ -160,6 +161,7 @@ PRICING = {
     "finish": 100,        # Lackierung (Arbeit + Lack in einem)
     "shipping": 30,       # Shipping & Packaging
     "profit": 1.50,       # +50 % Marge
+    "vat": 1.20,          # +20 % Umsatzsteuer (Österreich); Endpreis = brutto
 }
 
 
@@ -195,7 +197,8 @@ def compute_price(config):
     neck = PRICING["neck"].get(config.get("neck"), PRICING["neck"]["drparts"])
 
     parts = metal + pickups + potis + neck + PRICING["fixed_parts"]
-    total = (parts + PRICING["labor"] + PRICING["finish"] + PRICING["shipping"]) * PRICING["profit"]
+    net = (parts + PRICING["labor"] + PRICING["finish"] + PRICING["shipping"]) * PRICING["profit"]
+    total = net * PRICING["vat"]   # brutto inkl. 20 % USt
     return round_up_to_9(total)
 
 

@@ -115,7 +115,7 @@
 
     // ----- Preis-Kalkulation ------------------------------------------------
     // Gesamtpreis = (Metall + Pickups + Potis + Hals + Fix-Teile + Arbeit +
-    // Shipping) * Gewinn. Metallpreis haengt von Marke UND Farbe ab.
+    // Shipping) * Gewinn * USt. Metallpreis haengt von Marke UND Farbe ab.
     function recalcPrice() {
         var P = window.PRICING;
         var el = document.getElementById("totalPrice");
@@ -136,7 +136,8 @@
         if (neck === undefined) neck = P.neck.drparts;
 
         var parts = metal + pickups + potis + neck + P.fixed_parts;
-        var total = (parts + P.labor + P.finish + P.shipping) * P.profit;
+        var vat = P.vat || 1;
+        var total = (parts + P.labor + P.finish + P.shipping) * P.profit * vat;  // brutto inkl. USt
         el.textContent = roundUp9(total).toLocaleString("de-DE") + " €";
         updateExtras();
     }
@@ -179,7 +180,7 @@
                 var ex = b.querySelector("[data-extra]");
                 if (!ex) return;
                 var c = contributionFor(group, b.dataset.id);
-                var d = (c === undefined) ? 0 : (c - base) * P.profit;
+                var d = (c === undefined) ? 0 : (c - base) * P.profit * (P.vat || 1);
                 ex.textContent = d > 0 ? ("+ " + roundUp5(d) + " €") : "";
             });
         });
