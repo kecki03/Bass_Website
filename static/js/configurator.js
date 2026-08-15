@@ -136,7 +136,7 @@
         if (neck === undefined) neck = P.neck.drparts;
 
         var parts = metal + pickups + potis + neck + P.fixed_parts;
-        var total = (parts + P.labor + P.shipping) * P.profit;
+        var total = (parts + P.labor + P.finish + P.shipping) * P.profit;
         el.textContent = roundUp9(total).toLocaleString("de-DE") + " €";
         updateExtras();
     }

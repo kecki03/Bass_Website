@@ -70,7 +70,6 @@ OPTIONS = {
             {"id": "drparts", "name": "Dr. Parts: Palisander", "delta": 0, "color": "#e8c79a",
              "desc": "Solider Standard-Hals aus Palisander."},
             {"id": "whitestork", "name": "White Stork Guitars", "delta": 0, "color": "#e8d6a6",
-             "badge": "Premium",
              "desc": "Hochwertiger Maple-Hals · Griffbrett aus Indian Rosewood · 20 Bünde · Clear High Gloss Nitro-Finish."},
         ],
     },
@@ -81,7 +80,7 @@ OPTIONS = {
         # Chrom/Schwarz. Gotoh: Chrom/Schwarz/Gold (Gold wird im JS nur bei Gotoh gezeigt).
         "choices": [
             {"id": "harley_benton", "name": "Harley Benton", "delta": 0},
-            {"id": "gotoh", "name": "Gotoh", "delta": 0, "badge": "Premium"},
+            {"id": "gotoh", "name": "Gotoh", "delta": 0},
         ],
     },
     "pickups": {
@@ -145,7 +144,7 @@ OPTIONS = {k: OPTIONS[k] for k in ("body", "metal_brand", "hardware", "pickups",
 # Metallteile-Preis haengt von Marke UND Farbe ab (Bridge + Tuners + 2x Knobs +
 # Output-Jack; Chrom = Nickel-Jack). Alles in Euro.
 #
-# Gesamtpreis = (Summe aller Teile + Arbeitszeit + Shipping) * (1 + Gewinn)
+# Gesamtpreis = (Summe aller Teile + Arbeitszeit + Lackierung + Shipping) * Marge
 #   Teile = Metall + Pickups + Potis + Hals + Fix-Teile (3D-Druck, Schrauben, Saiten)
 # ---------------------------------------------------------------------------
 PRICING = {
@@ -158,8 +157,9 @@ PRICING = {
     "neck": {"drparts": 69, "whitestork": 350},   # White Stork = Premium (Maple/Rosewood)
     "fixed_parts": 100,   # 3D-Druck 60 + Schrauben/Kabel/Kondensator 20 + Saiten 20
     "labor": 100,         # Arbeitszeit
+    "finish": 100,        # Lackierung (Arbeit + Lack in einem)
     "shipping": 30,       # Shipping & Packaging
-    "profit": 1.20,       # +20 % Gewinn
+    "profit": 1.50,       # +50 % Marge
 }
 
 
@@ -195,7 +195,7 @@ def compute_price(config):
     neck = PRICING["neck"].get(config.get("neck"), PRICING["neck"]["drparts"])
 
     parts = metal + pickups + potis + neck + PRICING["fixed_parts"]
-    total = (parts + PRICING["labor"] + PRICING["shipping"]) * PRICING["profit"]
+    total = (parts + PRICING["labor"] + PRICING["finish"] + PRICING["shipping"]) * PRICING["profit"]
     return round_up_to_9(total)
 
 
