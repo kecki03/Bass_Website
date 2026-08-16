@@ -1,3 +1,4 @@
+import copy
 import hashlib
 import math
 import os
@@ -6,9 +7,11 @@ import secrets
 from datetime import date, timedelta
 from urllib.parse import urlparse
 
-from flask import Flask, abort, render_template, jsonify, request, send_from_directory
+from flask import (Flask, abort, render_template, jsonify, request,
+                   send_from_directory, redirect)
 
 import db
+import i18n
 import mailer
 from admin import admin_bp, format_config
 
@@ -234,6 +237,75 @@ TEAM = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Mehrsprachigkeit (DE/EN). Sprachwahl pro Request: Session > Browser > "de".
+# Der manuelle Umschalter setzt die Session ueber /lang/<code>.
+# ---------------------------------------------------------------------------
+def current_lang():
+    # Sprachwahl steckt in einem eigenen, langlebigen Cookie (nicht in der
+    # Session): Sie ist nicht sicherheitskritisch, soll dauerhaft merkbar sein
+    # und auch ueber HTTP (lokal) funktionieren. Ohne Cookie -> Browser-Sprache.
+    lang = request.cookies.get("lang")
+    if lang in i18n.SUPPORTED:
+        return lang
+    return i18n.match_accept_language(request.headers.get("Accept-Language", ""))
+
+
+@app.context_processor
+def inject_i18n():
+    """Stellt jedem Template lang, die Textmap t und den Umschalt-Link bereit."""
+    lang = current_lang()
+    other = "en" if lang == "de" else "de"
+    return {
+        "lang": lang,
+        "t": i18n.UI[lang],
+        "other_lang": other,
+    }
+
+
+@app.route("/lang/<code>")
+def set_lang(code):
+    """Sprache im lang-Cookie merken und zur vorigen Seite zurueckkehren."""
+    nxt = request.args.get("next", "/")
+    # Nur interne Pfade zulassen (kein Open-Redirect).
+    if not nxt.startswith("/") or nxt.startswith("//"):
+        nxt = "/"
+    resp = redirect(nxt)
+    if code in i18n.SUPPORTED:
+        # secure=False, damit die Wahl auch lokal ueber HTTP greift; Sprache ist
+        # kein Geheimnis. samesite=Lax reicht als CSRF-Grundschutz.
+        resp.set_cookie("lang", code, max_age=60 * 60 * 24 * 365,
+                        samesite="Lax", secure=False, httponly=False)
+    return resp
+
+
+def localized_options(lang):
+    """OPTIONS mit uebersetzten Labels/Namen/Descriptions fuer die Sprache."""
+    opts = copy.deepcopy(OPTIONS)
+    labels = i18n.OPTION_LABELS.get(lang, {})
+    choice_tr = i18n.OPTION_CHOICES.get(lang, {})
+    for key, group in opts.items():
+        if key in labels:
+            group["label"] = labels[key]
+        for c in group["choices"]:
+            tr = choice_tr.get(c["id"])
+            if tr:
+                if "name" in tr:
+                    c["name"] = tr["name"]
+                if "desc" in tr:
+                    c["desc"] = tr["desc"]
+    return opts
+
+
+def localized_person(slug, lang):
+    """TEAM-Person mit uebersetzter role + facts fuer die Sprache."""
+    person = dict(TEAM[slug])
+    tr = i18n.TEAM.get(lang, {}).get(slug)
+    if tr:
+        person = {**person, **tr}
+    return person
+
+
 @app.route("/")
 def home():
     return render_template("index.html", dev_phase=DEV_PHASE)
@@ -241,21 +313,23 @@ def home():
 
 @app.route("/team/<slug>")
 def team_member(slug):
-    person = TEAM.get(slug)
-    if not person:
+    if slug not in TEAM:
         abort(404)
+    person = localized_person(slug, current_lang())
     return render_template("founder.html", person=person, slug=slug)
 
 
 @app.route("/konfigurator")
 def configurator():
+    lang = current_lang()
     return render_template(
         "configurator.html",
-        options=OPTIONS,
+        options=localized_options(lang),
         base_price=BASE_PRICE,
         pricing=PRICING,
         dev_phase=DEV_PHASE,
         paypal_donate_url=PAYPAL_DONATE_URL,
+        js_i18n=i18n.JS[lang],
     )
 
 
@@ -297,11 +371,12 @@ def api_newsletter():
     data = request.get_json(silent=True) or request.form
     email = (data.get("email") or "").strip()
     consent = bool(data.get("consent"))
+    msg = i18n.API[current_lang()]
 
     if not EMAIL_RE.match(email):
-        return jsonify({"ok": False, "error": "Bitte gib eine gültige E-Mail-Adresse ein."}), 400
+        return jsonify({"ok": False, "error": msg["invalid_email"]}), 400
     if not consent:
-        return jsonify({"ok": False, "error": "Bitte bestätige die Einwilligung."}), 400
+        return jsonify({"ok": False, "error": msg["consent_required"]}), 400
 
     db.add_newsletter(email=email, consent=consent)
 
@@ -314,7 +389,7 @@ def api_newsletter():
             "Alle Eintraege siehst du unter https://layerinstruments.com/admin"
         ),
     )
-    return jsonify({"ok": True, "message": "Danke! Wir melden uns, sobald es losgeht."})
+    return jsonify({"ok": True, "message": msg["newsletter_ok"]})
 
 
 def _notify_interest(record):
@@ -370,9 +445,10 @@ def api_interest():
     kind = (data.get("kind") or "interest").strip()
     config = data.get("config") or {}
     email = (data.get("email") or "").strip()
+    msg = i18n.API[current_lang()]
 
     if email and not EMAIL_RE.match(email):
-        return jsonify({"ok": False, "error": "Bitte gib eine gültige E-Mail-Adresse ein."}), 400
+        return jsonify({"ok": False, "error": msg["invalid_email"]}), 400
 
     record = {"kind": kind, "config": config, "email": email or None}
 
@@ -389,23 +465,14 @@ def api_interest():
         if not email:
             missing.append("email")
         if missing:
-            return jsonify({
-                "ok": False,
-                "error": "Bitte fülle alle Felder aus, dann klappt's mit der Post.",
-            }), 400
+            return jsonify({"ok": False, "error": msg["fields_required"]}), 400
         record.update(required)
 
     db.add_interest(record)
 
     _notify_interest(record)
 
-    if kind == "supporter":
-        message = (
-            "Danke! Wir melden uns, "
-            "wenn es was zu erzählen gibt."
-        )
-    else:
-        message = "Danke für dein Interesse! Wir halten dich auf dem Laufenden."
+    message = msg["supporter_ok"] if kind == "supporter" else msg["interest_ok"]
     return jsonify({"ok": True, "message": message})
 
 

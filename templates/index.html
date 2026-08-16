@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ lang }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Layer Instruments — Ein Bass aus dem 3D-Drucker</title>
-    <meta name="description" content="Layer Instruments – modulare, 3D-gedruckte Bässe. Konfiguriere deinen individuellen Chisel Bass: einzigartige dreidimensionale Oberfläche, austauschbare Korpusteile und unendliche Farbkombinationen.">
+    <title>{{ t.home_title }}</title>
+    <meta name="description" content="{{ t.home_meta_desc }}">
     <link rel="canonical" href="https://layerinstruments.com/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Layer Instruments">
-    <meta property="og:title" content="Layer Instruments — Modulare Bässe aus dem 3D-Drucker">
-    <meta property="og:description" content="Konfiguriere deinen individuellen Chisel Bass: einzigartige 3D-Oberfläche, modularer Aufbau, unendliche Farbkombinationen.">
+    <meta property="og:title" content="{{ t.home_og_title }}">
+    <meta property="og:description" content="{{ t.home_og_desc }}">
     <meta property="og:image" content="https://layerinstruments.com/static/img/site/hero.jpg">
     <meta property="og:url" content="https://layerinstruments.com/">
     <meta name="twitter:card" content="summary_large_image">
@@ -32,11 +32,18 @@
     <!-- ===================== TOPBAR (immer transparent, feste Links) ===================== -->
     <header class="topbar">
         <a class="topbar__brand" href="#top">Layer Instruments</a>
-        <nav class="topbar__nav">
-            <a href="#modular">Modularität</a>
-            <a href="#process">Prozess</a>
-            <a href="#about">Über uns</a>
-            <a class="nav-konf" href="{{ url_for('configurator') }}">Konfigurator</a>
+        <button class="nav-toggle" type="button" aria-label="{{ t.nav_menu }}" aria-expanded="false" aria-controls="topnav">
+            <span></span><span></span><span></span>
+        </button>
+        <nav class="topbar__nav" id="topnav">
+            <a href="#modular">{{ t.nav_modular }}</a>
+            <a href="#process">{{ t.nav_process }}</a>
+            <a href="#about">{{ t.nav_about }}</a>
+            <a class="nav-konf" href="{{ url_for('configurator') }}">{{ t.nav_config }}</a>
+            <a class="nav-lang" href="{{ url_for('set_lang', code=other_lang) }}?next={{ request.path }}" aria-label="{{ t.lang_switch_aria }}">
+                <svg class="nav-lang__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>
+                <span>{{ t.lang_switch }}</span>
+            </a>
             <a class="nav-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             </a>
@@ -58,7 +65,7 @@
                 <span>Bass</span>
             </h1>
             <a class="btn btn--xl" href="{{ url_for('configurator') }}">
-                Konfigurieren
+                {{ t.hero_cta }}
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
         </div>
@@ -67,19 +74,15 @@
     <!-- ===================== MODULARITÄT (Vollbild) ===================== -->
     <section class="section--modular" id="modular" data-nav="dark">
         <div class="modular__left">
-            <h2 class="modular__title">Modularität.<br>Dein <span class="accent">individueller</span> Look.</h2>
+            <h2 class="modular__title">{{ t.mod_title_1 }}<br>{{ t.mod_title_2_pre }}<span class="accent">{{ t.mod_title_2_accent }}</span>{{ t.mod_title_2_post }}</h2>
             <div class="dropbox" tabindex="0" role="button" aria-expanded="false">
                 <div class="dropbox__head">
-                    <h3>So funktioniert´s</h3>
+                    <h3>{{ t.mod_how }}</h3>
                     <svg class="dropbox__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
                 <div class="dropbox__more">
                     <div>
-                        <p> Die Besonderheit an unserem Bass: Die Teile werden mittels 3D-Druck gefertigt. Dies ermöglicht
-                        einen modularen Aufbau sowie eine Vielzahl an Farbkombinationen. Im robusten Mittelteil aus 
-                        carbonfaserverstärktem ABS steckt die komplette Technik. 
-                            Die austauschbaren Korpusteile werden mit wenigen Schrauben befestigt und ermöglichen es,
-                            den Look deiner Gitarre jederzeit individuell anzupassen. </p>
+                        <p>{{ t.mod_text }}</p>
                     </div>
                 </div>
             </div>
@@ -111,7 +114,7 @@
             <source src="{{ url_for('static', filename='img/site/process.mp4') }}" type="video/mp4">
         </video>
         <div class="process__overlay">
-            <h2 class="process__title">Der Prozess</h2>
+            <h2 class="process__title">{{ t.process_title }}</h2>
         </div>
     </section>
 
@@ -120,15 +123,9 @@
         <div class="wrap">
             <div class="about__grid">
                 <div class="about__text">
-                    <h2 class="sec-title" style="margin-bottom:24px">Über uns</h2>
-                    <p>Warum sind alle Bässe so ähnlich und unpersönlich? Wir sind Maschinenbauer, Designer und Musiker aus Leidenschaft und haben 
-                        mit unserem Produkt eine Antwort auf diese Frage geschaffen.
-                    </p>
-                    <p>Eine Woche lang verschanzten wir uns in unserer Wohnung. 
-                        Wir haben gezeichnet, diskutiert und experimentiert. 
-                        Die Idee war es, eine noch nie gesehene dreidimensionale Oberfläche zu erstellen. 
-                        Sie verleiht dem Bass Tiefe, Textur und Charakter sowie unendlich mögliche Farbkombinationen.
-                    </p>
+                    <h2 class="sec-title" style="margin-bottom:24px">{{ t.about_title }}</h2>
+                    <p>{{ t.about_p1 }}</p>
+                    <p>{{ t.about_p2 }}</p>
                 </div>
                 <div class="founders">
                     <a class="founder" href="{{ url_for('team_member', slug='perotin') }}" aria-label="Mehr über Perotin">
@@ -147,15 +144,15 @@
     <!-- ===================== RELEASE / NEWSLETTER (direkt nach About Us) ===================== -->
     <section class="section release" id="release" data-nav="dark">
         <div class="wrap">
-            <h2 class="release__title">Kontaktanfrage</h2>
-            <p class="release__lead">Du willst einen Bass, hast Fragen zum Projekt oder magst uns Feedback geben? Melde dich gerne bei uns per E-Mail oder Instagram-Privatnachricht!</p>
+            <h2 class="release__title">{{ t.contact_title }}</h2>
+            <p class="release__lead">{{ t.contact_lead }}</p>
             <div class="contact-hub">
                 <div class="email-field">
                     <a class="email-field__addr" href="mailto:info@layerinstruments.de">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
                         <span class="email-field__text">info@layerinstruments.de</span>
                     </a>
-                    <button type="button" class="email-field__copy" data-copy="info@layerinstruments.de" aria-label="E-Mail-Adresse kopieren" title="Adresse kopieren">
+                    <button type="button" class="email-field__copy" data-copy="info@layerinstruments.de" aria-label="{{ t.contact_copy_aria }}" title="{{ t.contact_copy_title }}">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     </button>
                 </div>
@@ -169,7 +166,7 @@
 
     <!-- ===================== GALERIE (Vollbreite, abwechselnd Mensch/Detail) ===================== -->
     <section class="section--gallery" id="gallery" data-nav="light">
-        <div class="wrap"><h2 class="sec-title gallery__title">Galerie</h2></div>
+        <div class="wrap"><h2 class="sec-title gallery__title">{{ t.gallery_title }}</h2></div>
         <div class="gallery-zz">
             <figure class="gz gz--left  gz--portrait"><img src="{{ url_for('static', filename='img/site/gz_h5.jpg') }}" alt="Layer Instruments Bass – Detail" loading="lazy" decoding="async"></figure>
             <figure class="gz gz--right gz--portrait gz--nomobile"><img src="{{ url_for('static', filename='img/site/gz_1.jpg') }}" alt="Layer Instruments Bass mit Musikerin" loading="lazy" decoding="async"></figure>
@@ -187,10 +184,10 @@
     <!-- ===================== FOOTER ===================== -->
     <footer class="footer">
         <span class="footer__brand">Layer Instruments</span>
-        <span class="footer__note">3D-gedruckt · Ein Studentenprojekt</span>
+        <span class="footer__note">{{ t.footer_note }}</span>
         <nav class="footer__links">
-            <a href="{{ url_for('impressum') }}">Impressum</a>
-            <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+            <a href="{{ url_for('impressum') }}">{{ t.footer_imprint }}</a>
+            <a href="{{ url_for('datenschutz') }}">{{ t.footer_privacy }}</a>
             <a class="footer-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             </a>

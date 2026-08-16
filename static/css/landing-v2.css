@@ -106,6 +106,26 @@ body.landing-v2 {
    nur mobil (siehe Media-Query weiter unten). */
 .topbar__nav a.nav-konf { transition: opacity .3s ease; }
 
+/* Hamburger-Button: nur mobil sichtbar (siehe Media-Query). Drei Striche in
+   currentColor, damit er sich – wie die Nav-Schrift – an die Sektion anpasst.
+   Wird mobil absolut positioniert (nicht als Flex-Item), weil ein <button> als
+   Flex-Kind neben "space-between" in Chromium auf Breite 0 kollabiert. */
+.nav-toggle {
+    display: none;
+    width: 19px; height: 12px; padding: 0; border: 0; background: none;
+    color: inherit; cursor: pointer;
+    flex-direction: column; justify-content: space-between; align-items: stretch;
+}
+.nav-toggle span {
+    display: block; height: 2px; width: 100%; border-radius: 1px;
+    background: currentColor;
+    transition: transform .25s ease, opacity .2s ease;
+}
+/* Offen: Striche werden zum X. */
+.topbar.nav-open .nav-toggle span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.topbar.nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+.topbar.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+
 /* ---------- Buttons ---------- */
 .btn {
     display: inline-flex; align-items: center; gap: 10px;
@@ -358,6 +378,17 @@ a.founder:hover .founder__name { text-decoration: underline; text-underline-offs
 .footer-insta { display: inline-flex; align-items: center; }
 .footer-insta svg { width: 18px; height: 18px; display: block; }
 
+/* ---------- Sprachumschalter (Globus + Zielsprache) ---------- */
+.nav-lang {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    border: 1px solid currentColor; border-radius: 999px;
+    padding: 5px 11px; line-height: 1; opacity: .82;
+    transition: opacity .2s;
+}
+.nav-lang:hover { opacity: 1; }
+.nav-lang__icon { width: 14px; height: 14px; display: block; flex: none; }
+
 /* ---------- Screenshot-Modus ---------- */
 .shot .hero, .shot .section--modular { height: 760px; min-height: 0; }
 .shot .section--process { height: 560px; min-height: 0; }
@@ -378,19 +409,56 @@ a.founder:hover .founder__name { text-decoration: underline; text-underline-offs
 
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
-    .topbar__nav { gap: 18px; }
-    .topbar__nav a:not(.nav-konf):not(.nav-insta) { display: none; }   /* mobil nur Konfigurator + Instagram */
-    /* mobil: Konfigurator im Hero ausblenden, ab der 2. Sektion einblenden */
-    .topbar__nav a.nav-konf,
-    .topbar__nav a.nav-insta { opacity: 0; pointer-events: none; }
-    .topbar.past-hero .topbar__nav a.nav-konf,
-    .topbar.past-hero .topbar__nav a.nav-insta { opacity: .82; pointer-events: auto; }
-    /* Mobil: "Konfigurator" in der Element-Schrift wie "Layer Instruments"
-       (statt breiter Mono-Grossschrift) – optisch stimmig und schmaler. */
-    .topbar__nav a.nav-konf {
-        font-family: var(--display); text-transform: none;
-        letter-spacing: 0.02em; font-size: 16px;
+    /* Mobil: Nav einklappen, stattdessen Hamburger-Button zeigen. Der Button
+       liegt absolut oben rechts (raus aus dem Flex-Fluss der Topbar). */
+    .nav-toggle {
+        display: flex;
+        position: absolute; top: 50%; right: 30px; z-index: 50;
+        transform: translateY(-50%);
     }
+    /* Bei offenem Menü wird auch die Topbar selbst grau-transparent, damit
+       Topbar + Panel als ein durchgehendes Feld wirken. Text hell + lesbar. */
+    .topbar.nav-open {
+        background: rgba(10,10,13,0.74);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        color: #fff; text-shadow: none;
+    }
+    /* Menü als vollbreites, leicht transparentes Feld unter der Topbar. */
+    .topbar__nav {
+        position: absolute;
+        top: 100%; left: 0; right: 0; width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 6px 0;
+        background: rgba(10,10,13,0.74);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.30);
+        /* eingeklappt */
+        opacity: 0; transform: translateY(-10px); pointer-events: none;
+        transition: opacity .22s ease, transform .22s ease;
+    }
+    .topbar.nav-open .topbar__nav {
+        opacity: 1; transform: translateY(0); pointer-events: auto;
+    }
+    /* Im dunklen Panel immer heller Text – unabhängig von der Sektion. */
+    .topbar__nav a {
+        display: flex; align-items: center; gap: 12px;
+        width: 100%; padding: 15px 34px;
+        color: #fff; opacity: .92; text-shadow: none;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .topbar__nav a:last-child { border-bottom: 0; }
+    .topbar__nav a:hover, .topbar__nav a:active { opacity: 1; background: rgba(255,255,255,0.06); }
+    /* Sprach-Umschalter und Instagram im Panel als normale Menüzeilen. */
+    .topbar__nav a.nav-lang { border-radius: 0; border-left: 0; border-right: 0; border-top: 0; letter-spacing: 0.08em; }
+    .topbar__nav a.nav-lang .nav-lang__icon { width: 17px; height: 17px; }
+    .topbar__nav a.nav-insta { opacity: .92; pointer-events: auto; }
+    .topbar__nav a.nav-insta svg { filter: none; width: 18px; height: 18px; }
+    .topbar__nav a.nav-insta::after { content: "Instagram"; font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
     /* mobil: kompakter Abstand zwischen "Über uns"-Text und Foto-Karten, dafür
        mehr Luft rund um die Kontaktanfrage. Höhere Spezifität (.landing-v2 …),
        damit die spätere 76px-.section-Regel der 600er-Query sie nicht überschreibt. */

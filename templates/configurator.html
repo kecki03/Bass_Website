@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ lang }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Layer Instruments — Konfigurator</title>
+    <title>{{ t.config_title }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -24,7 +24,13 @@
 
     <header class="topbar topbar--solid">
         <a class="brand" href="{{ url_for('home') }}">Layer Instruments</a>
-        <span class="topbar__right">Chisel · Konfigurator</span>
+        <span class="topbar__right">
+            <a class="nav-lang" href="{{ url_for('set_lang', code=other_lang) }}?next={{ request.path }}" aria-label="{{ t.lang_switch_aria }}">
+                <svg class="nav-lang__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>
+                <span>{{ t.lang_switch_short }}</span>
+            </a>
+            <span class="topbar__crumb">{{ t.config_topbar_right }}</span>
+        </span>
     </header>
 
     <main class="config__grid">
@@ -43,23 +49,23 @@
             <div class="stage__info" tabindex="0" aria-label="Steuerung anzeigen">
                 <span class="stage__info-icon" aria-hidden="true">i</span>
                 <div class="stage__info-tip" role="tooltip">
-                    <strong>Steuerung</strong>
+                    <strong>{{ t.ctrl_title }}</strong>
                     <div class="stage__info-mouse">
-                        <span><b>Drehen</b> · linke Maustaste ziehen</span>
-                        <span><b>Verschieben</b> · rechte Maustaste ziehen</span>
-                        <span><b>Zoom</b> · Scrollrad</span>
+                        <span><b>{{ t.ctrl_rotate }}</b> · {{ t.ctrl_rotate_mouse }}</span>
+                        <span><b>{{ t.ctrl_pan }}</b> · {{ t.ctrl_pan_mouse }}</span>
+                        <span><b>{{ t.ctrl_zoom }}</b> · {{ t.ctrl_zoom_mouse }}</span>
                     </div>
                     <div class="stage__info-touch">
-                        <span><b>Drehen</b> · mit 1 Finger ziehen</span>
-                        <span><b>Zoom</b> · mit 2 Fingern auf-/zuziehen</span>
-                        <span><b>Verschieben</b> · mit 2 Fingern ziehen</span>
+                        <span><b>{{ t.ctrl_rotate }}</b> · {{ t.ctrl_rotate_touch }}</span>
+                        <span><b>{{ t.ctrl_zoom }}</b> · {{ t.ctrl_zoom_touch }}</span>
+                        <span><b>{{ t.ctrl_pan }}</b> · {{ t.ctrl_pan_touch }}</span>
                     </div>
                 </div>
             </div>
             <div class="stage__caption">
                 <span id="stageName">Silk Blue Magenta</span>
                 <span class="stage__dot">·</span>
-                <span id="stageHardware">Chrom</span>
+                <span id="stageHardware">{{ t.config_hardware_default }}</span>
             </div>
         </section>
 
@@ -67,11 +73,9 @@
         <aside class="panel">
             <div class="panel__scroll">
             <div class="panel__head">
-                <p class="panel__eyebrow">Dein Instrument</p>
+                <p class="panel__eyebrow">{{ t.config_eyebrow }}</p>
                 <h1 class="panel__title">CHISEL Bass</h1>
-                <p class="panel__desc">Stell dir deinen Bass zusammen. Jede Änderung siehst du sofort links am Instrument. Bitte Beachte,
-                    dass der Konfigurator noch in Entwicklung ist und sich verfügbare Teile sowie Farben beim Verkaufsstart ändern können.
-                </p>
+                <p class="panel__desc">{{ t.config_desc }}</p>
             </div>
 
             {% for key, group in options.items() %}
@@ -131,7 +135,7 @@
                 {% if key == 'body' and group.choices|length > 6 %}
                 <button type="button" class="choices-toggle" id="bodyToggle" aria-expanded="false"
                         data-count="{{ group.choices|length }}">
-                    Alle {{ group.choices|length }} Filamente anzeigen
+                    {{ js_i18n.filaments_show_all.replace('{n}', group.choices|length|string) }}
                 </button>
                 {% endif %}
                 {% if group.note %}
@@ -142,19 +146,17 @@
 
             <div class="summary">
                 <div class="dev-banner">
-                    <span class="dev-banner__tag">In Entwicklung</span>
-                    <p>Der CHISEL Bass ist noch nicht im Verkauf. Der Preis ist ein
-                       Richtwert je nach Konfiguration. Zeig uns, dass dir das Design
-                       gefällt, und wir melden uns zum Verkaufsstart bei dir.</p>
+                    <span class="dev-banner__tag">{{ t.dev_tag }}</span>
+                    <p>{{ t.dev_text }}</p>
                 </div>
 
-                <button id="interestBtn" class="buy">Interesse bekunden</button>
+                <button id="interestBtn" class="buy">{{ t.interest_btn }}</button>
             </div>
             </div><!-- /.panel__scroll -->
 
             <!-- Preisleiste als fixer Footer unten im Panel -->
             <div class="price-sticky">
-                <span class="price-sticky__label">Richtpreis · inkl. Aufbau, Versand &amp; USt</span>
+                <span class="price-sticky__label">{{ t.price_label }}</span>
                 <span class="price-sticky__value" id="totalPrice">–</span>
             </div>
         </aside>
@@ -165,21 +167,19 @@
     <div id="interestModal" class="modal" hidden>
         <div class="modal__backdrop" data-close></div>
         <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="interestTitle">
-            <button class="modal__x" data-close aria-label="Schließen">×</button>
-            <h2 id="interestTitle" class="modal__title">Interesse bekunden</h2>
-            <p class="modal__lead">Trag deine E-Mail ein und wir benachrichtigen dich, sobald
-               dein konfigurierter Bass bestellbar ist. Deine Konfiguration schicken wir mit.</p>
+            <button class="modal__x" data-close aria-label="{{ t.modal_close }}">×</button>
+            <h2 id="interestTitle" class="modal__title">{{ t.modal_title }}</h2>
+            <p class="modal__lead">{{ t.modal_lead }}</p>
             <form id="interestForm" class="modal__form">
                 <label class="field">
-                    <span>E-Mail</span>
-                    <input type="email" name="email" required placeholder="du@beispiel.de">
+                    <span>{{ t.modal_email }}</span>
+                    <input type="email" name="email" required placeholder="{{ t.modal_email_ph }}">
                 </label>
                 <label class="check">
                     <input type="checkbox" name="consent" required>
-                    <span>Ich bin einverstanden, zu Release-Infos kontaktiert zu werden.
-                          (<a href="{{ url_for('datenschutz') }}" target="_blank">Datenschutz</a>)</span>
+                    <span>{{ t.modal_consent_pre }}<a href="{{ url_for('datenschutz') }}" target="_blank">{{ t.modal_consent_link }}</a>{{ t.modal_consent_post }}</span>
                 </label>
-                <button type="submit" class="buy">Absenden</button>
+                <button type="submit" class="buy">{{ t.modal_submit }}</button>
                 <p class="form__msg" data-msg></p>
             </form>
         </div>
@@ -189,6 +189,7 @@
         window.BASE_PRICE = {{ base_price }};
         window.DEV_PHASE = {{ 'true' if dev_phase else 'false' }};
         window.PRICING = {{ pricing | tojson }};
+        window.I18N = {{ js_i18n | tojson }};
     </script>
     <script src="{{ url_for('static', filename='js/configurator.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/configurator3d.js') }}"></script>

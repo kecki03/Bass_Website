@@ -26,6 +26,35 @@
         updateNav();
     }
 
+    // ----- Mobiles Menü (Hamburger) -----------------------------------------
+    // Auf schmalen Screens ist die Nav eingeklappt; der Button oben rechts
+    // öffnet/schließt sie. Ein Klick auf einen Link oder außerhalb schließt sie.
+    var navToggle = document.querySelector(".nav-toggle");
+    if (navToggle && topbar) {
+        var topnav = document.getElementById("topnav");
+        function setNav(open) {
+            topbar.classList.toggle("nav-open", open);
+            navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+        navToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            setNav(!topbar.classList.contains("nav-open"));
+        });
+        if (topnav) {
+            topnav.querySelectorAll("a").forEach(function (a) {
+                a.addEventListener("click", function () { setNav(false); });
+            });
+        }
+        document.addEventListener("click", function (e) {
+            if (topbar.classList.contains("nav-open") && !topbar.contains(e.target)) {
+                setNav(false);
+            }
+        });
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 960) setNav(false);
+        });
+    }
+
     // Ausklapp-Box (Modularität): Tap-Toggle für Touch (Desktop nutzt :hover)
     document.querySelectorAll(".dropbox").forEach(function (box) {
         function toggle() {

@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    // Vom Server gesetzte UI-Texte (DE/EN). Fallback auf Deutsch, falls window.I18N fehlt.
+    var I18N = window.I18N || {};
+    function tr(key, fallback) { return I18N[key] || fallback; }
+
     // ===== Modals ZUERST und abgesichert verdrahten =====================
     // Bewusst ganz oben, damit "Interesse bekunden"/"Unterstuetzung" auch dann
     // funktionieren, wenn weiter unten etwas anderes einen Fehler wirft.
@@ -63,8 +67,8 @@
             var collapsed = bodyChoices.classList.toggle("is-collapsed");
             bodyToggle.setAttribute("aria-expanded", String(!collapsed));
             bodyToggle.textContent = collapsed
-                ? "Alle " + total + " Filamente anzeigen"
-                : "Weniger anzeigen";
+                ? tr("filaments_show_all", "Alle {n} Filamente anzeigen").replace("{n}", total)
+                : tr("filaments_show_less", "Weniger anzeigen");
         });
     }
 
@@ -138,7 +142,7 @@
         var parts = metal + pickups + potis + neck + P.fixed_parts;
         var vat = P.vat || 1;
         var total = (parts + P.labor + P.finish + P.shipping) * P.profit * vat;  // brutto inkl. USt
-        el.textContent = roundUp9(total).toLocaleString("de-DE") + " €";
+        el.textContent = roundUp9(total).toLocaleString(tr("price_locale", "de-DE")) + " €";
         updateExtras();
     }
 
@@ -291,7 +295,7 @@
 
         submitBtn.disabled = true;
         var original = submitBtn.textContent;
-        submitBtn.textContent = "Senden …";
+        submitBtn.textContent = tr("form_sending", "Senden …");
         msg.textContent = "";
         msg.className = "form__msg";
 
@@ -305,14 +309,14 @@
                 if (res.ok && res.d.ok) {
                     form.innerHTML = '<p class="form__success">✓ ' + res.d.message + "</p>";
                 } else {
-                    msg.textContent = res.d.error || "Etwas ist schiefgelaufen. Bitte später erneut versuchen.";
+                    msg.textContent = res.d.error || tr("form_error_generic", "Etwas ist schiefgelaufen. Bitte später erneut versuchen.");
                     msg.classList.add("is-error");
                     submitBtn.disabled = false;
                     submitBtn.textContent = original;
                 }
             })
             .catch(function () {
-                msg.textContent = "Verbindung fehlgeschlagen. Bitte später erneut versuchen.";
+                msg.textContent = tr("form_error_network", "Verbindung fehlgeschlagen. Bitte später erneut versuchen.");
                 msg.classList.add("is-error");
                 submitBtn.disabled = false;
                 submitBtn.textContent = original;

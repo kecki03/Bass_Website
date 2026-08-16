@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ lang }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -57,9 +57,16 @@
 
     <header class="topbar is-dark">
         <a class="topbar__brand" href="{{ url_for('home') }}">Layer Instruments</a>
-        <nav class="topbar__nav">
-            <a href="{{ url_for('home') }}#about">Über uns</a>
-            <a class="nav-konf" href="{{ url_for('configurator') }}">Konfigurator</a>
+        <button class="nav-toggle" type="button" aria-label="{{ t.nav_menu }}" aria-expanded="false" aria-controls="topnav">
+            <span></span><span></span><span></span>
+        </button>
+        <nav class="topbar__nav" id="topnav">
+            <a href="{{ url_for('home') }}#about">{{ t.nav_about }}</a>
+            <a class="nav-konf" href="{{ url_for('configurator') }}">{{ t.nav_config }}</a>
+            <a class="nav-lang" href="{{ url_for('set_lang', code=other_lang) }}?next={{ request.path }}" aria-label="{{ t.lang_switch_aria }}">
+                <svg class="nav-lang__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>
+                <span>{{ t.lang_switch }}</span>
+            </a>
             <a class="nav-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             </a>
@@ -69,7 +76,7 @@
     <main class="person-wrap">
         <a class="back-link" href="{{ url_for('home') }}#about">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-            Zurück zu „Über uns"
+            {{ t.founder_back }}
         </a>
 
         <div class="person">
@@ -77,7 +84,7 @@
                 <img src="{{ url_for('static', filename=person.img) }}" alt="{{ person.name }}">
             </div>
             <div class="person__info">
-                <p class="person__eyebrow">Layer Instruments</p>
+                <p class="person__eyebrow">{{ t.founder_eyebrow }}</p>
                 <h1 class="person__name">{{ person.name }}</h1>
                 <p class="person__role">{{ person.role }}</p>
                 <ul class="person__facts">
@@ -91,16 +98,17 @@
 
     <footer class="footer">
         <span class="footer__brand">Layer Instruments</span>
-        <span class="footer__note">3D-gedruckt · Ein Studentenprojekt</span>
+        <span class="footer__note">{{ t.footer_note }}</span>
         <nav class="footer__links">
-            <a href="{{ url_for('impressum') }}">Impressum</a>
-            <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+            <a href="{{ url_for('impressum') }}">{{ t.footer_imprint }}</a>
+            <a href="{{ url_for('datenschutz') }}">{{ t.footer_privacy }}</a>
             <a class="footer-insta" href="https://www.instagram.com/layer.instruments/" target="_blank" rel="noopener noreferrer" aria-label="Layer Instruments auf Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             </a>
         </nav>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
     <script src="{{ url_for('static', filename='js/track.js') }}" defer></script>
 </body>
 </html>
