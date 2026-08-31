@@ -345,6 +345,16 @@ def sitemap():
     return send_from_directory(app.static_folder, "sitemap.xml", mimetype="application/xml")
 
 
+@app.route("/favicon.ico")
+def favicon():
+    # Fallback unter der Wurzel-URL /favicon.ico (Browser & Crawler fragen die oft direkt an).
+    return send_from_directory(
+        os.path.join(app.static_folder, "img", "icons"),
+        "favicon.ico",
+        mimetype="image/x-icon",
+    )
+
+
 @app.route("/impressum")
 def impressum():
     return render_template("impressum.html")
