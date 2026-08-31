@@ -124,6 +124,34 @@ UI = {
         "modal_submit": "Absenden",
         "modal_close": "Schließen",
 
+        # --- configurator: Intro-Onboarding (vor dem Konfigurator) ---
+        # Slide-Texte enthalten <span class="intro-hl">…</span> (Lila-Buzzwords)
+        # und werden im Template mit |safe gerendert.
+        "intro_skip": "Überspringen",
+        "intro_back": "Zurück",
+        "intro_next": "Weiter",
+        "intro_start": "Jetzt konfigurieren",
+        "intro_start_short": "Konfigurieren",
+        "intro_label_base": "Basis",
+        "intro_label_parts": "Korpusteile",
+        "intro_label_click": "Klick mich!",
+        "intro_label_hover": "Hover drüber!",
+        "intro_s1_title": "Unsere Bässe sind <span class=\"intro-hl\">modular</span> aufgebaut. Bevor du deinen Bass konfigurierst, wollen wir dir gerne das Konzept erklären!",
+        "intro_s1_sub": "Es dauert höchstens 2 Minuten und du kannst jederzeit überspringen.",
+        "intro_s2_top": "Dein Bass besteht aus einer <span class=\"intro-hl\">Basis</span> und <span class=\"intro-hl\">4 Korpusteilen</span>.",
+        "intro_s2_bottom": "Beim Kauf kannst du wählen, ob du alle Teile brauchst oder bereits eine <span class=\"intro-hl\">Basis</span> besitzt und nur die Korpusteile zukaufen möchtest.",
+        "intro_s3_top": "Die Korpusteile kannst du mit wenigen <span class=\"intro-hl\">Schrauben</span> an der Basis befestigen.",
+        "intro_s3_sub": "Keine Sorge, dein Bass kommt standardmäßig fertig zusammengebaut!",
+        "intro_s3_bottom": "Besitzt du einmal eine Basis, kannst du also verschiedene <span class=\"intro-hl\">Farben</span> und <span class=\"intro-hl\">Designs</span> an deine Basis schrauben.",
+        "intro_s3_bottom_sub": "Die Teile lassen sich in etwa 15–20 min vollständig austauschen.",
+        # Kaufoptionen-Screen (nach dem Durchklicken)
+        "choose_title": "Was möchtest du bestellen?",
+        "choose_full_title": "Basis + Korpusteile",
+        "choose_full_desc": "Der komplette Bass inklusive Hals, Elektronik, Hardware und allen vier Korpusteilen.",
+        "choose_parts_title": "Nur Korpusteile",
+        "choose_parts_desc": "Ich habe bereits eine Basis und möchte nur die Korpusteile dazukaufen.",
+        "choose_soon": "Bald verfügbar",
+
         # --- founder ---
         "founder_back": "Zurück zu „Über uns“",
         "founder_eyebrow": "Layer Instruments",
@@ -213,6 +241,34 @@ UI = {
         "modal_consent_post": ")",
         "modal_submit": "Submit",
         "modal_close": "Close",
+
+        # --- configurator: intro onboarding (before the configurator) ---
+        # Slide texts contain <span class="intro-hl">…</span> (purple buzzwords)
+        # and are rendered with |safe in the template.
+        "intro_skip": "Skip",
+        "intro_back": "Back",
+        "intro_next": "Next",
+        "intro_start": "Start configuring",
+        "intro_start_short": "Configure",
+        "intro_label_base": "Base",
+        "intro_label_parts": "Body parts",
+        "intro_label_click": "Click me!",
+        "intro_label_hover": "Hover over it!",
+        "intro_s1_title": "Our basses have a <span class=\"intro-hl\">modular</span> build. Before you configure your bass, we'd love to walk you through the concept!",
+        "intro_s1_sub": "It takes 2 minutes at most and you can skip anytime.",
+        "intro_s2_top": "Your bass is made of one <span class=\"intro-hl\">base</span> and <span class=\"intro-hl\">4 body parts</span>.",
+        "intro_s2_bottom": "When you buy, you can choose whether you need all the parts or already own a <span class=\"intro-hl\">base</span> and only want to add the body parts.",
+        "intro_s3_top": "You attach the body parts to the base with just a few <span class=\"intro-hl\">screws</span>.",
+        "intro_s3_sub": "No worries — you can also order your bass fully assembled ;)",
+        "intro_s3_bottom": "Once you own a base, you can screw on different <span class=\"intro-hl\">colors</span> and <span class=\"intro-hl\">designs</span> whenever you like.",
+        "intro_s3_bottom_sub": "The parts can be fully swapped out in about 15–20 min.",
+        # Purchase-options screen (after the walkthrough)
+        "choose_title": "What would you like to order?",
+        "choose_full_title": "Base + body parts",
+        "choose_full_desc": "The complete bass including neck, electronics, hardware and all four body parts.",
+        "choose_parts_title": "Body parts only",
+        "choose_parts_desc": "I already own a base and only want to add the body parts.",
+        "choose_soon": "Coming soon",
 
         # --- founder ---
         "founder_back": "Back to “About us”",

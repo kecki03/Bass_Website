@@ -1128,3 +1128,497 @@ a.buy { display: block; text-align: center; text-decoration: none; }
     font-weight: 400;
     letter-spacing: 0;
 }
+
+/* ============================================================================
+   Intro-Onboarding (Konfigurator): Vollbild-Overlay, 3 Slides, erklaert das
+   modulare Konzept. Markup in configurator.html, Logik in configurator-intro.js.
+   ========================================================================== */
+/* ---- Seiten-Fade: weicher Uebergang Startseite <-> Konfigurator ----
+   Passt zum Intro-Fade: die Konfigurator-Seite blendet beim Laden sanft ein,
+   die Startseite blendet vor der Navigation aus (Klasse per JS, s. landing.js). */
+body.config { animation: pageFadeIn .45s ease both; }
+@keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+body.is-leaving { opacity: 0; transition: opacity .34s ease; }
+@media (prefers-reduced-motion: reduce) {
+    body.config { animation: none; }
+    body.is-leaving { transition: none; }
+}
+
+html.intro-open, body.intro-open { overflow: hidden; }
+
+.intro {
+    --ipad: clamp(16px, 3.5vw, 34px);
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity .42s ease;
+}
+.intro.is-hidden { opacity: 0; pointer-events: none; }
+
+/* Slides-Viewport + horizontaler Track */
+.intro__slides { position: absolute; inset: 0; overflow: hidden; }
+.intro__track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    transition: transform .6s cubic-bezier(.65, 0, .2, 1);
+    will-change: transform;
+}
+.intro-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--ipad) + 54px) var(--ipad) calc(var(--ipad) + 64px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Buzzwords in Akzent-Lila (Slide-Texte). Gleiche Schrift, nur farbig + leicht kraeftiger. */
+.intro-hl { color: var(--accent); font-weight: 500; }
+
+/* Slide 1: nur Text, zentriert. Gleiche Schrift wie Fliesstext (Roboto), nicht fett. */
+.intro-slide--text { align-items: center; justify-content: center; text-align: center; }
+.intro-hero {
+    max-width: 20ch;
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: 0;
+    font-size: clamp(26px, 3.4vw, 44px);
+}
+.intro-hero__sub {
+    display: block;
+    margin-top: clamp(16px, 2.6vw, 26px);
+    font-weight: 400;
+    color: var(--muted);
+    line-height: 1.45;
+    font-size: clamp(14px, 1.6vw, 19px);
+    max-width: 46ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Slides 2/3 (PC): Der Bass sitzt FIX & mittig (gleiche Groesse auf beiden
+   Slides). Der Text sitzt in den freien Diagonal-Ecken NEBEN dem Bass:
+   links-oben (linksbuendig) und rechts-unten (rechtsbuendig). Die Innenkante ist
+   ueber calc(50% ± halbe Bass-Breite) an die Bildkante gekoppelt -> beruehrt den
+   Bass nie. Auf Mobile ist all das aus (gestapelt, scrollbar) – s. unten. */
+.intro-slide--content {
+    /* halbe Bass-Breite (== Bildkante): Bass-Hoehe clamp(240,48vh,440) * 0.858
+       (halbe Bildbreite). So endet die Textspalte immer exakt an der Bildkante. */
+    --bassHalfW: clamp(206px, 41.2vh, 378px);
+    --bassGap: clamp(14px, 1.8vw, 36px);
+    position: relative;
+    display: block;
+    overflow: hidden;
+}
+/* Fuellt die (bereits um die Leisten gepolsterte) Slide-Flaeche; Bass liegt
+   absolut mittig drin, die Textbloecke in den gegenueberliegenden Ecken. */
+.intro-flow {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.flow-shape { display: none; }
+
+.intro-top, .intro-bottom {
+    position: absolute;
+    z-index: 2;
+    max-width: 40ch;
+    font-weight: 400;
+    line-height: 1.34;
+    letter-spacing: 0;
+    font-size: clamp(18px, 1.75vw, 24px);
+}
+/* Links OBEN, linksbuendig. Rechte Kante endet an der Bass-Bildkante. */
+.intro-top {
+    top: 0;
+    left: 0;
+    right: calc(50% + var(--bassHalfW) + var(--bassGap));
+    text-align: left;
+}
+/* Rechts UNTEN, rechtsbuendig. Linke Kante endet an der Bass-Bildkante. */
+.intro-bottom {
+    bottom: 0;
+    right: 0;
+    left: calc(50% + var(--bassHalfW) + var(--bassGap));
+    text-align: right;
+    margin-left: auto;
+}
+.intro-top__sub, .intro-bottom__sub {
+    display: block;
+    margin-top: 4px;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: clamp(14px, 1.4vw, 18px);
+    line-height: 1.4;
+}
+
+/* Bass FIX & mittig, absolut in der Buehne (auf beiden Slides gleich gross).
+   Auf Mobile wird das aufgehoben (static, im Fluss – s. Media-Query). */
+.assembly-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+    z-index: 1;
+    padding-block: clamp(6px, 1.6vh, 16px);
+}
+.assembly {
+    position: relative;
+    height: clamp(240px, 48vh, 440px);
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 1600 / 933;
+    margin: auto;
+}
+/* Kein drop-shadow: die Teile sind sauber freigestellt und wirken so cleaner. */
+.assembly img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+/* Alle Bilder exakt gleich skaliert (kein scale!), damit die Teile beim
+   Zusammenbauen millimetergenau auf die Basis passen. Nur Translate bewegt sie. */
+.assembly__part {
+    transition: transform .6s cubic-bezier(.5, .02, .2, 1);
+    transform: translate(0, 0);
+}
+.assembly__part[data-part="1"] { --dx: -25%; --dy: -13%; }
+.assembly__part[data-part="2"] { --dx: 25%;  --dy: -13%; }
+.assembly__part[data-part="3"] { --dx: 25%;  --dy: 13%; }
+.assembly__part[data-part="4"] { --dx: -25%; --dy: 13%; }
+/* Explodiert: Teile nach aussen versetzt; einzeln per .is-home zurueckholen */
+.assembly.is-exploded .assembly__part { transform: translate(var(--dx), var(--dy)); }
+.assembly.is-exploded .assembly__part.is-home { transform: translate(0, 0); }
+/* Slide 3: nach dem Zusammenbauen kann man Teile per Hover/Klick wieder abnehmen */
+.assembly.is-interactive .assembly__part.is-home { cursor: pointer; }
+.assembly.is-interactive .assembly__part.is-off { transform: translate(var(--dx), var(--dy)); }
+
+
+/* Handgezeichnete Annotationen (Slide 2): Caveat-Schrift + wackelige SVG-Pfeile */
+.annot { position: absolute; z-index: 6; display: flex; flex-direction: column; align-items: center; color: var(--fg); pointer-events: none; }
+.annot__label {
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: clamp(22px, 2.6vw, 34px);
+    line-height: 1;
+    transform: rotate(-4deg);
+}
+.annot__arrow { width: clamp(40px, 4vw, 58px); height: auto; color: var(--accent); margin-top: 2px; }
+/* "Basis" ueber der Basis-Mitte, Pfeil nach unten. */
+.annot--base { left: 30%; top: 6%; }
+/* "Korpusteile" ueber dem oberen rechten Teil, Pfeil nach unten. */
+.annot--parts { right: 8%; top: -15%; }
+
+/* "Klick mich!"-Hinweis (Slide 3): erscheint erst, wenn der Bass fertig
+   zusammengebaut ist, und wippt leicht – damit klar wird, dass man die Teile
+   anklicken kann. */
+.annot--click {
+    left: 42%;
+    top: -2%;
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity .45s ease;
+}
+.annot--click .annot__label { color: var(--accent); }
+.assembly.is-interactive .annot--click { opacity: 1; animation: annotBob 1.5s ease-in-out infinite; }
+@keyframes annotBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+/* Standard (Touch): "Klick mich!". Auf Geraeten mit echtem Hover (PC/Maus)
+   stattdessen "Hover drüber!" – deckt sich mit der JS-Logik (canHover), die
+   dort das Abnehmen per Hover statt per Klick aktiviert. */
+.annot__label--hover { display: none; }
+@media (hover: hover) {
+    .annot__label--tap { display: none; }
+    .annot__label--hover { display: inline-block; }
+}
+
+/* ---- Kaufoptionen-Screen (Slide 4) ---- */
+.intro-slide--choose {
+    align-items: center;
+    justify-content: center;
+    /* Unten Platz fuer die Leiste lassen (Zurueck-Button), damit die Karten
+       NICHT bis auf dessen Hoehe hinunterreichen. */
+    padding-bottom: calc(var(--ipad) + 64px);
+}
+.choose-title {
+    font-weight: 400;
+    font-size: clamp(20px, 2.2vw, 30px);
+    text-align: center;
+    margin-bottom: clamp(14px, 2.5vh, 30px);
+}
+.choose-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 2.4vw, 34px);
+    width: 100%;
+    max-width: 1200px;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+    /* Karten fuellen die volle Hoehe des Slides (fast die ganze Seite) */
+    grid-auto-rows: 1fr;
+}
+.choose-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 22px;
+    padding: clamp(14px, 2vw, 26px);
+    font-family: inherit;
+    color: var(--fg);
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color .2s, transform .12s, box-shadow .2s;
+}
+.choose-card--full:hover {
+    border-color: var(--accent);
+    box-shadow: 0 14px 40px rgba(190, 25, 255, .16);
+    transform: translateY(-3px);
+}
+.choose-card--full:active { transform: translateY(0); }
+.choose-card__stage {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+/* Aufrechte Figur (== gedrehter Bass). Sie passt sich per contain an die Buehne
+   an: Hoehe fuellt die Buehne (gedeckelt), Breite bleibt drin – so wird der Bass
+   NIE abgeschnitten und ist links & rechts exakt gleich gross. */
+.choose-figure {
+    position: relative;
+    aspect-ratio: 933 / 1600;
+    height: min(100%, 400px);
+    max-width: 100%;
+    width: auto;
+    margin: auto;
+}
+/* Das Quell-Bild ist quer (1600×933). Es wird um 90° gedreht und exakt auf die
+   aufrechte Figur skaliert (Bildbreite = Figur-Hoehe), damit nichts ueberlaeuft. */
+.choose-figure img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(100% * 1600 / 933);
+    aspect-ratio: 1600 / 933;
+    height: auto;
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+/* Voller Bass (Basis + Korpusteile): jetzt im GLEICHEN Format wie die rechte
+   Karte – aufrecht (gedreht) und exakt gleich gross. Nutzt daher einfach die
+   .choose-figure-Defaults (rotate + feste Breite), kein Sonder-Layout mehr. */
+.choose-card__body { width: 100%; margin-top: clamp(8px, 1.5vh, 18px); }
+.choose-card__title {
+    display: block;
+    font-weight: 500;
+    font-size: clamp(17px, 1.9vw, 24px);
+}
+.choose-card__desc {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: clamp(13px, 1.4vw, 16px);
+    line-height: 1.45;
+}
+/* Rechte Option vorerst deaktiviert */
+.choose-card.is-disabled { cursor: default; }
+.choose-card.is-disabled .choose-card__stage,
+.choose-card.is-disabled .choose-card__body { opacity: .32; filter: grayscale(1); }
+.choose-card__soon {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-6deg);
+    z-index: 3;
+    font-weight: 700;
+    font-size: clamp(20px, 2.6vw, 34px);
+    color: var(--fg);
+    background: rgba(255, 255, 255, .82);
+    border: 2px solid var(--fg);
+    border-radius: 12px;
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+/* Steuerleisten oben/unten */
+.intro__top-bar, .intro__bottom-bar {
+    position: absolute;
+    left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    padding: 14px var(--ipad);
+    pointer-events: none;
+}
+.intro__top-bar { top: 0; justify-content: space-between; }
+.intro__bottom-bar { bottom: 0; justify-content: space-between; gap: 12px; }
+.intro__top-bar > *, .intro__bottom-bar > * { pointer-events: auto; }
+
+/* Marke (zurueck zur Startseite) + Sprachumschalter oben */
+.intro__brand {
+    font-family: var(--display);
+    font-size: clamp(16px, 1.9vw, 21px);
+    letter-spacing: .01em;
+    color: var(--fg);
+    padding: 8px 4px;
+}
+.intro__brand:hover { color: var(--accent); }
+.intro__top-right { display: inline-flex; align-items: center; gap: 6px; }
+.intro__lang {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 600; font-size: clamp(13px, 1.5vw, 15px);
+    color: var(--muted); padding: 10px 12px; border-radius: 999px;
+    transition: background .18s, color .18s;
+}
+.intro__lang:hover { background: rgba(0, 0, 0, .06); color: var(--fg); }
+
+.ibtn {
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--fg);
+    font-size: clamp(15px, 1.7vw, 18px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    transition: background .18s, opacity .18s, transform .12s;
+}
+.ibtn:hover { background: rgba(0, 0, 0, .06); }
+.ibtn:active { transform: scale(.97); }
+/* Ueberspringen: gut sichtbar (dunkel, leichter Rahmen) statt blass-grau */
+.ibtn--skip { color: var(--fg); border: 1.5px solid var(--line); }
+.ibtn--skip:hover { border-color: var(--fg); background: rgba(0, 0, 0, .04); }
+.ibtn--back[hidden] { display: none; }
+.ibtn--next { background: var(--btn); color: var(--btn-fg); padding: 14px 26px; }
+.ibtn--next:hover { background: #000; }
+
+.progress { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.progress__dots { display: flex; gap: 9px; }
+.progress__dot {
+    width: 9px; height: 9px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .18);
+    transition: background .25s, width .25s;
+}
+.progress__dot.is-on { background: var(--accent); width: 26px; }
+.progress__count { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+
+/* Mobile & Hochformat-Tablets: Bass HORIZONTAL, Text oben/unten linksbuendig,
+   kleine Schrift – damit sich alles schoen ueber die Hoehe verteilt. */
+@media (max-width: 720px), (min-width: 721px) and (orientation: portrait) {
+    /* mehr Luft oben, damit die (schlanke) Leiste keinen Text abschneidet */
+    .intro-slide { padding: 82px 16px 100px; }
+    .intro-slide--text { padding-top: 88px; padding-bottom: 92px; }
+    .intro-hero { font-size: clamp(24px, 6.6vw, 34px); max-width: 18ch; }
+    /* Mobile: kein Umfluss – Text/Bass/Text gestapelt, linksbuendig. Die
+       PC-Spalten (absolut, neben dem Bass) hier komplett zuruecksetzen. */
+    .intro-flow { display: flex; flex-direction: column; gap: clamp(6px, 1.3vh, 14px); height: auto; text-align: left; }
+    .flow-shape { display: none; }
+    .intro-top, .intro-bottom {
+        position: static; transform: none; left: auto; right: auto;
+        font-size: clamp(13px, 3.4vw, 15px); max-width: 100%; text-align: left;
+    }
+    .intro-top::before, .intro-bottom::before { display: none; }
+    .intro-top__sub { font-size: clamp(11px, 2.9vw, 13px); }
+    /* oben UND unten linksbuendig */
+    .intro-bottom {
+        font-size: clamp(13px, 3.4vw, 15px);
+        max-width: 100%;
+        margin-left: 0;
+        text-align: left;
+    }
+    .intro-bottom__sub { font-size: clamp(11px, 2.9vw, 13px); }
+
+    /* Mobile: KEIN starres Grid, sondern scrollbare Flex-Spalte. Wird es in der
+       Hoehe eng, darf gescrollt werden (PC nicht). Text zentriert im Fluss. */
+    .intro-slide--content {
+        display: flex; flex-direction: column;
+        grid-template-rows: none;
+        overflow-y: auto; justify-content: safe center;
+        gap: clamp(6px, 1.3vh, 14px);
+    }
+    /* Bass NICHT stauchen (flex-shrink:0) – lieber scrollen. Der grosszuegige
+       Puffer oben/unten reserviert Platz fuer die vertikal gespreizten Teile,
+       damit sie nie in den Text ragen (notfalls wird gescrollt). */
+    .assembly-stage {
+        grid-row: auto;
+        flex: 0 0 auto;
+        position: static; top: auto; left: auto; transform: none; width: auto;
+        height: auto; margin: 0; overflow: visible;
+        padding-block: clamp(26px, 11vw, 90px);
+    }
+    /* Horizontaler Bass, mittig, feste Breite (gleich auf Slide 2 & 3). Teile
+       ueberwiegend vertikal auseinander (Hochformat hat dort Platz), horizontal
+       nur leicht – sonst wuerde es seitlich abgeschnitten. */
+    .assembly { height: auto; width: 92%; max-width: 92%; max-height: none; transform: none; margin: auto; }
+    .assembly.is-exploded .assembly__part {
+        transform: translate(calc(var(--dx) * .5), calc(var(--dy) * 1.4));
+    }
+    /* Handgezeichnete Annotationen (Pfeile auf Basis/Korpusteile & "Klick mich!")
+       auch auf Mobil zeigen, nur etwas kleiner. */
+    .annot__label { font-size: clamp(15px, 4.6vw, 21px); }
+    .annot__arrow { width: clamp(26px, 8vw, 40px); }
+    .annot--base { left: 40%; top: 7%; }
+    .annot--parts { right: 22%; top: -22%; }
+    .annot--click { left: 40%; top: -6%; }
+
+    /* Kaufoptionen: Felder untereinander, groesser (mehr Hoehe), Bild links */
+    .choose-grid { grid-template-columns: 1fr; gap: 14px; align-content: stretch; }
+    .choose-card { flex-direction: row; text-align: left; align-items: center; gap: 14px; padding: 12px 14px; }
+    .choose-card__stage { flex: 0 0 42%; height: clamp(150px, 26vh, 230px); }
+    .choose-figure { width: auto; height: min(100%, 200px); }
+    .choose-card__body { margin-top: 0; }
+    /* Badge ueber der Figur (linke Spalte), nicht ueber dem Text */
+    .choose-card__soon { font-size: 14px; padding: 6px 10px; left: 20%; }
+    .choose-title { margin-bottom: 14px; }
+
+    /* Schlanke Leisten – kleinere Buttons/Logo, Fokus liegt auf dem Inhalt.
+       Verlaeufe blenden gescrollten Text sauber aus. */
+    .intro__top-bar {
+        justify-content: space-between; gap: 8px;
+        align-items: flex-start;
+        padding: 9px var(--ipad) 22px;
+        background: linear-gradient(var(--bg) 60%, transparent);
+    }
+    .intro__brand { font-size: 12px; padding: 5px 0; }
+    .intro__lang { padding: 5px 7px; font-size: 12px; }
+    .intro__bottom-bar {
+        padding: 22px 12px 12px;
+        gap: 6px;
+        align-items: flex-end;
+        background: linear-gradient(transparent, var(--bg) 46%);
+    }
+    .progress__count { display: none; }
+    .progress__dots { gap: 6px; }
+    .progress__dot { width: 7px; height: 7px; }
+    .progress__dot.is-on { width: 20px; }
+    .ibtn { padding: 8px 11px; font-size: 13px; }
+    .ibtn--next { padding: 9px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro__track { transition: none; }
+    .assembly__part { transition: none; }
+}

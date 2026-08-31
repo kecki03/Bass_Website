@@ -149,6 +149,22 @@
         });
     }
 
+    // ----- Weicher Fade beim Wechsel Startseite -> Konfigurator ------------
+    // Passt zum Intro-Fade des Konfigurators: die Seite blendet erst aus, dann
+    // wird navigiert. Nur einfache Linksklicks (kein neuer Tab / Modifier-Taste),
+    // damit Strg-/Mittelklick weiterhin normal in neuem Tab oeffnen.
+    var konfLinks = document.querySelectorAll("a.nav-konf, a.btn--xl");
+    Array.prototype.forEach.call(konfLinks, function (a) {
+        a.addEventListener("click", function (e) {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            var href = a.getAttribute("href");
+            if (!href) return;
+            e.preventDefault();
+            document.body.classList.add("is-leaving");
+            window.setTimeout(function () { window.location.href = href; }, 320);
+        });
+    });
+
     // ----- E-Mail-Adresse in die Zwischenablage kopieren -------------------
     var COPY_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
     var CHECK_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
